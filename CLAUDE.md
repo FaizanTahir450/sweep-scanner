@@ -5,9 +5,10 @@ Guidance for future Claude Code sessions working in this repo.
 ## What this project is
 
 A single-file Python scanner that runs **once daily on GitHub Actions**, scans
-every liquid Binance USDT pair (spot + USDT-M futures) on the **daily candle**,
-detects **liquidity sweeps / Swing Failure Patterns (SFP)**, and sends a
-consolidated **Telegram** message with the results. No server, no manual step.
+liquid USDT spot pairs across **multiple exchanges (Binance, MEXC, KuCoin)** plus
+Binance USDT-M futures on the **daily candle**, detects **liquidity sweeps /
+Swing Failure Patterns (SFP)**, and sends a consolidated **Telegram** message
+with the results. No server, no manual step.
 
 ## Files
 
@@ -29,19 +30,34 @@ Implemented in `scanner.py`; treat as fixed spec:
   - **Bullish sweep**: `low < swing_low` AND `close > swing_low`
   - **Bearish sweep**: `high > swing_high` AND `close < swing_high`
 - Key functions: `last_valid_pivot()` (pivot + intact check) and
-  `check_sweep()` (returns `"bull"`, `"bear"`, or `None`).
+  `check_sweep()` (returns `"bull"`, `"bear"`, or `None`). These are exchange-
+  agnostic — they take `(highs, lows, closes)` lists, so adding an exchange never
+  touches the signal logic.
+
+## Architecture — adding/removing exchanges
+
+Each exchange has two adapter pieces: a **symbol lister** (`get_<ex>_symbols()`,
+applies the volume filter) and a **kline fetcher** returning
+`(highs, lows, closes)` as ascending lists of *closed* candles only. Spot
+exchanges are wired up in the **`SPOT_EXCHANGES`** registry near the bottom of
+`scanner.py`: `(display_name, symbol_lister, kline_fetcher)`. `main()` iterates
+it, each exchange wrapped in try/except so one failing (e.g. geo-block) emits a
+⚠️ note without blocking the others. Binance/MEXC share `binance_style_klines()`
+(identical kline format); KuCoin uses `kucoin_klines()` (newest-first, different
+column order). Binance futures is handled as a separate block after the registry.
 
 ## Data sources
 
-- **Spot**: `https://data-api.binance.vision` — Binance's public, geo-unrestricted
-  data mirror. Used because GitHub runners are US-based and the main Binance API
-  blocks US IPs.
-- **Futures (USDT-M)**: `https://fapi.binance.com` — no geo mirror exists. US
-  runners are geo-blocked, so futures requests are routed through an optional
-  proxy (`FUTURES_PROXY` env var / secret) whose exit is in a Binance-allowed
-  region. If unset (or the proxy fails), the run still succeeds and the Telegram
-  message includes a clear ⚠️ note; spot results are unaffected. Only the futures
-  requests use the proxy — spot always goes direct to the mirror.
+- **Binance spot**: `https://data-api.binance.vision` — public geo-unrestricted
+  mirror (GitHub runners are US-based; the main Binance API blocks US IPs).
+- **MEXC**: `https://api.mexc.com` — Binance-compatible API; `status == "1"`
+  means trading. Reachable from US runners.
+- **KuCoin**: `https://api.kucoin.com` — `volValue` = USDT 24h volume; candles are
+  newest-first `[start, open, close, high, low, ...]`; leveraged tokens end in
+  `3L/3S/5L/5S`.
+- **Binance futures (USDT-M)**: `https://fapi.binance.com` — no geo mirror; usually
+  geo-blocked on US runners, so it typically emits a ⚠️ note. To scan it, run from
+  a non-US machine. (No proxy support in the code — kept deliberately simple.)
 
 ## Config knobs (top of `scanner.py`)
 
@@ -49,20 +65,20 @@ Implemented in `scanner.py`; treat as fixed spec:
 |---------|---------|---------|
 | `SWING_STRENGTH` | 5 | Bars each side to confirm a swing point. |
 | `CANDLES` | 120 | Daily candles of history fetched per symbol. |
-| `MIN_QUOTE_VOLUME` | 500_000 | Skip pairs under $500k 24h quote volume. Lower = more coins, more noise. |
+| `MIN_QUOTE_VOLUME` | 500_000 | Skip pairs under $500k 24h quote volume. Applied to every exchange. Lower = more coins (esp. MEXC/KuCoin long tail), more noise. |
 | `QUOTE_ASSET` | "USDT" | Quote asset filter. |
-| `SCAN_FUTURES` | True | Set False for spot only. |
+| `SCAN_FUTURES` | True | Binance USDT-M futures. Set False to skip. |
 | `REQUEST_PAUSE` | 0.08 | Seconds between kline requests (rate-limit safety). |
 
-Leveraged tokens (`UP/DOWN/BULL/BEAR` suffixes) and stablecoin bases are excluded.
+Leveraged tokens (Binance/MEXC `UP/DOWN/BULL/BEAR` suffixes, KuCoin `3L/3S/5L/5S`)
+and stablecoin bases are excluded on every exchange.
 
 ## Secrets / configuration — SECURITY
 
-Sensitive values are provided **only** via environment variables:
-`TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID`, and the optional `FUTURES_PROXY`
-(a proxy URL that may embed `user:pass` credentials).
+The Telegram bot token and chat ID are provided **only** via environment
+variables `TELEGRAM_BOT_TOKEN` and `TELEGRAM_CHAT_ID`.
 
-- **Never** hardcode any of these in code, commits, logs, or docs.
+- **Never** hardcode the token/chat ID in code, commits, logs, or docs.
 - In production they live as **GitHub Actions repository secrets**.
 - For local testing, set them as local environment variables only.
 

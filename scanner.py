@@ -1,6 +1,9 @@
 """
-Daily Liquidity Sweep (SFP) Scanner — Binance Spot + USDT-M Futures
--------------------------------------------------------------------
+Daily Liquidity Sweep (SFP) Scanner — Multi-Exchange
+----------------------------------------------------
+Scans liquid USDT spot pairs across several exchanges (plus Binance USDT-M
+futures) on daily candles and reports liquidity sweeps / Swing Failure Patterns.
+
 Logic per symbol (daily candles):
   * Find the most recent CONFIRMED swing low/high (strength N bars each side).
   * Level must still be intact (no candle CLOSED beyond it since the pivot).
@@ -21,22 +24,18 @@ SWING_STRENGTH   = 5           # bars each side to confirm a swing point
 CANDLES          = 120         # daily candles of history to fetch
 MIN_QUOTE_VOLUME = 500_000     # skip pairs with < $500k 24h volume
 QUOTE_ASSET      = "USDT"
-SCAN_FUTURES     = True
+SCAN_FUTURES     = True         # Binance USDT-M futures (geo-blocked on US runners)
 REQUEST_PAUSE    = 0.08        # seconds between kline requests (rate-limit safety)
 
-SPOT_BASE = "https://data-api.binance.vision"   # geo-unrestricted public data mirror
-FUT_BASE  = "https://fapi.binance.com"          # may be geo-blocked on some runners
-
-# Optional proxy for FUTURES requests only (spot mirror already works from any
-# region). Set FUTURES_PROXY to an http/https/socks5 URL pointing at an exit in
-# a Binance-allowed region, e.g. "http://user:pass@host:port" or
-# "socks5://user:pass@host:port". Provide it ONLY via env var / GitHub secret —
-# it may contain credentials, so never hardcode it. Empty → futures go direct.
-FUTURES_PROXY = os.environ.get("FUTURES_PROXY", "").strip()
-FUT_PROXIES = {"http": FUTURES_PROXY, "https": FUTURES_PROXY} if FUTURES_PROXY else None
+# Exchange REST bases
+SPOT_BASE   = "https://data-api.binance.vision"   # geo-unrestricted Binance spot mirror
+FUT_BASE    = "https://fapi.binance.com"          # Binance futures (may be geo-blocked)
+MEXC_BASE   = "https://api.mexc.com"              # MEXC (Binance-compatible API)
+KUCOIN_BASE = "https://api.kucoin.com"            # KuCoin
 
 # Leveraged tokens & stablecoin bases we don't want to scan
 EXCLUDE_SUFFIXES = ("UPUSDT", "DOWNUSDT", "BULLUSDT", "BEARUSDT")
+KUCOIN_LEV_SUFFIXES = ("3L", "3S", "5L", "5S")   # e.g. BTC3L, ETH3S
 STABLE_BASES = {"USDC", "FDUSD", "TUSD", "BUSD", "DAI", "USDP", "EUR", "AEUR",
                 "EURI", "PAXG", "XUSD", "USDE", "USD1"}
 
@@ -45,19 +44,19 @@ session.headers.update({"User-Agent": "sweep-scanner/1.0"})
 
 
 # ── Helpers ────────────────────────────────────────────────────────
-def get_json(url, params=None, timeout=20, proxies=None):
-    r = session.get(url, params=params, timeout=timeout, proxies=proxies)
+def get_json(url, params=None, timeout=25):
+    r = session.get(url, params=params, timeout=timeout)
     r.raise_for_status()
     return r.json()
 
 
-def get_spot_symbols():
-    """Return list of active spot USDT symbols passing the volume filter."""
+# ── Symbol listings (one per exchange) ─────────────────────────────
+def get_binance_spot_symbols():
+    """Active Binance spot USDT symbols passing the volume filter."""
     info = get_json(f"{SPOT_BASE}/api/v3/exchangeInfo")
     tickers = get_json(f"{SPOT_BASE}/api/v3/ticker/24hr")
     vol = {t["symbol"]: float(t.get("quoteVolume", 0)) for t in tickers}
-
-    symbols = []
+    out = []
     for s in info["symbols"]:
         sym = s["symbol"]
         if (s.get("status") == "TRADING"
@@ -66,17 +65,16 @@ def get_spot_symbols():
                 and not sym.endswith(EXCLUDE_SUFFIXES)
                 and s.get("baseAsset") not in STABLE_BASES
                 and vol.get(sym, 0) >= MIN_QUOTE_VOLUME):
-            symbols.append(sym)
-    return sorted(symbols)
+            out.append(sym)
+    return sorted(out)
 
 
 def get_futures_symbols():
-    """Return list of active USDT-M perpetual symbols passing the volume filter."""
-    info = get_json(f"{FUT_BASE}/fapi/v1/exchangeInfo", proxies=FUT_PROXIES)
-    tickers = get_json(f"{FUT_BASE}/fapi/v1/ticker/24hr", proxies=FUT_PROXIES)
+    """Active Binance USDT-M perpetual symbols passing the volume filter."""
+    info = get_json(f"{FUT_BASE}/fapi/v1/exchangeInfo")
+    tickers = get_json(f"{FUT_BASE}/fapi/v1/ticker/24hr")
     vol = {t["symbol"]: float(t.get("quoteVolume", 0)) for t in tickers}
-
-    symbols = []
+    out = []
     for s in info["symbols"]:
         sym = s["symbol"]
         if (s.get("status") == "TRADING"
@@ -84,24 +82,72 @@ def get_futures_symbols():
                 and s.get("quoteAsset") == QUOTE_ASSET
                 and s.get("baseAsset") not in STABLE_BASES
                 and vol.get(sym, 0) >= MIN_QUOTE_VOLUME):
-            symbols.append(sym)
-    return sorted(symbols)
+            out.append(sym)
+    return sorted(out)
 
 
-def get_klines(base, path, symbol, proxies=None):
-    """Fetch daily klines and drop the still-forming candle."""
+def get_mexc_symbols():
+    """Active MEXC spot USDT symbols passing the volume filter."""
+    info = get_json(f"{MEXC_BASE}/api/v3/exchangeInfo")
+    tickers = get_json(f"{MEXC_BASE}/api/v3/ticker/24hr")
+    vol = {t["symbol"]: float(t.get("quoteVolume") or 0) for t in tickers}
+    out = []
+    for s in info["symbols"]:
+        sym = s["symbol"]
+        if (s.get("status") == "1"                       # MEXC: "1" == trading
+                and s.get("quoteAsset") == QUOTE_ASSET
+                and s.get("isSpotTradingAllowed", False)
+                and not sym.endswith(EXCLUDE_SUFFIXES)
+                and s.get("baseAsset") not in STABLE_BASES
+                and vol.get(sym, 0) >= MIN_QUOTE_VOLUME):
+            out.append(sym)
+    return sorted(out)
+
+
+def get_kucoin_symbols():
+    """Active KuCoin spot USDT symbols passing the volume filter."""
+    syms = get_json(f"{KUCOIN_BASE}/api/v1/symbols")["data"]
+    tick = get_json(f"{KUCOIN_BASE}/api/v1/market/allTickers")["data"]["ticker"]
+    vol = {t["symbol"]: float(t.get("volValue") or 0) for t in tick}  # volValue = USDT vol
+    out = []
+    for s in syms:
+        sym = s["symbol"]                                # e.g. "BTC-USDT"
+        base = s.get("baseCurrency", "")
+        if (s.get("quoteCurrency") == QUOTE_ASSET
+                and s.get("enableTrading")
+                and not base.endswith(KUCOIN_LEV_SUFFIXES)
+                and base not in STABLE_BASES
+                and vol.get(sym, 0) >= MIN_QUOTE_VOLUME):
+            out.append(sym)
+    return sorted(out)
+
+
+# ── Kline fetchers (return highs, lows, closes; ascending, closed only) ──
+def binance_style_klines(base, path, symbol):
+    """Binance & MEXC share this exact kline format."""
     data = get_json(f"{base}{path}",
-                    params={"symbol": symbol, "interval": "1d", "limit": CANDLES},
-                    proxies=proxies)
+                    params={"symbol": symbol, "interval": "1d", "limit": CANDLES})
     now_ms = int(time.time() * 1000)
-    closed = [k for k in data if int(k[6]) <= now_ms]   # k[6] = close time
+    closed = [k for k in data if int(k[6]) <= now_ms]    # k[6] = close time
     highs  = [float(k[2]) for k in closed]
     lows   = [float(k[3]) for k in closed]
     closes = [float(k[4]) for k in closed]
     return highs, lows, closes
 
 
-# ── Sweep detection ────────────────────────────────────────────────
+def kucoin_klines(symbol):
+    """KuCoin candles are newest-first: [start, open, close, high, low, vol, turnover]."""
+    data = get_json(f"{KUCOIN_BASE}/api/v1/market/candles",
+                    params={"type": "1day", "symbol": symbol}).get("data") or []
+    now_s = int(time.time())
+    rows = [r for r in reversed(data) if int(r[0]) + 86400 <= now_s]  # ascending, closed
+    highs  = [float(r[3]) for r in rows]
+    lows   = [float(r[4]) for r in rows]
+    closes = [float(r[2]) for r in rows]
+    return highs, lows, closes
+
+
+# ── Sweep detection (unchanged signal logic) ───────────────────────
 def last_valid_pivot(values, closes, strength, kind):
     """
     Most recent confirmed pivot low/high whose level is still intact
@@ -140,12 +186,12 @@ def check_sweep(highs, lows, closes):
     return None
 
 
-# ── Scan runners ───────────────────────────────────────────────────
-def scan_market(name, base, kline_path, symbols, proxies=None):
+# ── Scan runner ────────────────────────────────────────────────────
+def scan(name, symbols, fetch_klines):
     bulls, bears, errors = [], [], 0
     for i, sym in enumerate(symbols, 1):
         try:
-            highs, lows, closes = get_klines(base, kline_path, sym, proxies=proxies)
+            highs, lows, closes = fetch_klines(sym)
             signal = check_sweep(highs, lows, closes)
             if signal == "bull":
                 bulls.append((sym, closes[-1]))
@@ -153,7 +199,7 @@ def scan_market(name, base, kline_path, symbols, proxies=None):
                 bears.append((sym, closes[-1]))
         except Exception:
             errors += 1
-        if i % 25 == 0:
+        if i % 50 == 0:
             print(f"[{name}] {i}/{len(symbols)} scanned...")
         time.sleep(REQUEST_PAUSE)
     print(f"[{name}] done: {len(bulls)} bull / {len(bears)} bear / {errors} errors")
@@ -185,37 +231,51 @@ def fmt_section(title, rows):
     return "\n".join(lines)
 
 
+# ── Exchange registry (spot) ───────────────────────────────────────
+# (display name, symbol-listing fn, kline fn)
+SPOT_EXCHANGES = [
+    ("BINANCE", get_binance_spot_symbols,
+     lambda s: binance_style_klines(SPOT_BASE, "/api/v3/klines", s)),
+    ("MEXC", get_mexc_symbols,
+     lambda s: binance_style_klines(MEXC_BASE, "/api/v3/klines", s)),
+    ("KUCOIN", get_kucoin_symbols, kucoin_klines),
+]
+
+
 # ── Main ───────────────────────────────────────────────────────────
 def main():
     date_str = time.strftime("%d %b %Y", time.gmtime())
     parts = [f"📊 Daily Sweep Scan — {date_str} (1D close)"]
 
-    # Spot
-    spot_syms = get_spot_symbols()
-    print(f"Spot symbols to scan: {len(spot_syms)}")
-    s_bull, s_bear, _ = scan_market("SPOT", SPOT_BASE, "/api/v3/klines", spot_syms)
-    parts.append("— SPOT —")
-    parts.append(fmt_section("🟢 Bullish sweeps", s_bull))
-    parts.append(fmt_section("🔴 Bearish sweeps", s_bear))
+    # Spot exchanges — one failing (e.g. geo-block) never blocks the others
+    for display, list_symbols, fetch_klines in SPOT_EXCHANGES:
+        try:
+            syms = list_symbols()
+            print(f"[{display}] symbols to scan: {len(syms)}")
+            bulls, bears, _ = scan(display, syms, fetch_klines)
+            parts.append(f"— {display} (SPOT) —")
+            parts.append(fmt_section("🟢 Bullish sweeps", bulls))
+            parts.append(fmt_section("🔴 Bearish sweeps", bears))
+        except Exception as e:
+            print(f"[{display}] scan failed: {type(e).__name__}: {e}")
+            parts.append(f"⚠️ {display} spot scan unavailable ({type(e).__name__}).")
 
-    # Futures (may be geo-blocked on some runners)
+    # Binance USDT-M futures (may be geo-blocked on some runners)
     if SCAN_FUTURES:
         try:
             fut_syms = get_futures_symbols()
-            print(f"Futures symbols to scan: {len(fut_syms)} "
-                  f"(proxy: {'on' if FUT_PROXIES else 'off'})")
-            f_bull, f_bear, _ = scan_market("FUT", FUT_BASE, "/fapi/v1/klines",
-                                            fut_syms, proxies=FUT_PROXIES)
-            parts.append("— FUTURES (USDT-M) —")
+            print(f"[BINANCE FUT] symbols to scan: {len(fut_syms)}")
+            f_bull, f_bear, _ = scan(
+                "BINANCE FUT", fut_syms,
+                lambda s: binance_style_klines(FUT_BASE, "/fapi/v1/klines", s))
+            parts.append("— BINANCE FUTURES (USDT-M) —")
             parts.append(fmt_section("🟢 Bullish sweeps", f_bull))
             parts.append(fmt_section("🔴 Bearish sweeps", f_bear))
         except requests.HTTPError as e:
             code = e.response.status_code if e.response is not None else "?"
-            hint = ("check FUTURES_PROXY region/credentials" if FUT_PROXIES
-                    else "likely geo-block on runner — set FUTURES_PROXY")
-            parts.append(f"⚠️ Futures scan unavailable (HTTP {code} — {hint}). Spot results above are complete.")
+            parts.append(f"⚠️ Binance futures unavailable (HTTP {code} — likely geo-block on runner). Spot results above are complete.")
         except Exception as e:
-            parts.append(f"⚠️ Futures scan failed: {type(e).__name__}")
+            parts.append(f"⚠️ Binance futures scan failed: {type(e).__name__}")
 
     send_telegram("\n\n".join(parts))
     print("Telegram message sent.")

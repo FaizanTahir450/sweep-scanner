@@ -1,9 +1,9 @@
-# Daily Liquidity Sweep Scanner (Binance → Telegram)
+# Daily Liquidity Sweep Scanner (Multi-Exchange → Telegram)
 
-Scans every liquid USDT pair on Binance (spot + USDT-M futures) once per day
-after the daily candle closes, detects liquidity sweeps / Swing Failure
-Patterns, and sends you a Telegram alert. Runs free on GitHub Actions —
-no PC, no server, nothing manual.
+Scans every liquid USDT spot pair across **Binance, MEXC, and KuCoin** (plus
+Binance USDT-M futures when reachable) once per day after the daily candle
+closes, detects liquidity sweeps / Swing Failure Patterns, and sends you a
+Telegram alert. Runs free on GitHub Actions — no PC, no server, nothing manual.
 
 **Signal logic (daily candles):**
 - Bullish sweep: candle wick goes BELOW the most recent confirmed swing low,
@@ -38,11 +38,6 @@ no PC, no server, nothing manual.
 Repo → **Settings → Secrets and variables → Actions → New repository secret**:
 - `TELEGRAM_BOT_TOKEN` = your bot token
 - `TELEGRAM_CHAT_ID`   = your chat ID
-- `FUTURES_PROXY` *(optional)* = proxy URL for futures data, e.g.
-  `http://user:pass@host:port` or `socks5://user:pass@host:port`. Needed only
-  to scan USDT-M futures, because GitHub's US-based runners are geo-blocked
-  from `fapi.binance.com`. The proxy's exit must be in a Binance-allowed region.
-  Leave it unset for spot-only scanning.
 
 ### Step 4 — Test it
 Repo → **Actions** tab → "Daily Sweep Scan" → **Run workflow** button.
@@ -58,19 +53,21 @@ Done. It now runs automatically every day at **00:15 UTC**
 | Setting            | Default    | Meaning                                        |
 |--------------------|-----------|-------------------------------------------------|
 | `SWING_STRENGTH`   | 5         | Bars each side to confirm a swing. Higher = only major highs/lows, fewer signals. |
-| `MIN_QUOTE_VOLUME` | 500,000   | Skip pairs under $500k 24h volume. Lower = more coins, more noise. |
+| `MIN_QUOTE_VOLUME` | 500,000   | Skip pairs under $500k 24h volume. Lower = more coins (esp. MEXC/KuCoin long tail), more noise. |
 | `CANDLES`          | 120       | Days of history examined.                       |
-| `SCAN_FUTURES`     | True      | Set False for spot only.                        |
+| `SCAN_FUTURES`     | True      | Binance USDT-M futures. Set False to skip.      |
+
+To add or remove exchanges, edit the `SPOT_EXCHANGES` registry near the bottom
+of `scanner.py` — each entry is `(display_name, symbol_lister, kline_fetcher)`.
 
 ## Notes
-- Spot data uses `data-api.binance.vision`, Binance's public data mirror
-  that works from any region (GitHub runners are US-based and the main
-  Binance API blocks US IPs).
-- Futures has no such mirror; if the runner IP is blocked you'll see a
-  clear ⚠️ note in the Telegram message and spot results are unaffected.
-  To actually scan futures, set the `FUTURES_PROXY` secret (Step 3) to a proxy
-  whose exit is in a Binance-allowed region — that unlocks ~260 extra
-  futures-only coins.
+- Spot exchanges scanned: **Binance** (via `data-api.binance.vision`, a public
+  mirror that works from any region), **MEXC** (`api.mexc.com`), and **KuCoin**
+  (`api.kucoin.com`). If any one exchange is unreachable from the runner, you'll
+  see a ⚠️ note for just that exchange and the others still report normally.
+- **Binance futures** (`fapi.binance.com`) has no geo-free mirror, so on GitHub's
+  US-based runners it's usually geo-blocked — you'll see a ⚠️ note and spot
+  results are unaffected. To scan futures, run from a non-US machine.
 - GitHub schedules can drift 5–15 minutes at busy times — normal.
 - If the repo has no commits for 60 days, GitHub pauses scheduled
   workflows and emails you; one click re-enables it.
