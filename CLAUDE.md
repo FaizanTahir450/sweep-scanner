@@ -36,9 +36,12 @@ Implemented in `scanner.py`; treat as fixed spec:
 - **Spot**: `https://data-api.binance.vision` — Binance's public, geo-unrestricted
   data mirror. Used because GitHub runners are US-based and the main Binance API
   blocks US IPs.
-- **Futures (USDT-M)**: `https://fapi.binance.com` — no geo mirror exists; if the
-  runner IP is blocked the run still succeeds and the Telegram message includes a
-  clear ⚠️ note. Spot results are unaffected.
+- **Futures (USDT-M)**: `https://fapi.binance.com` — no geo mirror exists. US
+  runners are geo-blocked, so futures requests are routed through an optional
+  proxy (`FUTURES_PROXY` env var / secret) whose exit is in a Binance-allowed
+  region. If unset (or the proxy fails), the run still succeeds and the Telegram
+  message includes a clear ⚠️ note; spot results are unaffected. Only the futures
+  requests use the proxy — spot always goes direct to the mirror.
 
 ## Config knobs (top of `scanner.py`)
 
@@ -46,7 +49,7 @@ Implemented in `scanner.py`; treat as fixed spec:
 |---------|---------|---------|
 | `SWING_STRENGTH` | 5 | Bars each side to confirm a swing point. |
 | `CANDLES` | 120 | Daily candles of history fetched per symbol. |
-| `MIN_QUOTE_VOLUME` | 1_000_000 | Skip pairs under $1M 24h quote volume. |
+| `MIN_QUOTE_VOLUME` | 500_000 | Skip pairs under $500k 24h quote volume. Lower = more coins, more noise. |
 | `QUOTE_ASSET` | "USDT" | Quote asset filter. |
 | `SCAN_FUTURES` | True | Set False for spot only. |
 | `REQUEST_PAUSE` | 0.08 | Seconds between kline requests (rate-limit safety). |
@@ -55,10 +58,11 @@ Leveraged tokens (`UP/DOWN/BULL/BEAR` suffixes) and stablecoin bases are exclude
 
 ## Secrets / configuration — SECURITY
 
-The Telegram bot token and chat ID are provided **only** via environment
-variables `TELEGRAM_BOT_TOKEN` and `TELEGRAM_CHAT_ID`.
+Sensitive values are provided **only** via environment variables:
+`TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID`, and the optional `FUTURES_PROXY`
+(a proxy URL that may embed `user:pass` credentials).
 
-- **Never** hardcode the token/chat ID in code, commits, logs, or docs.
+- **Never** hardcode any of these in code, commits, logs, or docs.
 - In production they live as **GitHub Actions repository secrets**.
 - For local testing, set them as local environment variables only.
 

@@ -19,13 +19,21 @@ import requests
 # ── Config ─────────────────────────────────────────────────────────
 SWING_STRENGTH   = 5           # bars each side to confirm a swing point
 CANDLES          = 120         # daily candles of history to fetch
-MIN_QUOTE_VOLUME = 1_000_000   # skip pairs with < $1M 24h volume
+MIN_QUOTE_VOLUME = 500_000     # skip pairs with < $500k 24h volume
 QUOTE_ASSET      = "USDT"
 SCAN_FUTURES     = True
 REQUEST_PAUSE    = 0.08        # seconds between kline requests (rate-limit safety)
 
 SPOT_BASE = "https://data-api.binance.vision"   # geo-unrestricted public data mirror
 FUT_BASE  = "https://fapi.binance.com"          # may be geo-blocked on some runners
+
+# Optional proxy for FUTURES requests only (spot mirror already works from any
+# region). Set FUTURES_PROXY to an http/https/socks5 URL pointing at an exit in
+# a Binance-allowed region, e.g. "http://user:pass@host:port" or
+# "socks5://user:pass@host:port". Provide it ONLY via env var / GitHub secret —
+# it may contain credentials, so never hardcode it. Empty → futures go direct.
+FUTURES_PROXY = os.environ.get("FUTURES_PROXY", "").strip()
+FUT_PROXIES = {"http": FUTURES_PROXY, "https": FUTURES_PROXY} if FUTURES_PROXY else None
 
 # Leveraged tokens & stablecoin bases we don't want to scan
 EXCLUDE_SUFFIXES = ("UPUSDT", "DOWNUSDT", "BULLUSDT", "BEARUSDT")
@@ -37,8 +45,8 @@ session.headers.update({"User-Agent": "sweep-scanner/1.0"})
 
 
 # ── Helpers ────────────────────────────────────────────────────────
-def get_json(url, params=None, timeout=20):
-    r = session.get(url, params=params, timeout=timeout)
+def get_json(url, params=None, timeout=20, proxies=None):
+    r = session.get(url, params=params, timeout=timeout, proxies=proxies)
     r.raise_for_status()
     return r.json()
 
@@ -64,8 +72,8 @@ def get_spot_symbols():
 
 def get_futures_symbols():
     """Return list of active USDT-M perpetual symbols passing the volume filter."""
-    info = get_json(f"{FUT_BASE}/fapi/v1/exchangeInfo")
-    tickers = get_json(f"{FUT_BASE}/fapi/v1/ticker/24hr")
+    info = get_json(f"{FUT_BASE}/fapi/v1/exchangeInfo", proxies=FUT_PROXIES)
+    tickers = get_json(f"{FUT_BASE}/fapi/v1/ticker/24hr", proxies=FUT_PROXIES)
     vol = {t["symbol"]: float(t.get("quoteVolume", 0)) for t in tickers}
 
     symbols = []
@@ -80,10 +88,11 @@ def get_futures_symbols():
     return sorted(symbols)
 
 
-def get_klines(base, path, symbol):
+def get_klines(base, path, symbol, proxies=None):
     """Fetch daily klines and drop the still-forming candle."""
     data = get_json(f"{base}{path}",
-                    params={"symbol": symbol, "interval": "1d", "limit": CANDLES})
+                    params={"symbol": symbol, "interval": "1d", "limit": CANDLES},
+                    proxies=proxies)
     now_ms = int(time.time() * 1000)
     closed = [k for k in data if int(k[6]) <= now_ms]   # k[6] = close time
     highs  = [float(k[2]) for k in closed]
@@ -132,11 +141,11 @@ def check_sweep(highs, lows, closes):
 
 
 # ── Scan runners ───────────────────────────────────────────────────
-def scan_market(name, base, kline_path, symbols):
+def scan_market(name, base, kline_path, symbols, proxies=None):
     bulls, bears, errors = [], [], 0
     for i, sym in enumerate(symbols, 1):
         try:
-            highs, lows, closes = get_klines(base, kline_path, sym)
+            highs, lows, closes = get_klines(base, kline_path, sym, proxies=proxies)
             signal = check_sweep(highs, lows, closes)
             if signal == "bull":
                 bulls.append((sym, closes[-1]))
@@ -193,14 +202,18 @@ def main():
     if SCAN_FUTURES:
         try:
             fut_syms = get_futures_symbols()
-            print(f"Futures symbols to scan: {len(fut_syms)}")
-            f_bull, f_bear, _ = scan_market("FUT", FUT_BASE, "/fapi/v1/klines", fut_syms)
+            print(f"Futures symbols to scan: {len(fut_syms)} "
+                  f"(proxy: {'on' if FUT_PROXIES else 'off'})")
+            f_bull, f_bear, _ = scan_market("FUT", FUT_BASE, "/fapi/v1/klines",
+                                            fut_syms, proxies=FUT_PROXIES)
             parts.append("— FUTURES (USDT-M) —")
             parts.append(fmt_section("🟢 Bullish sweeps", f_bull))
             parts.append(fmt_section("🔴 Bearish sweeps", f_bear))
         except requests.HTTPError as e:
             code = e.response.status_code if e.response is not None else "?"
-            parts.append(f"⚠️ Futures scan unavailable (HTTP {code} — likely geo-block on runner). Spot results above are complete.")
+            hint = ("check FUTURES_PROXY region/credentials" if FUT_PROXIES
+                    else "likely geo-block on runner — set FUTURES_PROXY")
+            parts.append(f"⚠️ Futures scan unavailable (HTTP {code} — {hint}). Spot results above are complete.")
         except Exception as e:
             parts.append(f"⚠️ Futures scan failed: {type(e).__name__}")
 

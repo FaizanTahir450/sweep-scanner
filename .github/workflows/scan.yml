@@ -17,10 +17,11 @@ jobs:
           python-version: "3.11"
 
       - name: Install dependencies
-        run: pip install requests
+        run: pip install "requests[socks]"
 
       - name: Run scanner
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          FUTURES_PROXY: ${{ secrets.FUTURES_PROXY }}   # optional: proxy for futures (non-US exit)
         run: python scanner.py
