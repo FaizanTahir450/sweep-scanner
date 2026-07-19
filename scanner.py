@@ -21,11 +21,25 @@ import requests
 
 # ── Config ─────────────────────────────────────────────────────────
 SWING_STRENGTH   = 5           # bars each side to confirm a swing point
-CANDLES          = 120         # daily candles of history to fetch
+CANDLES          = 120         # candles of history to fetch (per timeframe)
 MIN_QUOTE_VOLUME = 500_000     # skip pairs with < $500k 24h volume
 QUOTE_ASSET      = "USDT"
 SCAN_FUTURES     = True         # Binance USDT-M futures (geo-blocked on US runners)
 REQUEST_PAUSE    = 0.08        # seconds between kline requests (rate-limit safety)
+
+# Timeframe: daily / weekly / monthly. Set via TIMEFRAME env (1d/1w/1M or a
+# friendly name); defaults to daily. Note: the volume filter always uses 24h
+# quote volume for liquidity regardless of the scan timeframe.
+_TF_ALIASES = {"1d": "1d", "d": "1d", "daily": "1d", "day": "1d",
+               "1w": "1w", "w": "1w", "weekly": "1w", "week": "1w",
+               "1M": "1M", "monthly": "1M", "month": "1M"}
+TIMEFRAME = _TF_ALIASES.get(os.environ.get("TIMEFRAME", "1d").strip(), "1d")
+TF_LABEL  = {"1d": "Daily", "1w": "Weekly", "1M": "Monthly"}[TIMEFRAME]
+
+# Per-exchange interval / candle-type strings for the chosen timeframe.
+BINANCE_INTERVAL = {"1d": "1d",   "1w": "1w",    "1M": "1M"}[TIMEFRAME]   # spot + futures
+MEXC_INTERVAL    = {"1d": "1d",   "1w": "1W",    "1M": "1M"}[TIMEFRAME]   # MEXC uses "1W"
+KUCOIN_TYPE      = {"1d": "1day", "1w": "1week", "1M": "1month"}[TIMEFRAME]
 
 # Exchange REST bases
 SPOT_BASE   = "https://data-api.binance.vision"   # geo-unrestricted Binance spot mirror
@@ -123,10 +137,10 @@ def get_kucoin_symbols():
 
 
 # ── Kline fetchers (return highs, lows, closes; ascending, closed only) ──
-def binance_style_klines(base, path, symbol):
-    """Binance & MEXC share this exact kline format."""
+def binance_style_klines(base, path, symbol, interval):
+    """Binance & MEXC share this exact kline format (works for 1d/1w/1M)."""
     data = get_json(f"{base}{path}",
-                    params={"symbol": symbol, "interval": "1d", "limit": CANDLES})
+                    params={"symbol": symbol, "interval": interval, "limit": CANDLES})
     now_ms = int(time.time() * 1000)
     closed = [k for k in data if int(k[6]) <= now_ms]    # k[6] = close time
     highs  = [float(k[2]) for k in closed]
@@ -135,12 +149,22 @@ def binance_style_klines(base, path, symbol):
     return highs, lows, closes
 
 
+def _kucoin_candle_closed(start, now_s):
+    """KuCoin candles give only a start time. Decide if the period has ended."""
+    if TIMEFRAME == "1M":                                # calendar month (variable length)
+        st, nw = time.gmtime(start), time.gmtime(now_s)
+        return (st.tm_year, st.tm_mon) < (nw.tm_year, nw.tm_mon)
+    dur = 86400 if TIMEFRAME == "1d" else 604800         # day / week: fixed duration
+    return start + dur <= now_s
+
+
 def kucoin_klines(symbol):
     """KuCoin candles are newest-first: [start, open, close, high, low, vol, turnover]."""
     data = get_json(f"{KUCOIN_BASE}/api/v1/market/candles",
-                    params={"type": "1day", "symbol": symbol}).get("data") or []
+                    params={"type": KUCOIN_TYPE, "symbol": symbol}).get("data") or []
     now_s = int(time.time())
-    rows = [r for r in reversed(data) if int(r[0]) + 86400 <= now_s]  # ascending, closed
+    rows = [r for r in reversed(data)                    # -> ascending, closed only
+            if _kucoin_candle_closed(int(r[0]), now_s)]
     highs  = [float(r[3]) for r in rows]
     lows   = [float(r[4]) for r in rows]
     closes = [float(r[2]) for r in rows]
@@ -235,9 +259,9 @@ def fmt_section(title, rows):
 # (display name, symbol-listing fn, kline fn)
 SPOT_EXCHANGES = [
     ("BINANCE", get_binance_spot_symbols,
-     lambda s: binance_style_klines(SPOT_BASE, "/api/v3/klines", s)),
+     lambda s: binance_style_klines(SPOT_BASE, "/api/v3/klines", s, BINANCE_INTERVAL)),
     ("MEXC", get_mexc_symbols,
-     lambda s: binance_style_klines(MEXC_BASE, "/api/v3/klines", s)),
+     lambda s: binance_style_klines(MEXC_BASE, "/api/v3/klines", s, MEXC_INTERVAL)),
     ("KUCOIN", get_kucoin_symbols, kucoin_klines),
 ]
 
@@ -245,7 +269,8 @@ SPOT_EXCHANGES = [
 # ── Main ───────────────────────────────────────────────────────────
 def main():
     date_str = time.strftime("%d %b %Y", time.gmtime())
-    parts = [f"📊 Daily Sweep Scan — {date_str} (1D close)"]
+    print(f"Timeframe: {TF_LABEL} ({TIMEFRAME})")
+    parts = [f"📊 {TF_LABEL} Sweep Scan — {date_str} ({TIMEFRAME} close)"]
 
     # Spot exchanges — one failing (e.g. geo-block) never blocks the others
     for display, list_symbols, fetch_klines in SPOT_EXCHANGES:
@@ -267,7 +292,7 @@ def main():
             print(f"[BINANCE FUT] symbols to scan: {len(fut_syms)}")
             f_bull, f_bear, _ = scan(
                 "BINANCE FUT", fut_syms,
-                lambda s: binance_style_klines(FUT_BASE, "/fapi/v1/klines", s))
+                lambda s: binance_style_klines(FUT_BASE, "/fapi/v1/klines", s, BINANCE_INTERVAL))
             parts.append("— BINANCE FUTURES (USDT-M) —")
             parts.append(fmt_section("🟢 Bullish sweeps", f_bull))
             parts.append(fmt_section("🔴 Bearish sweeps", f_bear))

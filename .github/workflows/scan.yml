@@ -1,9 +1,17 @@
-name: Daily Sweep Scan
+name: Sweep Scan
 
 on:
   schedule:
-    - cron: "15 0 * * *"   # 00:15 UTC daily, right after the 1D candle closes
-  workflow_dispatch:        # manual "Run workflow" button for testing
+    - cron: "15 0 * * *"   # daily  — 00:15 UTC every day (after the 1D close)
+    - cron: "15 0 * * 1"   # weekly — 00:15 UTC Mondays (after the 1W close)
+    - cron: "15 0 1 * *"   # monthly— 00:15 UTC on the 1st (after the 1M close)
+  workflow_dispatch:        # manual run — pick a timeframe below
+    inputs:
+      timeframe:
+        description: "Timeframe to scan"
+        type: choice
+        default: daily
+        options: [daily, weekly, monthly]
 
 jobs:
   scan:
@@ -19,8 +27,30 @@ jobs:
       - name: Install dependencies
         run: pip install requests
 
+      - name: Resolve timeframe
+        id: tf
+        run: |
+          INPUT="${{ github.event.inputs.timeframe }}"
+          SCHED="${{ github.event.schedule }}"
+          if [ -n "$INPUT" ]; then
+            case "$INPUT" in
+              weekly)  TF=1w ;;
+              monthly) TF=1M ;;
+              *)       TF=1d ;;
+            esac
+          else
+            case "$SCHED" in
+              "15 0 * * 1") TF=1w ;;
+              "15 0 1 * *") TF=1M ;;
+              *)            TF=1d ;;
+            esac
+          fi
+          echo "tf=$TF" >> "$GITHUB_OUTPUT"
+          echo "Resolved timeframe: $TF"
+
       - name: Run scanner
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          TIMEFRAME: ${{ steps.tf.outputs.tf }}
         run: python scanner.py

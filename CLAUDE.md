@@ -4,18 +4,23 @@ Guidance for future Claude Code sessions working in this repo.
 
 ## What this project is
 
-A single-file Python scanner that runs **once daily on GitHub Actions**, scans
-liquid USDT spot pairs across **multiple exchanges (Binance, MEXC, KuCoin)** plus
-Binance USDT-M futures on the **daily candle**, detects **liquidity sweeps /
-Swing Failure Patterns (SFP)**, and sends a consolidated **Telegram** message
-with the results. No server, no manual step.
+A single-file Python scanner that runs **on GitHub Actions**, scans liquid USDT
+spot pairs across **multiple exchanges (Binance, MEXC, KuCoin)** plus Binance
+USDT-M futures on **daily / weekly / monthly** candles, detects **liquidity
+sweeps / Swing Failure Patterns (SFP)**, and sends a consolidated **Telegram**
+message per run. No server, no manual step.
+
+The **timeframe** is selected at runtime via the `TIMEFRAME` env var
+(`1d`/`1w`/`1M`, default daily). The workflow runs three schedules — daily
+(00:15 UTC), weekly (Mondays 00:15 UTC), monthly (1st 00:15 UTC) — each setting
+`TIMEFRAME` accordingly; a manual `workflow_dispatch` has a timeframe dropdown.
 
 ## Files
 
 | File | Purpose |
 |------|---------|
 | `scanner.py` | The entire program. Fetches symbols, fetches klines, detects sweeps, sends Telegram. |
-| `.github/workflows/scan.yml` | Daily cron (`15 0 * * *` = 00:15 UTC) + manual `workflow_dispatch`. Installs `requests`, runs `scanner.py`. |
+| `.github/workflows/scan.yml` | Three crons (daily `15 0 * * *`, weekly `15 0 * * 1`, monthly `15 0 1 * *`) + manual `workflow_dispatch` with a timeframe dropdown. A "Resolve timeframe" step maps the cron / input to `TIMEFRAME` (1d/1w/1M) via `github.event.schedule`. Installs `requests`, runs `scanner.py`. |
 | `README.md` | End-user setup guide (Telegram bot, GitHub secrets, manual trigger). |
 
 ## Signal logic — DO NOT change unless the user explicitly asks
@@ -54,7 +59,13 @@ column order). Binance futures is handled as a separate block after the registry
   means trading. Reachable from US runners.
 - **KuCoin**: `https://api.kucoin.com` — `volValue` = USDT 24h volume; candles are
   newest-first `[start, open, close, high, low, ...]`; leveraged tokens end in
-  `3L/3S/5L/5S`.
+  `3L/3S/5L/5S`. Candles give only a *start* time, so `_kucoin_candle_closed()`
+  decides the forming candle by fixed duration (day/week) or calendar month.
+  KuCoin weeks start **Thursday** (Binance/MEXC weeks start Monday) — expected.
+
+**Forming-candle safety:** the current (unclosed) candle is always dropped —
+Binance/MEXC via `close_time <= now`, KuCoin via `_kucoin_candle_closed()`.
+Signals only ever fire on closed candles, on every timeframe.
 - **Binance futures (USDT-M)**: `https://fapi.binance.com` — no geo mirror; usually
   geo-blocked on US runners, so it typically emits a ⚠️ note. To scan it, run from
   a non-US machine. (No proxy support in the code — kept deliberately simple.)
@@ -64,7 +75,8 @@ column order). Binance futures is handled as a separate block after the registry
 | Setting | Default | Meaning |
 |---------|---------|---------|
 | `SWING_STRENGTH` | 5 | Bars each side to confirm a swing point. |
-| `CANDLES` | 120 | Daily candles of history fetched per symbol. |
+| `TIMEFRAME` (env) | 1d | `1d`/`1w`/`1M` (or daily/weekly/monthly). Sets per-exchange interval (`BINANCE_INTERVAL`/`MEXC_INTERVAL`/`KUCOIN_TYPE` — note MEXC weekly is `1W`, KuCoin uses `1day`/`1week`/`1month`) and the message label. |
+| `CANDLES` | 120 | Candles of history fetched per symbol (per timeframe). |
 | `MIN_QUOTE_VOLUME` | 500_000 | Skip pairs under $500k 24h quote volume. Applied to every exchange. Lower = more coins (esp. MEXC/KuCoin long tail), more noise. |
 | `QUOTE_ASSET` | "USDT" | Quote asset filter. |
 | `SCAN_FUTURES` | True | Binance USDT-M futures. Set False to skip. |
