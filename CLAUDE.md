@@ -23,6 +23,7 @@ The **timeframe** is selected at runtime via the `TIMEFRAME` env var
 | `evaluate.py` | Resolves logged signals (win/loss/expired + realized R) and builds/sends the performance digest. Imports `scanner` for fetchers + helpers. |
 | `backtest.py` | Read-only historical backtest: replays candles, fires the live `analyze_sweep` per bar, grades with `evaluate_outcome`, reports win% / expectancy by timeframe/direction/exchange. Run locally on demand; tune via `BACKTEST_*` env vars. Never writes signals.jsonl or Telegram. |
 | `signals.jsonl` | Append-only signal log, committed back by the Action each run. One JSON object per signal (levels + outcome). Created on first run; **not** gitignored. |
+| `signals_archive.txt` | Human-readable archive: a copy of every Telegram message in the simple `SYMBOL @ price` style (`fmt_section_simple`), appended each run, committed back. Telegram keeps the detailed format (`fmt_section`); both are rendered from the same blocks via `render_message()`. |
 | `.github/workflows/scan.yml` | Three crons (daily `15 0 * * *`, weekly `15 0 * * 1`, monthly `15 0 1 * *`) + manual `workflow_dispatch` with a timeframe dropdown. Steps: resolve timeframe → run scanner → run evaluate → commit `signals.jsonl` back. `permissions: contents: write` + a `concurrency` group (serializes the commit-back). Weekly run sets `DIGEST=1`. |
 | `README.md` | End-user setup guide (Telegram bot, GitHub secrets, manual trigger). |
 | `IMPROVEMENTS.md` | Backlog of strategy upgrades (some now built — see markers). |

@@ -74,14 +74,14 @@ jobs:
           DIGEST: ${{ steps.tf.outputs.digest }}
         run: python evaluate.py
 
-      - name: Commit signal log
+      - name: Commit signal log + message archive
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add signals.jsonl
+          git add signals.jsonl signals_archive.txt
           if git diff --cached --quiet; then
-            echo "No signal-log changes to commit."
+            echo "Nothing to commit."
           else
-            git commit -m "chore: update signals.jsonl [skip ci]"
+            git commit -m "chore: update signal log + archive [skip ci]"
             git push || (git pull --rebase && git push)
           fi

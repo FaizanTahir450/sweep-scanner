@@ -38,6 +38,8 @@ REQUEST_PAUSE    = 0.08        # seconds between kline requests (rate-limit safe
 TARGET_R     = float(os.environ.get("TARGET_R", "2"))       # reward multiple (stop = 1R)
 EVAL_HORIZON = int(os.environ.get("EVAL_HORIZON", "20"))    # candles to resolve a signal
 SIGNALS_LOG  = os.environ.get("SIGNALS_LOG", "signals.jsonl")
+# Plain-text archive: a copy of every Telegram message, appended each run.
+SIGNALS_ARCHIVE = os.environ.get("SIGNALS_ARCHIVE", "signals_archive.txt")
 
 # Quality score: signals are always scored & ranked (best-first). MIN_SCORE is an
 # OPT-IN filter — at 0 (default) NOTHING is filtered; every detected signal is
@@ -431,11 +433,19 @@ def send_telegram(text):
         resp.raise_for_status()
 
 
+def append_archive(text, path=SIGNALS_ARCHIVE):
+    """Append a copy of the sent Telegram message to the plain-text archive."""
+    divider = ("\n" + "=" * 50 + "\n\n") if os.path.exists(path) and os.path.getsize(path) else ""
+    with open(path, "a", encoding="utf-8") as f:
+        f.write(divider + text.rstrip() + "\n")
+
+
 def fmt_price(p):
     return f"{p:.8f}".rstrip("0").rstrip(".") if p < 1 else f"{p:,.4f}".rstrip("0").rstrip(".")
 
 
 def fmt_section(title, sigs):
+    """Detailed rendering (score + levels) — used for the Telegram message."""
     if not sigs:
         return f"{title}: none"
     sigs = sorted(sigs, key=lambda s: s.get("score", 0), reverse=True)  # best-first
@@ -445,6 +455,29 @@ def fmt_section(title, sigs):
                      f"entry {fmt_price(s['entry'])} | stop {fmt_price(s['stop'])} | "
                      f"tgt {fmt_price(s['target'])} ({TARGET_R:g}R)  {s.get('reason', '')}")
     return "\n".join(lines)
+
+
+def fmt_section_simple(title, sigs):
+    """Plain 'SYMBOL @ price' rendering — used for the archive file."""
+    if not sigs:
+        return f"{title}: none"
+    sigs = sorted(sigs, key=lambda s: s["symbol"])
+    lines = [f"{title} ({len(sigs)}):"]
+    lines += [f"  • {s['symbol']} @ {fmt_price(s['entry'])}" for s in sigs]
+    return "\n".join(lines)
+
+
+def render_message(header, blocks, formatter):
+    """Build a full message from collected blocks using the given section formatter."""
+    parts = [header]
+    for b in blocks:
+        if "note" in b:                              # ⚠️ warning line
+            parts.append(b["note"])
+        else:
+            parts.append(f"— {b['label']} —")
+            parts.append(formatter("🟢 Bullish sweeps", b["bulls"]))
+            parts.append(formatter("🔴 Bearish sweeps", b["bears"]))
+    return "\n\n".join(parts)
 
 
 # ── Exchange registry (spot) ───────────────────────────────────────
@@ -463,7 +496,7 @@ def main():
     hdr = f"📊 {TF_LABEL} Sweep Scan — {date_str} ({TIMEFRAME} close)"
     if MIN_SCORE:
         hdr += f"  [min score {MIN_SCORE}]"
-    parts = [hdr]
+    blocks = []           # collected once, rendered twice (Telegram + archive)
     all_signals = []
 
     # Spot exchanges — one failing (e.g. geo-block) never blocks the others
@@ -473,12 +506,12 @@ def main():
             print(f"[{display}] symbols to scan: {len(syms)}")
             sigs, _ = scan(display, syms, fetch_klines)
             all_signals += sigs
-            parts.append(f"— {display} (SPOT) —")
-            parts.append(fmt_section("🟢 Bullish sweeps", [s for s in sigs if s["direction"] == "bull"]))
-            parts.append(fmt_section("🔴 Bearish sweeps", [s for s in sigs if s["direction"] == "bear"]))
+            blocks.append({"label": f"{display} (SPOT)",
+                           "bulls": [s for s in sigs if s["direction"] == "bull"],
+                           "bears": [s for s in sigs if s["direction"] == "bear"]})
         except Exception as e:
             print(f"[{display}] scan failed: {type(e).__name__}: {e}")
-            parts.append(f"⚠️ {display} spot scan unavailable ({type(e).__name__}).")
+            blocks.append({"note": f"⚠️ {display} spot scan unavailable ({type(e).__name__})."})
 
     # Binance USDT-M futures (may be geo-blocked on some runners)
     if SCAN_FUTURES:
@@ -487,17 +520,20 @@ def main():
             print(f"[BINANCE FUT] symbols to scan: {len(fut_syms)}")
             sigs, _ = scan("BINANCE FUT", fut_syms, lambda s: klines_for("BINANCE FUT", s, TIMEFRAME))
             all_signals += sigs
-            parts.append("— BINANCE FUTURES (USDT-M) —")
-            parts.append(fmt_section("🟢 Bullish sweeps", [s for s in sigs if s["direction"] == "bull"]))
-            parts.append(fmt_section("🔴 Bearish sweeps", [s for s in sigs if s["direction"] == "bear"]))
+            blocks.append({"label": "BINANCE FUTURES (USDT-M)",
+                           "bulls": [s for s in sigs if s["direction"] == "bull"],
+                           "bears": [s for s in sigs if s["direction"] == "bear"]})
         except requests.HTTPError as e:
             code = e.response.status_code if e.response is not None else "?"
-            parts.append(f"⚠️ Binance futures unavailable (HTTP {code} — likely geo-block on runner). Spot results above are complete.")
+            blocks.append({"note": f"⚠️ Binance futures unavailable (HTTP {code} — likely geo-block on runner). Spot results above are complete."})
         except Exception as e:
-            parts.append(f"⚠️ Binance futures scan failed: {type(e).__name__}")
+            blocks.append({"note": f"⚠️ Binance futures scan failed: {type(e).__name__}"})
 
-    send_telegram("\n\n".join(parts))
+    send_telegram(render_message(hdr, blocks, fmt_section))          # detailed → Telegram
     print("Telegram message sent.")
+
+    append_archive(render_message(hdr, blocks, fmt_section_simple))  # simple → archive file
+    print(f"Archived message -> {SIGNALS_ARCHIVE}")
 
     added = log_signals(all_signals)
     print(f"Signal log: {added} new / {len(all_signals)} found -> {SIGNALS_LOG}")

@@ -37,6 +37,9 @@ higher-scored setups.
   hit before stop), **loss** (stop first), or **expired** — and records realized R.
 - On the **weekly** run you get a Telegram **performance digest** (win rate &
   average R, overall and per timeframe / direction).
+- A plain-text copy of every message is appended to **`signals_archive.txt`**
+  (simple `SYMBOL @ price` style) and committed back, so you have a running
+  history of what was sent.
 
 ---
 
