@@ -13,6 +13,16 @@ on:
         default: daily
         options: [daily, weekly, monthly]
 
+# Allow the job to commit signals.jsonl back to the repo.
+permissions:
+  contents: write
+
+# Serialize runs so overlapping schedules (e.g. Monday the 1st) don't race on
+# the signals.jsonl commit-back.
+concurrency:
+  group: sweep-scan-signals
+  cancel-in-progress: false
+
 jobs:
   scan:
     runs-on: ubuntu-latest
@@ -46,11 +56,32 @@ jobs:
             esac
           fi
           echo "tf=$TF" >> "$GITHUB_OUTPUT"
+          # Send the performance digest on the weekly run only (avoids daily spam).
+          if [ "$TF" = "1w" ]; then echo "digest=1" >> "$GITHUB_OUTPUT"; else echo "digest=0" >> "$GITHUB_OUTPUT"; fi
           echo "Resolved timeframe: $TF"
 
-      - name: Run scanner
+      - name: Run scanner (scan + log new signals)
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
           TIMEFRAME: ${{ steps.tf.outputs.tf }}
         run: python scanner.py
+
+      - name: Evaluate outcomes (+ weekly digest)
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          DIGEST: ${{ steps.tf.outputs.digest }}
+        run: python evaluate.py
+
+      - name: Commit signal log
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add signals.jsonl
+          if git diff --cached --quiet; then
+            echo "No signal-log changes to commit."
+          else
+            git commit -m "chore: update signals.jsonl [skip ci]"
+            git push || (git pull --rebase && git push)
+          fi

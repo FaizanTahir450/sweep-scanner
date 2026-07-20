@@ -23,6 +23,17 @@ fire — that's three messages.)
 - The still-forming (current) candle is always excluded — signals fire only on
   closed candles.
 
+Each alert now includes **trade levels**: entry (close), stop (the swept wick
+extreme) and a target at `TARGET_R`× risk (default 2R).
+
+**Performance tracking (automatic):**
+- Every signal is logged to `signals.jsonl` in the repo (committed back by the
+  Action each run — expect small automated "update signals.jsonl" commits).
+- `evaluate.py` resolves each past signal against later candles — **win** (target
+  hit before stop), **loss** (stop first), or **expired** — and records realized R.
+- On the **weekly** run you get a Telegram **performance digest** (win rate &
+  average R, overall and per timeframe / direction).
+
 ---
 
 ## Setup (one time, ~15 minutes)
@@ -68,6 +79,8 @@ Done. It now runs automatically on schedule (all UTC): **daily** 00:15,
 | `MIN_QUOTE_VOLUME` | 500,000   | Skip pairs under $500k 24h volume. Lower = more coins (esp. MEXC/KuCoin long tail), more noise. |
 | `CANDLES`          | 120       | Candles of history examined (per timeframe).    |
 | `SCAN_FUTURES`     | True      | Binance USDT-M futures. Set False to skip.      |
+| `TARGET_R`         | 2         | Reward multiple for the target (stop = 1R).     |
+| `EVAL_HORIZON`     | 20        | Candles a signal has to hit target/stop before it expires. |
 
 **Timeframe** is chosen at runtime via the `TIMEFRAME` env var (`1d` / `1w` /
 `1M`, or `daily` / `weekly` / `monthly`; defaults to daily). The workflow sets it

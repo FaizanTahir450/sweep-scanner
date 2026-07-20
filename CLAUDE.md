@@ -19,9 +19,12 @@ The **timeframe** is selected at runtime via the `TIMEFRAME` env var
 
 | File | Purpose |
 |------|---------|
-| `scanner.py` | The entire program. Fetches symbols, fetches klines, detects sweeps, sends Telegram. |
-| `.github/workflows/scan.yml` | Three crons (daily `15 0 * * *`, weekly `15 0 * * 1`, monthly `15 0 1 * *`) + manual `workflow_dispatch` with a timeframe dropdown. A "Resolve timeframe" step maps the cron / input to `TIMEFRAME` (1d/1w/1M) via `github.event.schedule`. Installs `requests`, runs `scanner.py`. |
+| `scanner.py` | Scan core. Fetches symbols/klines, detects sweeps, computes trade levels, sends Telegram, logs signals. Also holds the shared signal-log + `evaluate_outcome` helpers. |
+| `evaluate.py` | Resolves logged signals (win/loss/expired + realized R) and builds/sends the performance digest. Imports `scanner` for fetchers + helpers. |
+| `signals.jsonl` | Append-only signal log, committed back by the Action each run. One JSON object per signal (levels + outcome). Created on first run; **not** gitignored. |
+| `.github/workflows/scan.yml` | Three crons (daily `15 0 * * *`, weekly `15 0 * * 1`, monthly `15 0 1 * *`) + manual `workflow_dispatch` with a timeframe dropdown. Steps: resolve timeframe → run scanner → run evaluate → commit `signals.jsonl` back. `permissions: contents: write` + a `concurrency` group (serializes the commit-back). Weekly run sets `DIGEST=1`. |
 | `README.md` | End-user setup guide (Telegram bot, GitHub secrets, manual trigger). |
+| `IMPROVEMENTS.md` | Backlog of strategy upgrades (some now built — see markers). |
 
 ## Signal logic — DO NOT change unless the user explicitly asks
 
@@ -38,6 +41,23 @@ Implemented in `scanner.py`; treat as fixed spec:
   `check_sweep()` (returns `"bull"`, `"bear"`, or `None`). These are exchange-
   agnostic — they take `(highs, lows, closes)` lists, so adding an exchange never
   touches the signal logic.
+- `analyze_sweep()` is a **layer on top** of `check_sweep` (does not change it):
+  it adds entry/stop/target (stop = the sweep wick extreme, target = `TARGET_R`×
+  risk). If you change the level math, do it here, not in `check_sweep`.
+
+## Signal logging & evaluation
+
+- Kline fetchers return `(highs, lows, closes, opens)` — `opens` are candle
+  open/start times in ms, used as each candle's id.
+- `scan()` returns signal dicts; `log_signals()` appends unseen ones to
+  `signals.jsonl` as `status:"open"` (dedup by `timeframe:exchange:symbol:candle_ts`).
+- `evaluate.py` re-fetches candles via `klines_for(exchange, symbol, timeframe)`
+  (timeframe-parameterized, so it can score any timeframe regardless of the run's
+  `TIMEFRAME`), locates the signal candle by `candle_ts`, and walks forward up to
+  `EVAL_HORIZON` candles: **win** (target hit first), **loss** (stop first; stop
+  wins same-candle ties), or **expired** (mark-to-market R). Writes the file back.
+- The digest (win rate / avg R, overall + per timeframe/direction) is sent on the
+  weekly run (`DIGEST=1`).
 
 ## Architecture — adding/removing exchanges
 
@@ -75,7 +95,10 @@ Signals only ever fire on closed candles, on every timeframe.
 | Setting | Default | Meaning |
 |---------|---------|---------|
 | `SWING_STRENGTH` | 5 | Bars each side to confirm a swing point. |
-| `TIMEFRAME` (env) | 1d | `1d`/`1w`/`1M` (or daily/weekly/monthly). Sets per-exchange interval (`BINANCE_INTERVAL`/`MEXC_INTERVAL`/`KUCOIN_TYPE` — note MEXC weekly is `1W`, KuCoin uses `1day`/`1week`/`1month`) and the message label. |
+| `TIMEFRAME` (env) | 1d | `1d`/`1w`/`1M` (or daily/weekly/monthly). Selects per-exchange interval via `BINANCE_INTERVALS`/`MEXC_INTERVALS`/`KUCOIN_TYPES` (note MEXC weekly is `1W`) and the message label. |
+| `TARGET_R` (env) | 2 | Reward multiple for the target; stop = 1R (the sweep wick). |
+| `EVAL_HORIZON` (env) | 20 | Candles a signal has to resolve before it expires. |
+| `SIGNALS_LOG` (env) | signals.jsonl | Path to the signal log (override to a scratch path for local tests so the repo file isn't touched). |
 | `CANDLES` | 120 | Candles of history fetched per symbol (per timeframe). |
 | `MIN_QUOTE_VOLUME` | 500_000 | Skip pairs under $500k 24h quote volume. Applied to every exchange. Lower = more coins (esp. MEXC/KuCoin long tail), more noise. |
 | `QUOTE_ASSET` | "USDT" | Quote asset filter. |
