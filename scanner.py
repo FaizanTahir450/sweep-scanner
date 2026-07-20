@@ -3,8 +3,9 @@ Liquidity Sweep (SFP) Scanner — Multi-Exchange, Multi-Timeframe
 ---------------------------------------------------------------
 Scans liquid USDT spot pairs across several exchanges (plus Binance USDT-M
 futures) on daily/weekly/monthly candles and reports liquidity sweeps / Swing
-Failure Patterns. Each signal carries trade levels (entry/stop/target) and is
-logged to signals.jsonl for later outcome evaluation (see evaluate.py).
+Failure Patterns. Each signal carries trade levels (entry/stop/target) and a
+0-100 quality score, and is logged to signals.jsonl for later outcome
+evaluation (see evaluate.py).
 
 Logic per symbol:
   * Find the most recent CONFIRMED swing low/high (strength N bars each side).
@@ -15,12 +16,14 @@ Logic per symbol:
 Sends one consolidated Telegram message per run.
 
 Env vars: TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID (required); TIMEFRAME,
-SIGNALS_LOG, TARGET_R, EVAL_HORIZON (optional).
+SIGNALS_LOG, TARGET_R, EVAL_HORIZON, MIN_SCORE (optional).
 """
 
 import os
 import json
 import time
+from collections import namedtuple
+
 import requests
 
 # ── Config ─────────────────────────────────────────────────────────
@@ -35,6 +38,13 @@ REQUEST_PAUSE    = 0.08        # seconds between kline requests (rate-limit safe
 TARGET_R     = float(os.environ.get("TARGET_R", "2"))       # reward multiple (stop = 1R)
 EVAL_HORIZON = int(os.environ.get("EVAL_HORIZON", "20"))    # candles to resolve a signal
 SIGNALS_LOG  = os.environ.get("SIGNALS_LOG", "signals.jsonl")
+
+# Quality score: signals are always scored & ranked (best-first). MIN_SCORE is an
+# OPT-IN filter — at 0 (default) NOTHING is filtered; every detected signal is
+# shown/logged. Raise it to only keep higher-quality setups. The core detection
+# (check_sweep) is never affected by scoring.
+MIN_SCORE   = int(os.environ.get("MIN_SCORE", "0"))
+VOL_LOOKBACK = 20              # candles for the average-volume baseline
 
 # Timeframe: daily / weekly / monthly. Set via TIMEFRAME env (1d/1w/1M or a
 # friendly name); defaults to daily. The volume filter always uses 24h quote
@@ -62,6 +72,10 @@ EXCLUDE_SUFFIXES = ("UPUSDT", "DOWNUSDT", "BULLUSDT", "BEARUSDT")
 KUCOIN_LEV_SUFFIXES = ("3L", "3S", "5L", "5S")   # e.g. BTC3L, ETH3S
 STABLE_BASES = {"USDC", "FDUSD", "TUSD", "BUSD", "DAI", "USDP", "EUR", "AEUR",
                 "EURI", "PAXG", "XUSD", "USDE", "USD1"}
+
+# Parallel per-candle arrays (ascending, closed candles only). `opens` are candle
+# open/start times in ms (each candle's id); `oprices` open prices; `vols` volume.
+Klines = namedtuple("Klines", "highs lows closes opens oprices vols")
 
 session = requests.Session()
 session.headers.update({"User-Agent": "sweep-scanner/1.0"})
@@ -146,18 +160,21 @@ def get_kucoin_symbols():
     return sorted(out)
 
 
-# ── Kline fetchers (return highs, lows, closes, opens; ascending, closed only) ──
+# ── Kline fetchers (return Klines; ascending, closed candles only) ──
 def binance_style_klines(base, path, symbol, interval):
     """Binance & MEXC share this exact kline format (works for 1d/1w/1M)."""
     data = get_json(f"{base}{path}",
                     params={"symbol": symbol, "interval": interval, "limit": CANDLES})
     now_ms = int(time.time() * 1000)
     closed = [k for k in data if int(k[6]) <= now_ms]    # k[6] = close time
-    highs  = [float(k[2]) for k in closed]
-    lows   = [float(k[3]) for k in closed]
-    closes = [float(k[4]) for k in closed]
-    opens  = [int(k[0]) for k in closed]                 # candle open time (ms) — its id
-    return highs, lows, closes, opens
+    return Klines(
+        highs=[float(k[2]) for k in closed],
+        lows=[float(k[3]) for k in closed],
+        closes=[float(k[4]) for k in closed],
+        opens=[int(k[0]) for k in closed],               # open time (ms) — candle id
+        oprices=[float(k[1]) for k in closed],           # open price
+        vols=[float(k[5]) for k in closed],              # base volume
+    )
 
 
 def _kucoin_candle_closed(start, now_s, timeframe):
@@ -176,11 +193,14 @@ def kucoin_klines(symbol, timeframe=TIMEFRAME):
     now_s = int(time.time())
     rows = [r for r in reversed(data)                    # -> ascending, closed only
             if _kucoin_candle_closed(int(r[0]), now_s, timeframe)]
-    highs  = [float(r[3]) for r in rows]
-    lows   = [float(r[4]) for r in rows]
-    closes = [float(r[2]) for r in rows]
-    opens  = [int(r[0]) * 1000 for r in rows]            # start time (ms) — its id
-    return highs, lows, closes, opens
+    return Klines(
+        highs=[float(r[3]) for r in rows],
+        lows=[float(r[4]) for r in rows],
+        closes=[float(r[2]) for r in rows],
+        opens=[int(r[0]) * 1000 for r in rows],          # start time (ms) — candle id
+        oprices=[float(r[1]) for r in rows],             # open price
+        vols=[float(r[5]) for r in rows],                # volume
+    )
 
 
 def klines_for(exchange, symbol, timeframe):
@@ -235,7 +255,7 @@ def check_sweep(highs, lows, closes):
     return None
 
 
-# ── Trade levels (scoring layer on top — signal logic unchanged) ───
+# ── Trade levels + quality score (layers on top — detection unchanged) ──
 def analyze_sweep(highs, lows, closes):
     """
     Wrap check_sweep with trade levels. Returns a dict with direction, the swept
@@ -265,18 +285,52 @@ def analyze_sweep(highs, lows, closes):
             "stop": stop, "target": target}
 
 
+def score_signal(direction, highs, lows, closes, oprices, vols):
+    """
+    0-100 quality score for an already-detected signal — pure ranking metadata,
+    never changes detection. Blends: volume spike (vs prior avg), rejection
+    strength (wick beyond the level), and close location within the candle.
+    Returns (score, reason).
+    """
+    i = len(closes) - 1
+    hi, lo, cl, op = highs[i], lows[i], closes[i], oprices[i]
+    rng = (hi - lo) or 1e-9
+
+    prior = vols[max(0, i - VOL_LOOKBACK):i]
+    avg_v = (sum(prior) / len(prior)) if prior else 0.0
+    v_ratio = (vols[i] / avg_v) if avg_v > 0 else 1.0
+
+    if direction == "bull":
+        close_loc = (cl - lo) / rng              # 1 = closed at the high
+        rej = (min(op, cl) - lo) / rng           # lower-wick fraction (rejection of low)
+    else:
+        close_loc = (hi - cl) / rng              # 1 = closed at the low
+        rej = (hi - max(op, cl)) / rng           # upper-wick fraction (rejection of high)
+
+    s_vol = min(v_ratio / 2.0, 1.0)              # 2x average volume → full marks
+    s_rej = min(max(rej, 0.0) / 0.5, 1.0)        # 50% wick → full marks
+    s_loc = min(max(close_loc, 0.0), 1.0)        # closes at extreme → full marks
+    score = round(100 * (0.40 * s_vol + 0.35 * s_rej + 0.25 * s_loc))
+    reason = f"vol {v_ratio:.1f}x·rej {rej:.2f}·loc {close_loc:.2f}"
+    return score, reason
+
+
 # ── Scan runner ────────────────────────────────────────────────────
 def scan(name, symbols, fetch_klines):
-    """Returns (signals, errors). Each signal is a dict with levels + candle id."""
+    """Returns (signals, errors). Each signal is a dict with levels + score."""
     signals, errors = [], 0
     for i, sym in enumerate(symbols, 1):
         try:
-            highs, lows, closes, opens = fetch_klines(sym)
-            sig = analyze_sweep(highs, lows, closes)
+            k = fetch_klines(sym)
+            sig = analyze_sweep(k.highs, k.lows, k.closes)
             if sig:
-                sig.update({"exchange": name, "symbol": sym,
-                            "timeframe": TIMEFRAME, "candle_ts": opens[-1]})
-                signals.append(sig)
+                score, reason = score_signal(sig["direction"], k.highs, k.lows,
+                                             k.closes, k.oprices, k.vols)
+                if score >= MIN_SCORE:           # MIN_SCORE=0 → keep everything
+                    sig.update({"exchange": name, "symbol": sym,
+                                "timeframe": TIMEFRAME, "candle_ts": k.opens[-1],
+                                "score": score, "reason": reason})
+                    signals.append(sig)
         except Exception:
             errors += 1
         if i % 50 == 0:
@@ -327,6 +381,7 @@ def log_signals(new_signals, path=SIGNALS_LOG):
             "symbol": s["symbol"], "direction": s["direction"],
             "entry": s["entry"], "stop": s["stop"], "target": s["target"],
             "level": s["level"], "candle_ts": s["candle_ts"],
+            "score": s.get("score"), "reason": s.get("reason"),
             "status": "open", "realized_r": None, "closed_ts": None, "bars": None,
         })
         added += 1
@@ -383,11 +438,12 @@ def fmt_price(p):
 def fmt_section(title, sigs):
     if not sigs:
         return f"{title}: none"
+    sigs = sorted(sigs, key=lambda s: s.get("score", 0), reverse=True)  # best-first
     lines = [f"{title} ({len(sigs)}):"]
     for s in sigs:
-        lines.append(f"  • {s['symbol']}  entry {fmt_price(s['entry'])} | "
-                     f"stop {fmt_price(s['stop'])} | tgt {fmt_price(s['target'])} "
-                     f"({TARGET_R:g}R)")
+        lines.append(f"  • [{s.get('score', 0):>3}] {s['symbol']}  "
+                     f"entry {fmt_price(s['entry'])} | stop {fmt_price(s['stop'])} | "
+                     f"tgt {fmt_price(s['target'])} ({TARGET_R:g}R)  {s.get('reason', '')}")
     return "\n".join(lines)
 
 
@@ -403,8 +459,11 @@ SPOT_EXCHANGES = [
 # ── Main ───────────────────────────────────────────────────────────
 def main():
     date_str = time.strftime("%d %b %Y", time.gmtime())
-    print(f"Timeframe: {TF_LABEL} ({TIMEFRAME})")
-    parts = [f"📊 {TF_LABEL} Sweep Scan — {date_str} ({TIMEFRAME} close)"]
+    print(f"Timeframe: {TF_LABEL} ({TIMEFRAME}) | MIN_SCORE={MIN_SCORE}")
+    hdr = f"📊 {TF_LABEL} Sweep Scan — {date_str} ({TIMEFRAME} close)"
+    if MIN_SCORE:
+        hdr += f"  [min score {MIN_SCORE}]"
+    parts = [hdr]
     all_signals = []
 
     # Spot exchanges — one failing (e.g. geo-block) never blocks the others

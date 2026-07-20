@@ -23,8 +23,12 @@ fire — that's three messages.)
 - The still-forming (current) candle is always excluded — signals fire only on
   closed candles.
 
-Each alert now includes **trade levels**: entry (close), stop (the swept wick
-extreme) and a target at `TARGET_R`× risk (default 2R).
+Each alert includes **trade levels** (entry, stop = swept wick extreme, target =
+`TARGET_R`× risk) and a **0–100 quality score** (volume spike + rejection
+strength + close location). Signals are listed **best-score-first**. The score is
+pure ranking metadata — it never changes which sweeps are detected. `MIN_SCORE`
+(default **0**) is an opt-in filter: at 0 nothing is hidden; raise it to keep only
+higher-scored setups.
 
 **Performance tracking (automatic):**
 - Every signal is logged to `signals.jsonl` in the repo (committed back by the
@@ -81,6 +85,7 @@ Done. It now runs automatically on schedule (all UTC): **daily** 00:15,
 | `SCAN_FUTURES`     | True      | Binance USDT-M futures. Set False to skip.      |
 | `TARGET_R`         | 2         | Reward multiple for the target (stop = 1R).     |
 | `EVAL_HORIZON`     | 20        | Candles a signal has to hit target/stop before it expires. |
+| `MIN_SCORE`        | 0         | Opt-in quality filter (0 = keep all). Raise to hide low-scored signals. |
 
 **Timeframe** is chosen at runtime via the `TIMEFRAME` env var (`1d` / `1w` /
 `1M`, or `daily` / `weekly` / `monthly`; defaults to daily). The workflow sets it

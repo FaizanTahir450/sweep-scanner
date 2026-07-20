@@ -16,7 +16,14 @@ weekly Telegram performance digest reports win rate & avg R. Still open: #1
 
 ---
 
-## 1. Quality score + filters  ⭐ biggest win (fewer false positives)
+## 1. Quality score + filters  ◑ PARTIAL — scoring+ranking shipped; needs recalibration
+`score_signal()` (volume spike + rejection + close location) now ranks/annotates
+every signal (best-first); `MIN_SCORE` opt-in filter defaults to 0 (nothing
+hidden). Detection untouched. **Backtest finding:** win% is non-monotonic — 55-69
+band best (~33%), but 70-100 regresses (~27%, driven by big-volume/deep-wick
+sweeps that behave like breakouts + wide stops that miss the fixed 2R target). So
+don't naively raise MIN_SCORE yet. TODO: re-weight (cap/penalize extreme volume),
+try structural (not fixed-R) targets, re-run backtest score buckets.
 Today every sweep is treated equally. Score each one and only alert on strong ones,
 ranked best-first.
 

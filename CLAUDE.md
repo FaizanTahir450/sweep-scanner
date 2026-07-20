@@ -45,6 +45,13 @@ Implemented in `scanner.py`; treat as fixed spec:
 - `analyze_sweep()` is a **layer on top** of `check_sweep` (does not change it):
   it adds entry/stop/target (stop = the sweep wick extreme, target = `TARGET_R`×
   risk). If you change the level math, do it here, not in `check_sweep`.
+- `score_signal()` is another post-detection layer: a 0-100 rank from volume
+  spike + rejection wick + close location. It NEVER changes detection. `MIN_SCORE`
+  (default 0) is an opt-in filter applied in `scan()`; at 0 nothing is dropped.
+  Backtest note: win% is non-monotonic in score (mid-band best, top band regresses
+  — big-volume/deep-wick sweeps behave like breakouts). Recalibrate before relying
+  on `MIN_SCORE` to filter. Fetchers now return a `Klines` namedtuple that also
+  carries `oprices` (open price) and `vols` (volume) for scoring.
 
 ## Signal logging & evaluation
 

@@ -29,8 +29,8 @@ def resolve_open_signals(rows):
             if key not in cache:
                 cache[key] = sc.klines_for(r["exchange"], r["symbol"], r["timeframe"])
                 time.sleep(sc.REQUEST_PAUSE)
-            highs, lows, closes, opens = cache[key]
-            res = sc.evaluate_outcome(r, highs, lows, closes, opens)
+            k = cache[key]
+            res = sc.evaluate_outcome(r, k.highs, k.lows, k.closes, k.opens)
             if res:
                 r.update(res)
                 r["closed_ts"] = int(time.time())

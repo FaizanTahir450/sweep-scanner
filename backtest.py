@@ -34,18 +34,21 @@ LISTERS = {"BINANCE": sc.get_binance_spot_symbols,
 
 def backtest_symbol(exchange, symbol, timeframe):
     """Every historical sweep on this symbol, graded. Returns list of trades."""
-    highs, lows, closes, opens = sc.klines_for(exchange, symbol, timeframe)
+    k = sc.klines_for(exchange, symbol, timeframe)
+    highs, lows, closes, opens = k.highs, k.lows, k.closes, k.opens
     trades = []
     for t in range(MIN_LEN - 1, len(closes) - 1):           # t = "last closed" bar
         sig = sc.analyze_sweep(highs[:t + 1], lows[:t + 1], closes[:t + 1])
         if not sig:
             continue
+        score, _ = sc.score_signal(sig["direction"], highs[:t + 1], lows[:t + 1],
+                                   closes[:t + 1], k.oprices[:t + 1], k.vols[:t + 1])
         rec = {"direction": sig["direction"], "entry": sig["entry"],
                "stop": sig["stop"], "target": sig["target"], "candle_ts": opens[t]}
         res = sc.evaluate_outcome(rec, highs, lows, closes, opens)
         if res:                                             # resolved or expired
             trades.append({"exchange": exchange, "timeframe": timeframe,
-                           "direction": sig["direction"], **res})
+                           "direction": sig["direction"], "score": score, **res})
     return trades
 
 
@@ -94,10 +97,15 @@ def main():
         print(f"  timeframe {tf:<3}              {stats([t for t in all_trades if t['timeframe'] == tf])}")
     for d in ("bull", "bear"):
         print(f"  direction {d:<5}            {stats([t for t in all_trades if t['direction'] == d])}")
+    print("-" * 72)
+    print("BY QUALITY SCORE (does the score predict wins?):")
+    for lo, hi in [(0, 40), (40, 55), (55, 70), (70, 101)]:
+        bucket = [t for t in all_trades if lo <= t.get("score", 0) < hi]
+        print(f"  score {lo:>2}-{hi - 1 if hi <= 100 else 100:<3}            {stats(bucket)}")
     print("=" * 72)
     print("Note: win% is of decisive (win+loss) trades; expectancy R averages all "
-          "resolved incl. expired.\nRaw SFP with no quality filters — a baseline to "
-          "improve on (see IMPROVEMENTS.md #1/#2/#5).")
+          "resolved incl. expired.\nIf higher score buckets show higher win%/expectancy, "
+          "the score adds edge — set MIN_SCORE to filter.")
 
 
 if __name__ == "__main__":
