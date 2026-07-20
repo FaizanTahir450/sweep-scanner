@@ -21,6 +21,7 @@ The **timeframe** is selected at runtime via the `TIMEFRAME` env var
 |------|---------|
 | `scanner.py` | Scan core. Fetches symbols/klines, detects sweeps, computes trade levels, sends Telegram, logs signals. Also holds the shared signal-log + `evaluate_outcome` helpers. |
 | `evaluate.py` | Resolves logged signals (win/loss/expired + realized R) and builds/sends the performance digest. Imports `scanner` for fetchers + helpers. |
+| `backtest.py` | Read-only historical backtest: replays candles, fires the live `analyze_sweep` per bar, grades with `evaluate_outcome`, reports win% / expectancy by timeframe/direction/exchange. Run locally on demand; tune via `BACKTEST_*` env vars. Never writes signals.jsonl or Telegram. |
 | `signals.jsonl` | Append-only signal log, committed back by the Action each run. One JSON object per signal (levels + outcome). Created on first run; **not** gitignored. |
 | `.github/workflows/scan.yml` | Three crons (daily `15 0 * * *`, weekly `15 0 * * 1`, monthly `15 0 1 * *`) + manual `workflow_dispatch` with a timeframe dropdown. Steps: resolve timeframe → run scanner → run evaluate → commit `signals.jsonl` back. `permissions: contents: write` + a `concurrency` group (serializes the commit-back). Weekly run sets `DIGEST=1`. |
 | `README.md` | End-user setup guide (Telegram bot, GitHub secrets, manual trigger). |

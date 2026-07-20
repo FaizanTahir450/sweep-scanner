@@ -44,7 +44,14 @@ Attach to each alert:
 Turns each message from "a wick happened" into a tradeable setup, and self-filters
 weak setups.
 
-## 4. Backtest mode  ⭐ the meta-upgrade (makes tuning data-driven)
+## 4. Backtest mode  ✅ DONE — the meta-upgrade (makes tuning data-driven)
+`backtest.py` replays history, fires the live `analyze_sweep` at each past bar,
+grades outcomes with `evaluate_outcome`, and reports win% / expectancy by
+timeframe / direction / exchange. Read-only (no signals.jsonl / Telegram).
+**Baseline finding (40-sym sample, 2R, no filters):** ~29.5% win overall,
+slightly negative expectancy; monthly best (~35%, +0.10R). Break-even at 2R is
+33.3% → the edge must come from filters (#1/#2/#5). Re-run after each filter to
+measure impact. Tune via `BACKTEST_*` env vars.
 Replay history and compute the pattern's **forward win rate / average R** — per
 timeframe and per filter combination.
 - Tells us which filters above actually improve results (vs guessing).
