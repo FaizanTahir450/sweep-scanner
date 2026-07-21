@@ -445,15 +445,12 @@ def fmt_price(p):
 
 
 def fmt_section(title, sigs):
-    """Detailed rendering (score + levels) — used for the Telegram message."""
+    """Simple 'SYMBOL @ price' + ⭐rank — used for the Telegram message."""
     if not sigs:
         return f"{title}: none"
     sigs = sorted(sigs, key=lambda s: s.get("score", 0), reverse=True)  # best-first
     lines = [f"{title} ({len(sigs)}):"]
-    for s in sigs:
-        lines.append(f"  • [{s.get('score', 0):>3}] {s['symbol']}  "
-                     f"entry {fmt_price(s['entry'])} | stop {fmt_price(s['stop'])} | "
-                     f"tgt {fmt_price(s['target'])} ({TARGET_R:g}R)  {s.get('reason', '')}")
+    lines += [f"  • ⭐{s.get('score', 0)} {s['symbol']} @ {fmt_price(s['entry'])}" for s in sigs]
     return "\n".join(lines)
 
 

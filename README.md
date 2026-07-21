@@ -23,11 +23,12 @@ fire — that's three messages.)
 - The still-forming (current) candle is always excluded — signals fire only on
   closed candles.
 
-Each alert includes **trade levels** (entry, stop = swept wick extreme, target =
-`TARGET_R`× risk) and a **0–100 quality score** (volume spike + rejection
-strength + close location). Signals are listed **best-score-first**. The score is
-pure ranking metadata — it never changes which sweeps are detected. `MIN_SCORE`
-(default **0**) is an opt-in filter: at 0 nothing is hidden; raise it to keep only
+Alerts are kept simple — `⭐<score> SYMBOL @ price`, listed **best-score-first**.
+The **0–100 quality score** (volume spike + rejection strength + close location)
+is a rank indicator only — it never changes which sweeps are detected. Trade
+levels (entry, stop = swept wick extreme, target = `TARGET_R`× risk) are computed
+and **logged** for evaluation but kept out of the message. `MIN_SCORE` (default
+**0**) is an opt-in filter: at 0 nothing is hidden; raise it to keep only
 higher-scored setups.
 
 **Performance tracking (automatic):**
