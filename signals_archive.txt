@@ -1,0 +1,46 @@
+📊 Daily Sweep Scan — 21 Jul 2026 (1d close)
+
+— BINANCE (SPOT) —
+
+🟢 Bullish sweeps (11):
+  • ARUSDT @ 1.892
+  • DOTUSDT @ 0.827
+  • ETCUSDT @ 6.92
+  • HYPERUSDT @ 0.0662
+  • IDUSDT @ 0.0323
+  • KNCUSDT @ 0.1088
+  • MAGICUSDT @ 0.0427
+  • QNTUSDT @ 64.8
+  • SANDUSDT @ 0.04735
+  • SEIUSDT @ 0.04663
+  • WUSDT @ 0.0092
+
+🔴 Bearish sweeps (7):
+  • CETUSUSDT @ 0.01937
+  • PENDLEUSDT @ 1.593
+  • PLUMEUSDT @ 0.01076
+  • RSRUSDT @ 0.001274
+  • SAPIENUSDT @ 0.0805
+  • TURTLEUSDT @ 0.0364
+  • XVGUSDT @ 0.002099
+
+— MEXC (SPOT) —
+
+🟢 Bullish sweeps (1):
+  • DOTUSDT @ 0.8267
+
+🔴 Bearish sweeps (1):
+  • ADIUSDT @ 6.7529
+
+— KUCOIN (SPOT) —
+
+🟢 Bullish sweeps (3):
+  • DOT-USDT @ 0.8269
+  • KCS-USDT @ 6.693
+  • SEI-USDT @ 0.04664
+
+🔴 Bearish sweeps (2):
+  • ADI-USDT @ 6.7293
+  • TURTLE-USDT @ 0.03633
+
+⚠️ Binance futures unavailable (HTTP 451 — likely geo-block on runner). Spot results above are complete.
