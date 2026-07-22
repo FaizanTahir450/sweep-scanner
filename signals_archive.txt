@@ -44,3 +44,44 @@
   • TURTLE-USDT @ 0.03633
 
 ⚠️ Binance futures unavailable (HTTP 451 — likely geo-block on runner). Spot results above are complete.
+
+==================================================
+
+📊 Daily Sweep Scan — 22 Jul 2026 (1d close)
+
+— BINANCE (SPOT) —
+
+🟢 Bullish sweeps (2):
+  • VELODROMEUSDT @ 0.01881
+  • WLFIUSDT @ 0.057
+
+🔴 Bearish sweeps (10):
+  • ETHUSDT @ 1,930.09
+  • KGSTUSDT @ 0.011445
+  • MEUSDT @ 0.06376
+  • MITOUSDT @ 0.025
+  • NILUSDT @ 0.03746
+  • PENDLEUSDT @ 1.605
+  • PEPEUSDT @ 0.00000288
+  • POLYXUSDT @ 0.0375
+  • TSTUSDT @ 0.01157
+  • WBETHUSDT @ 2,124.36
+
+— MEXC (SPOT) —
+
+🟢 Bullish sweeps: none
+
+🔴 Bearish sweeps (2):
+  • ETHUSDT @ 1,930.22
+  • PENDLEUSDT @ 1.607
+
+— KUCOIN (SPOT) —
+
+🟢 Bullish sweeps: none
+
+🔴 Bearish sweeps (3):
+  • DASH-USDT @ 34.9
+  • ERA-USDT @ 0.0921
+  • ETH-USDT @ 1,929.86
+
+⚠️ Binance futures unavailable (HTTP 451 — likely geo-block on runner). Spot results above are complete.
