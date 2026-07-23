@@ -16,6 +16,39 @@ weekly Telegram performance digest reports win rate & avg R. Still open: #1
 
 ---
 
+## Research findings (backtested — READ BEFORE iterating)
+
+All results are 40-symbol samples, 500-candle history, fixed stop = sweep wick,
+horizon 20, fees ignored. Directionally consistent across repeated runs.
+
+- **Raw SFP baseline ≈ 29–30% win, slightly negative expectancy** at 2R. Break-even
+  at 2R is 33.3%, so as a mechanical system it's a small net loss before costs.
+- **Level significance does NOT help — it hurts.** Tested three level-finders:
+  nearest-pivot (baseline), all-intact-pivots + most-extreme (`new.py`), and
+  equal-highs/lows **clustering**. All land ~29%. Worse: win% *falls* with level
+  prominence — clustering by touch count gave 1-touch 29%, 2-touch 28%, **3+
+  touch 19.6% (−0.36R)**. Heavily-tested/major levels, once swept & closed
+  through, tend to **continue (breakout)**, not reverse. ⇒ Don't chase "better
+  levels"; the edge isn't there. (The all-intact-pivots variant was prototyped
+  and reverted — not deployed.)
+- **Quality score is non-monotonic** (mid-band ~33% best, top band ~25–27% worst)
+  for the same reason — it over-weights big-volume/deep-wick/major-level sweeps.
+  Don't use `MIN_SCORE` as a hard filter without recalibrating.
+- **Target-R sweep: tighter targets are worse, not better.** Expectancy improves
+  monotonically with R (0.5R −0.20 → 3R −0.05 overall) — the stop hits fast/often
+  but winners run (fat tail). No target makes daily/weekly positive.
+- **The one real edge is the TIMEFRAME.** Monthly @ 2R is the only positive cell in
+  the whole grid (~+0.10R, ~35% win) and is the bright spot in *every* experiment.
+  Daily & weekly are net-negative at all targets → best treated as discretionary
+  alerts, not auto-trades. The live default `TARGET_R=2` is already optimal for
+  monthly.
+
+**Open threads worth trying (all backtestable):** monthly-only mechanical mode;
+**invert** the thesis on major/multi-touch levels (trade the breakout); a market
+regime/BTC-trend gate (#5); structural (not fixed-R) or trailing exits.
+
+---
+
 ## 1. Quality score + filters  ◑ PARTIAL — scoring+ranking shipped; needs recalibration
 `score_signal()` (volume spike + rejection + close location) now ranks/annotates
 every signal (best-first); `MIN_SCORE` opt-in filter defaults to 0 (nothing
@@ -108,8 +141,8 @@ year if it grows).
   the signal direction before alerting — fewer fakeouts, one candle of lag.
 - **Alert de-duplication / state**: remember which signals already fired; track
   outcomes to build a live hit-rate log.
-- **Indicator confluence**: RSI divergence at the sweep, or equal highs/lows
-  (liquidity pools) preceding the sweep.
+- **Indicator confluence**: RSI divergence at the sweep. (Equal-highs/lows
+  liquidity pools were tested — see Research findings: no edge, more touches = worse.)
 - **Ranking + top-N**: cap each message to the top N by score to cut alert fatigue.
 
 ---
