@@ -85,3 +85,43 @@
   • ETH-USDT @ 1,929.86
 
 ⚠️ Binance futures unavailable (HTTP 451 — likely geo-block on runner). Spot results above are complete.
+
+==================================================
+
+📊 Daily Sweep Scan — 23 Jul 2026 (1d close)
+
+— BINANCE (SPOT) —
+
+🟢 Bullish sweeps (2):
+  • PIVXUSDT @ 0.0347
+  • SEIUSDT @ 0.0464
+
+🔴 Bearish sweeps (8):
+  • ETHUSDT @ 1,934.25
+  • INITUSDT @ 0.0556
+  • KGSTUSDT @ 0.011444
+  • LISTAUSDT @ 0.0504
+  • MIRAUSDT @ 0.0489
+  • NVDABUSDT @ 212
+  • UNIUSDT @ 3.782
+  • WBETHUSDT @ 2,128.86
+
+— MEXC (SPOT) —
+
+🟢 Bullish sweeps (1):
+  • HYPEUSDT @ 59.36
+
+🔴 Bearish sweeps (1):
+  • ETHUSDT @ 1,934.31
+
+— KUCOIN (SPOT) —
+
+🟢 Bullish sweeps (2):
+  • HYPE-USDT @ 59.383
+  • SEI-USDT @ 0.04641
+
+🔴 Bearish sweeps (2):
+  • ETH-USDT @ 1,934.07
+  • UNI-USDT @ 3.7815
+
+⚠️ Binance futures unavailable (HTTP 451 — likely geo-block on runner). Spot results above are complete.
