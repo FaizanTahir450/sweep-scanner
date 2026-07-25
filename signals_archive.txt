@@ -216,3 +216,59 @@
   • WLFI-USDT @ 0.0576
 
 ⚠️ Binance futures unavailable (HTTP 451 — likely geo-block on runner). Spot results above are complete.
+
+==================================================
+
+📊 Daily Sweep Scan — 25 Jul 2026 (1d close)
+
+— BINANCE (SPOT) —
+
+🟢 Bullish sweeps (14):
+  • ACXUSDT @ 0.04127
+  • CHIPUSDT @ 0.02936
+  • CVXUSDT @ 1.278
+  • GALAUSDT @ 0.001981
+  • MSTRBUSDT @ 91.29
+  • OPGUSDT @ 0.103
+  • PHAUSDT @ 0.022
+  • RENDERUSDT @ 1.457
+  • SKLUSDT @ 0.00387
+  • TAOUSDT @ 191.3
+  • TIAUSDT @ 0.3397
+  • TRBUSDT @ 14.59
+  • WUSDT @ 0.00902
+  • ZKUSDT @ 0.0092
+
+🔴 Bearish sweeps (6):
+  • ALLOUSDT @ 0.5173
+  • ESPUSDT @ 0.07458
+  • HFTUSDT @ 0.009239
+  • LAUSDT @ 0.0676
+  • TNSRUSDT @ 0.0336
+  • UNIUSDT @ 3.784
+
+— MEXC (SPOT) —
+
+🟢 Bullish sweeps (3):
+  • ATLAUSDT @ 151.2942
+  • TAOUSDT @ 191.38
+  • VELVETUSDT @ 0.44889
+
+🔴 Bearish sweeps (2):
+  • ASTERUSDT @ 0.6298
+  • BRLUSDT @ 0.1932
+
+— KUCOIN (SPOT) —
+
+🟢 Bullish sweeps (4):
+  • TAO-USDT @ 191.25
+  • TIA-USDT @ 0.3399
+  • VELVET-USDT @ 0.44909
+  • XLM-USDT @ 0.178
+
+🔴 Bearish sweeps (3):
+  • ALLO-USDT @ 0.5185
+  • UNI-USDT @ 3.7838
+  • US-USDT @ 0.047845
+
+⚠️ Binance futures unavailable (HTTP 451 — likely geo-block on runner). Spot results above are complete.
