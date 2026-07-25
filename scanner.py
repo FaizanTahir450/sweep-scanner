@@ -8,15 +8,22 @@ Failure Patterns. Each signal carries trade levels (entry/stop/target) and a
 evaluation (see evaluate.py).
 
 Logic per symbol:
-  * Find the most recent CONFIRMED swing low/high (strength N bars each side).
-  * Level must still be intact (no candle CLOSED beyond it since the pivot).
+  * Build ATR-filtered ZigZag swings: a low/high only counts as a swing once
+    price has CLOSED away from it by ATR_MULT x ATR. Minor fractal wiggles
+    never reach that threshold, so only significant levels — where stop-loss
+    liquidity actually rests — survive (see detect_pivots).
+  * Take the most recent confirmed swing whose level is still sweepable:
+    no candle CLOSED beyond it since the pivot, and (with REQUIRE_UNTAPPED)
+    no wick has traded through it either — the signal candle must be the
+    FIRST to run the level. Broken levels fall through to older intact ones.
   * Signal on the last closed candle:
       Bullish sweep : low  < swing_low  AND close > swing_low
       Bearish sweep : high > swing_high AND close < swing_high
 Sends one consolidated Telegram message per run.
 
 Env vars: TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID (required); TIMEFRAME,
-SIGNALS_LOG, TARGET_R, EVAL_HORIZON, MIN_SCORE (optional).
+SIGNALS_LOG, TARGET_R, EVAL_HORIZON, MIN_SCORE, ATR_MULT,
+REQUIRE_UNTAPPED (optional).
 """
 
 import os
@@ -27,7 +34,12 @@ from collections import namedtuple
 import requests
 
 # ── Config ─────────────────────────────────────────────────────────
-SWING_STRENGTH   = 5           # bars each side to confirm a swing point
+ATR_PERIOD       = 14          # ATR lookback used by the swing filter
+ATR_MULT         = float(os.environ.get("ATR_MULT", "2.0"))
+                               # close-reversal (in ATRs) needed to confirm a swing:
+                               # 1.5 = more/smaller swings · 2.5-3 = only major ones
+REQUIRE_UNTAPPED = os.environ.get("REQUIRE_UNTAPPED", "1") != "0"
+                               # True → only FIRST-time sweeps (no prior wick through level)
 CANDLES          = 120         # candles of history to fetch (per timeframe)
 MIN_QUOTE_VOLUME = 500_000     # skip pairs with < $500k 24h volume
 QUOTE_ASSET      = "USDT"
@@ -218,102 +230,198 @@ def klines_for(exchange, symbol, timeframe):
     raise ValueError(f"unknown exchange: {exchange}")
 
 
-# ── Sweep detection (unchanged signal logic) ───────────────────────
-def last_valid_pivot(values, closes, strength, kind):
-    """
-    Most recent confirmed pivot low/high whose level is still intact
-    (no candle has CLOSED beyond it after the pivot, up to but excluding
-    the last candle). Returns the pivot price or None.
-    """
-    last = len(values) - 1                       # index of last closed candle
-    for p in range(last - strength - 1, strength - 1, -1):
-        left  = values[p - strength:p]
-        right = values[p + 1:p + strength + 1]
-        v = values[p]
-        if kind == "low":
-            is_pivot = all(v < x for x in left) and all(v <= x for x in right)
-            intact   = all(c > v for c in closes[p + 1:last])
+# ── Swing detection (ATR-filtered ZigZag — real pivots, not noise) ──
+def compute_atr(highs, lows, closes, period=ATR_PERIOD):
+    """Average True Range (simple rolling mean of TR); one value per candle."""
+    n = len(closes)
+    trs = [highs[0] - lows[0]] if n else []
+    for i in range(1, n):
+        trs.append(max(highs[i] - lows[i],
+                       abs(highs[i] - closes[i - 1]),
+                       abs(lows[i] - closes[i - 1])))
+    atr, s = [], 0.0
+    for i, tr in enumerate(trs):
+        s += tr
+        if i >= period:
+            s -= trs[i - period]
+            atr.append(s / period)
         else:
-            is_pivot = all(v > x for x in left) and all(v >= x for x in right)
-            intact   = all(c < v for c in closes[p + 1:last])
-        if is_pivot:
-            return v if intact else None         # nearest pivot broken → no signal
+            atr.append(s / (i + 1))
+    return atr
+
+
+def detect_pivots(highs, lows, closes, atr_mult=None, atr=None):
+    """
+    ZigZag swing detector with an ATR noise filter.
+
+    While price keeps making higher highs, the candidate swing high keeps
+    extending — so the TRUE extreme is always captured, never an early bump.
+    The candidate is only CONFIRMED as a pivot once price CLOSES against it
+    by atr_mult * ATR; smaller wiggles never confirm and are ignored.
+    Confirming on the CLOSE (not the opposite wick) stops a single huge-range
+    candle from faking two pivots at once. Pivots alternate H, L, H, L.
+
+    Returns a time-ordered list of dicts {idx, price, type 'H'/'L', confirmed},
+    where `confirmed` is the bar at which the pivot became known (no lookahead).
+    """
+    n = len(closes)
+    if n < 3:
+        return []
+    if atr is None:
+        atr = compute_atr(highs, lows, closes)
+    if atr_mult is None:
+        atr_mult = ATR_MULT
+
+    piv = []
+    trend = 0                     # 0 = warm-up, +1 = up-leg, -1 = down-leg
+    cand = hi_i = lo_i = 0        # candidate extreme / warm-up running extremes
+
+    for i in range(1, n):
+        if trend == 0:
+            # warm-up: wait for the first threshold-sized move
+            if highs[i] > highs[hi_i]:
+                hi_i = i
+            if lows[i] < lows[lo_i]:
+                lo_i = i
+            if closes[i] - lows[lo_i] >= atr_mult * atr[i]:
+                piv.append({"idx": lo_i, "price": lows[lo_i], "type": "L", "confirmed": i})
+                seg = range(lo_i + 1, i + 1)
+                cand = max(seg, key=lambda j: highs[j]) if len(seg) else i
+                trend = 1
+            elif highs[hi_i] - closes[i] >= atr_mult * atr[i]:
+                piv.append({"idx": hi_i, "price": highs[hi_i], "type": "H", "confirmed": i})
+                seg = range(hi_i + 1, i + 1)
+                cand = min(seg, key=lambda j: lows[j]) if len(seg) else i
+                trend = -1
+        elif trend == 1:                                   # tracking a swing HIGH
+            if highs[i] > highs[cand]:
+                cand = i                                   # higher high → extend
+            elif highs[cand] - closes[i] >= atr_mult * atr[i]:
+                piv.append({"idx": cand, "price": highs[cand], "type": "H", "confirmed": i})
+                cand = min(range(cand + 1, i + 1), key=lambda j: lows[j])
+                trend = -1
+        else:                                              # tracking a swing LOW
+            if lows[i] < lows[cand]:
+                cand = i                                   # lower low → extend
+            elif closes[i] - lows[cand] >= atr_mult * atr[i]:
+                piv.append({"idx": cand, "price": lows[cand], "type": "L", "confirmed": i})
+                cand = max(range(cand + 1, i + 1), key=lambda j: highs[j])
+                trend = 1
+    return piv
+
+
+def last_intact_swing(pivots, highs, lows, closes, kind):
+    """
+    Most recent confirmed swing low/high whose level is still sweepable:
+      * confirmed BEFORE the last candle (no lookahead);
+      * no candle CLOSED beyond it since the pivot (up to, excluding, last);
+      * with REQUIRE_UNTAPPED, no wick traded through it either — the signal
+        candle must be the FIRST to run the level (equal touches allowed).
+    Unlike the old fractal logic, a broken nearer level falls through to the
+    next older swing: a deeper low can still hold untouched liquidity.
+    Returns (price, idx) or (None, None).
+    """
+    last = len(closes) - 1
+    want = "L" if kind == "low" else "H"
+    for p in reversed(pivots):
+        if p["type"] != want or p["confirmed"] >= last:
+            continue
+        i, v = p["idx"], p["price"]
+        if kind == "low":
+            if any(c <= v for c in closes[i + 1:last]):
+                continue                                   # level broken by a close
+            if REQUIRE_UNTAPPED and any(lo < v for lo in lows[i + 1:last]):
+                continue                                   # already swept once
+        else:
+            if any(c >= v for c in closes[i + 1:last]):
+                continue
+            if REQUIRE_UNTAPPED and any(hi > v for hi in highs[i + 1:last]):
+                continue
+        return v, i
+    return None, None
+
+
+# ── Sweep detection + trade levels (built on the ZigZag swings) ─────
+def analyze_sweep(highs, lows, closes):
+    """
+    Detect a sweep of the nearest intact ZigZag swing on the last closed
+    candle. Returns a dict with direction, the swept level, entry (close),
+    stop (the sweep wick extreme), target (TARGET_R multiple of risk) plus
+    scoring metadata (level_idx, atr), or None.
+    """
+    n = len(closes)
+    if n < ATR_PERIOD + 10:
+        return None
+    last = n - 1
+    atr = compute_atr(highs, lows, closes)
+    pivots = detect_pivots(highs, lows, closes, atr=atr)
+    entry = closes[last]
+
+    level, pidx = last_intact_swing(pivots, highs, lows, closes, "low")
+    if level is not None and lows[last] < level and closes[last] > level:
+        stop = lows[last]                        # below the swept low
+        risk = entry - stop
+        if risk > 0:
+            return {"direction": "bull", "level": level, "entry": entry,
+                    "stop": stop, "target": entry + TARGET_R * risk,
+                    "level_idx": pidx, "atr": atr[last]}
+
+    level, pidx = last_intact_swing(pivots, highs, lows, closes, "high")
+    if level is not None and highs[last] > level and closes[last] < level:
+        stop = highs[last]                       # above the swept high
+        risk = stop - entry
+        if risk > 0:
+            return {"direction": "bear", "level": level, "entry": entry,
+                    "stop": stop, "target": entry - TARGET_R * risk,
+                    "level_idx": pidx, "atr": atr[last]}
     return None
 
 
 def check_sweep(highs, lows, closes):
     """Return 'bull', 'bear', or None for the last closed candle."""
-    if len(closes) < SWING_STRENGTH * 2 + 5:
-        return None
-    last = len(closes) - 1
-
-    swing_low = last_valid_pivot(lows, closes, SWING_STRENGTH, "low")
-    if swing_low is not None and lows[last] < swing_low and closes[last] > swing_low:
-        return "bull"
-
-    swing_high = last_valid_pivot(highs, closes, SWING_STRENGTH, "high")
-    if swing_high is not None and highs[last] > swing_high and closes[last] < swing_high:
-        return "bear"
-    return None
+    sig = analyze_sweep(highs, lows, closes)
+    return sig["direction"] if sig else None
 
 
-# ── Trade levels + quality score (layers on top — detection unchanged) ──
-def analyze_sweep(highs, lows, closes):
+def score_signal(sig, k):
     """
-    Wrap check_sweep with trade levels. Returns a dict with direction, the swept
-    level, entry (close), stop (the sweep wick extreme) and target (TARGET_R
-    multiple of risk), or None. Detection matches check_sweep exactly.
-    """
-    signal = check_sweep(highs, lows, closes)
-    if signal is None:
-        return None
-    last = len(closes) - 1
-    entry = closes[last]
-    if signal == "bull":
-        level = last_valid_pivot(lows, closes, SWING_STRENGTH, "low")
-        stop  = lows[last]                       # below the swept low
-        risk  = entry - stop
-        if risk <= 0:
-            return None
-        target = entry + TARGET_R * risk
-    else:
-        level = last_valid_pivot(highs, closes, SWING_STRENGTH, "high")
-        stop  = highs[last]                      # above the swept high
-        risk  = stop - entry
-        if risk <= 0:
-            return None
-        target = entry - TARGET_R * risk
-    return {"direction": signal, "level": level, "entry": entry,
-            "stop": stop, "target": target}
-
-
-def score_signal(direction, highs, lows, closes, oprices, vols):
-    """
-    0-100 quality score for an already-detected signal — pure ranking metadata,
-    never changes detection. Blends: volume spike (vs prior avg), rejection
-    strength (wick beyond the level), and close location within the candle.
+    0-100 quality score for a detected signal — pure ranking metadata, never
+    changes detection. Blends: volume spike, rejection wick, close location,
+    reclaim distance beyond the level (in ATRs), and the size of the swept
+    swing (in ATRs — a bigger swing means more resting liquidity under it).
     Returns (score, reason).
     """
+    highs, lows, closes, oprices, vols = k.highs, k.lows, k.closes, k.oprices, k.vols
     i = len(closes) - 1
     hi, lo, cl, op = highs[i], lows[i], closes[i], oprices[i]
     rng = (hi - lo) or 1e-9
+    a = sig.get("atr") or 1e-9
+    level, pidx = sig["level"], sig["level_idx"]
 
     prior = vols[max(0, i - VOL_LOOKBACK):i]
     avg_v = (sum(prior) / len(prior)) if prior else 0.0
     v_ratio = (vols[i] / avg_v) if avg_v > 0 else 1.0
 
-    if direction == "bull":
+    if sig["direction"] == "bull":
         close_loc = (cl - lo) / rng              # 1 = closed at the high
         rej = (min(op, cl) - lo) / rng           # lower-wick fraction (rejection of low)
+        reclaim = (cl - level) / a               # how far back ABOVE the level (ATRs)
+        swing = (max(highs[pidx:i]) - level) / a # size of the swept swing (ATRs)
     else:
         close_loc = (hi - cl) / rng              # 1 = closed at the low
         rej = (hi - max(op, cl)) / rng           # upper-wick fraction (rejection of high)
+        reclaim = (level - cl) / a
+        swing = (level - min(lows[pidx:i])) / a
 
     s_vol = min(v_ratio / 2.0, 1.0)              # 2x average volume → full marks
     s_rej = min(max(rej, 0.0) / 0.5, 1.0)        # 50% wick → full marks
     s_loc = min(max(close_loc, 0.0), 1.0)        # closes at extreme → full marks
-    score = round(100 * (0.40 * s_vol + 0.35 * s_rej + 0.25 * s_loc))
-    reason = f"vol {v_ratio:.1f}x·rej {rej:.2f}·loc {close_loc:.2f}"
+    s_rec = min(max(reclaim, 0.0) / 0.5, 1.0)    # closed 0.5 ATR beyond level → full marks
+    s_swg = min(max(swing, 0.0) / 4.0, 1.0)      # 4 ATR swing → full marks
+    score = round(100 * (0.30 * s_vol + 0.25 * s_rej + 0.15 * s_loc
+                         + 0.15 * s_rec + 0.15 * s_swg))
+    reason = (f"vol {v_ratio:.1f}x·rej {rej:.2f}·loc {close_loc:.2f}"
+              f"·rcl {reclaim:.2f}A·swg {swing:.1f}A")
     return score, reason
 
 
@@ -326,8 +434,7 @@ def scan(name, symbols, fetch_klines):
             k = fetch_klines(sym)
             sig = analyze_sweep(k.highs, k.lows, k.closes)
             if sig:
-                score, reason = score_signal(sig["direction"], k.highs, k.lows,
-                                             k.closes, k.oprices, k.vols)
+                score, reason = score_signal(sig, k)
                 if score >= MIN_SCORE:           # MIN_SCORE=0 → keep everything
                     sig.update({"exchange": name, "symbol": sym,
                                 "timeframe": TIMEFRAME, "candle_ts": k.opens[-1],

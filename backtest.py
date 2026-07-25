@@ -26,7 +26,7 @@ MAX_SYMBOLS = int(os.environ.get("BACKTEST_MAX_SYMBOLS", "0"))
 EXCHANGES   = os.environ.get("BACKTEST_EXCHANGES", "BINANCE,MEXC,KUCOIN").split(",")
 sc.CANDLES  = int(os.environ.get("BACKTEST_CANDLES", "500"))   # deepen history (Binance/MEXC)
 
-MIN_LEN = sc.SWING_STRENGTH * 2 + 5
+MIN_LEN = sc.ATR_PERIOD + 10   # matches analyze_sweep's minimum history requirement
 LISTERS = {"BINANCE": sc.get_binance_spot_symbols,
            "MEXC": sc.get_mexc_symbols,
            "KUCOIN": sc.get_kucoin_symbols}
@@ -41,8 +41,9 @@ def backtest_symbol(exchange, symbol, timeframe):
         sig = sc.analyze_sweep(highs[:t + 1], lows[:t + 1], closes[:t + 1])
         if not sig:
             continue
-        score, _ = sc.score_signal(sig["direction"], highs[:t + 1], lows[:t + 1],
-                                   closes[:t + 1], k.oprices[:t + 1], k.vols[:t + 1])
+        kw = sc.Klines(highs[:t + 1], lows[:t + 1], closes[:t + 1],
+                       opens[:t + 1], k.oprices[:t + 1], k.vols[:t + 1])
+        score, _ = sc.score_signal(sig, kw)
         rec = {"direction": sig["direction"], "entry": sig["entry"],
                "stop": sig["stop"], "target": sig["target"], "candle_ts": opens[t]}
         res = sc.evaluate_outcome(rec, highs, lows, closes, opens)
