@@ -272,3 +272,38 @@
   • US-USDT @ 0.047845
 
 ⚠️ Binance futures unavailable (HTTP 451 — likely geo-block on runner). Spot results above are complete.
+
+==================================================
+
+📊 Daily Sweep Scan — 25 Jul 2026 (1d close)
+
+— BINANCE (SPOT) —
+
+🟢 Bullish sweeps (3):
+  • CVXUSDT @ 1.278
+  • MSTRBUSDT @ 91.29
+  • TIAUSDT @ 0.3397
+
+🔴 Bearish sweeps (1):
+  • ALLOUSDT @ 0.5173
+
+— MEXC (SPOT) —
+
+🟢 Bullish sweeps (2):
+  • HANAUSDT @ 0.030026
+  • VELVETUSDT @ 0.44889
+
+🔴 Bearish sweeps (1):
+  • BEATUSDT @ 3.2488
+
+— KUCOIN (SPOT) —
+
+🟢 Bullish sweeps (2):
+  • HANA-USDT @ 0.03007
+  • TIA-USDT @ 0.3399
+
+🔴 Bearish sweeps (2):
+  • ALLO-USDT @ 0.5185
+  • BEAT-USDT @ 3.2522
+
+⚠️ Binance futures unavailable (HTTP 451 — likely geo-block on runner). Spot results above are complete.
