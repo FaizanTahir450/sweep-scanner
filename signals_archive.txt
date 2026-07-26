@@ -307,3 +307,33 @@
   • BEAT-USDT @ 3.2522
 
 ⚠️ Binance futures unavailable (HTTP 451 — likely geo-block on runner). Spot results above are complete.
+
+==================================================
+
+📊 Daily Sweep Scan — 26 Jul 2026 (1d close)
+
+— BINANCE (SPOT) —
+
+🟢 Bullish sweeps (3):
+  • ALLOUSDT @ 0.3842
+  • API3USDT @ 0.2201
+  • DIAUSDT @ 0.1083
+
+🔴 Bearish sweeps (1):
+  • 1000CATUSDT @ 0.00146
+
+— MEXC (SPOT) —
+
+🟢 Bullish sweeps (1):
+  • ALLOUSDT @ 0.38448
+
+🔴 Bearish sweeps: none
+
+— KUCOIN (SPOT) —
+
+🟢 Bullish sweeps (1):
+  • ALLO-USDT @ 0.3842
+
+🔴 Bearish sweeps: none
+
+⚠️ Binance futures unavailable (HTTP 451 — likely geo-block on runner). Spot results above are complete.
