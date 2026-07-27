@@ -337,3 +337,35 @@
 🔴 Bearish sweeps: none
 
 ⚠️ Binance futures unavailable (HTTP 451 — likely geo-block on runner). Spot results above are complete.
+
+==================================================
+
+📊 Daily Sweep Scan — 27 Jul 2026 (1d close)
+
+— BINANCE (SPOT) —
+
+🟢 Bullish sweeps (1):
+  • KITEUSDT @ 0.1066
+
+🔴 Bearish sweeps (3):
+  • CVXUSDT @ 1.407
+  • EPICUSDT @ 0.7257
+  • PLUMEUSDT @ 0.01209
+
+— MEXC (SPOT) —
+
+🟢 Bullish sweeps (1):
+  • AIXDROPUSDT @ 0.00042344
+
+🔴 Bearish sweeps (1):
+  • EPICUSDT @ 0.7258
+
+— KUCOIN (SPOT) —
+
+🟢 Bullish sweeps: none
+
+🔴 Bearish sweeps (2):
+  • PIEVERSE-USDT @ 0.7227
+  • PRL-USDT @ 0.19193
+
+⚠️ Binance futures unavailable (HTTP 451 — likely geo-block on runner). Spot results above are complete.
