@@ -369,3 +369,29 @@
   • PRL-USDT @ 0.19193
 
 ⚠️ Binance futures unavailable (HTTP 451 — likely geo-block on runner). Spot results above are complete.
+
+==================================================
+
+📊 Weekly Sweep Scan — 27 Jul 2026 (1w close)
+
+— BINANCE (SPOT) —
+
+🟢 Bullish sweeps (1):
+  • RIFUSDT @ 0.0822
+
+🔴 Bearish sweeps: none
+
+— MEXC (SPOT) —
+
+🟢 Bullish sweeps: none
+
+🔴 Bearish sweeps (1):
+  • AKEUSDT @ 0.0031324
+
+— KUCOIN (SPOT) —
+
+🟢 Bullish sweeps: none
+
+🔴 Bearish sweeps: none
+
+⚠️ Binance futures unavailable (HTTP 451 — likely geo-block on runner). Spot results above are complete.
