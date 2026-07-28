@@ -395,3 +395,44 @@
 🔴 Bearish sweeps: none
 
 ⚠️ Binance futures unavailable (HTTP 451 — likely geo-block on runner). Spot results above are complete.
+
+==================================================
+
+📊 Daily Sweep Scan — 28 Jul 2026 (1d close)
+
+— BINANCE (SPOT) —
+
+🟢 Bullish sweeps (4):
+  • ADAUSDT @ 0.1556
+  • BNSOLUSDT @ 83.2
+  • FLOKIUSDT @ 0.00002073
+  • INTCBUSDT @ 90.98
+
+🔴 Bearish sweeps (5):
+  • AAVEUSDT @ 98
+  • API3USDT @ 0.2115
+  • HFTUSDT @ 0.009376
+  • SAPIENUSDT @ 0.085
+  • USDSUSDT @ 1.001
+
+— MEXC (SPOT) —
+
+🟢 Bullish sweeps (2):
+  • ADAUSDT @ 0.1556
+  • UPCUSDT @ 0.1936
+
+🔴 Bearish sweeps (2):
+  • BTWUSDT @ 0.07407
+  • GEODUSDT @ 0.242
+
+— KUCOIN (SPOT) —
+
+🟢 Bullish sweeps (2):
+  • ADA-USDT @ 0.1556
+  • VFY-USDT @ 0.0064
+
+🔴 Bearish sweeps (2):
+  • AAVE-USDT @ 98.003
+  • NIL-USDT @ 0.03924
+
+⚠️ Binance futures unavailable (HTTP 451 — likely geo-block on runner). Spot results above are complete.
