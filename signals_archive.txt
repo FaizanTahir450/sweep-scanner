@@ -436,3 +436,47 @@
   • NIL-USDT @ 0.03924
 
 ⚠️ Binance futures unavailable (HTTP 451 — likely geo-block on runner). Spot results above are complete.
+
+==================================================
+
+📊 Daily Sweep Scan — 29 Jul 2026 (1d close)
+
+— BINANCE (SPOT) —
+
+🟢 Bullish sweeps (8):
+  • AMDBUSDT @ 461.06
+  • EIGENUSDT @ 0.1952
+  • FILUSDT @ 0.7066
+  • MIRAUSDT @ 0.0411
+  • MUBUSDT @ 832
+  • SPKUSDT @ 0.016184
+  • XRPUSDT @ 1.069
+  • ZENUSDT @ 3.953
+
+🔴 Bearish sweeps (4):
+  • ACHUSDT @ 0.0044
+  • OPENUSDT @ 0.1717
+  • TWTUSDT @ 0.3638
+  • ZILUSDT @ 0.002918
+
+— MEXC (SPOT) —
+
+🟢 Bullish sweeps (3):
+  • FILUSDT @ 0.7065
+  • SOLUSDT @ 73.81
+  • XRPUSDT @ 1.0689
+
+🔴 Bearish sweeps (1):
+  • COTIUSDT @ 0.010654
+
+— KUCOIN (SPOT) —
+
+🟢 Bullish sweeps (2):
+  • SOL-USDT @ 73.82
+  • XRP-USDT @ 1.0691
+
+🔴 Bearish sweeps (2):
+  • COTI-USDT @ 0.01052
+  • USDG-USDT @ 1.0011
+
+⚠️ Binance futures unavailable (HTTP 451 — likely geo-block on runner). Spot results above are complete.
