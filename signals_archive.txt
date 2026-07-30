@@ -480,3 +480,58 @@
   • USDG-USDT @ 1.0011
 
 ⚠️ Binance futures unavailable (HTTP 451 — likely geo-block on runner). Spot results above are complete.
+
+==================================================
+
+📊 Daily Sweep Scan — 30 Jul 2026 (1d close)
+
+— BINANCE (SPOT) —
+
+🟢 Bullish sweeps (17):
+  • APTUSDT @ 0.565
+  • BFUSDUSDT @ 0.9991
+  • DASHUSDT @ 29.68
+  • EDENUSDT @ 0.03983
+  • ESPUSDT @ 0.06545
+  • FILUSDT @ 0.6787
+  • ICPUSDT @ 2.063
+  • LINEAUSDT @ 0.002201
+  • NEIROUSDT @ 0.00005775
+  • NVDABUSDT @ 191.35
+  • ORDIUSDT @ 3.269
+  • PENGUUSDT @ 0.005756
+  • PUNDIXUSDT @ 0.0746
+  • SAGAUSDT @ 0.0122
+  • SXTUSDT @ 0.00662
+  • XLMUSDT @ 0.172
+  • ZROUSDT @ 0.759
+
+🔴 Bearish sweeps: none
+
+— MEXC (SPOT) —
+
+🟢 Bullish sweeps (4):
+  • DASHUSDT @ 29.67
+  • FILUSDT @ 0.6786
+  • MXUSDT @ 1.6353
+  • ZROUSDT @ 0.7592
+
+🔴 Bearish sweeps (1):
+  • UBUSDT @ 0.12854
+
+— KUCOIN (SPOT) —
+
+🟢 Bullish sweeps (9):
+  • DASH-USDT @ 29.66
+  • DATA-USDT @ 0.226
+  • ESP-USDT @ 0.06537
+  • FIL-USDT @ 0.6802
+  • ICP-USDT @ 2.062
+  • PENGU-USDT @ 0.005755
+  • UAI-USDT @ 0.4372
+  • XLM-USDT @ 0.1721
+  • ZRO-USDT @ 0.7595
+
+🔴 Bearish sweeps: none
+
+⚠️ Binance futures unavailable (HTTP 451 — likely geo-block on runner). Spot results above are complete.
