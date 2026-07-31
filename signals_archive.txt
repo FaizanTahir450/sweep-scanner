@@ -535,3 +535,38 @@
 🔴 Bearish sweeps: none
 
 ⚠️ Binance futures unavailable (HTTP 451 — likely geo-block on runner). Spot results above are complete.
+
+==================================================
+
+📊 Daily Sweep Scan — 31 Jul 2026 (1d close)
+
+— BINANCE (SPOT) —
+
+🟢 Bullish sweeps (1):
+  • COINBUSDT @ 155.52
+
+🔴 Bearish sweeps (3):
+  • BNBUSDT @ 591.99
+  • CAKEUSDT @ 1.454
+  • EPICUSDT @ 0.7331
+
+— MEXC (SPOT) —
+
+🟢 Bullish sweeps (1):
+  • ZANOUSDT @ 8.1
+
+🔴 Bearish sweeps (3):
+  • BNBUSDT @ 592.03
+  • CAKEUSDT @ 1.454
+  • EPICUSDT @ 0.7329
+
+— KUCOIN (SPOT) —
+
+🟢 Bullish sweeps: none
+
+🔴 Bearish sweeps (3):
+  • BNB-USDT @ 592.002
+  • EPIC-USDT @ 0.731
+  • YOM-USDT @ 0.10075
+
+⚠️ Binance futures unavailable (HTTP 451 — likely geo-block on runner). Spot results above are complete.
