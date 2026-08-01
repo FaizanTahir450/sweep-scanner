@@ -570,3 +570,38 @@
   • YOM-USDT @ 0.10075
 
 ⚠️ Binance futures unavailable (HTTP 451 — likely geo-block on runner). Spot results above are complete.
+
+==================================================
+
+📊 Daily Sweep Scan — 01 Aug 2026 (1d close)
+
+— BINANCE (SPOT) —
+
+🟢 Bullish sweeps (2):
+  • WIFUSDT @ 0.1434
+  • ZROUSDT @ 0.743
+
+🔴 Bearish sweeps (5):
+  • CFXUSDT @ 0.04216
+  • MUBARAKUSDT @ 0.01299
+  • RLCUSDT @ 0.282
+  • TSTUSDT @ 0.01209
+  • WDCBUSDT @ 538.26
+
+— MEXC (SPOT) —
+
+🟢 Bullish sweeps (1):
+  • ZROUSDT @ 0.7427
+
+🔴 Bearish sweeps: none
+
+— KUCOIN (SPOT) —
+
+🟢 Bullish sweeps (2):
+  • WIF-USDT @ 0.1435
+  • ZRO-USDT @ 0.7433
+
+🔴 Bearish sweeps (1):
+  • CFX-USDT @ 0.04216
+
+⚠️ Binance futures unavailable (HTTP 451 — likely geo-block on runner). Spot results above are complete.
