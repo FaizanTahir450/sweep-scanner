@@ -605,3 +605,37 @@
   • CFX-USDT @ 0.04216
 
 ⚠️ Binance futures unavailable (HTTP 451 — likely geo-block on runner). Spot results above are complete.
+
+==================================================
+
+📊 Daily Sweep Scan — 02 Aug 2026 (1d close)
+
+— BINANCE (SPOT) —
+
+🟢 Bullish sweeps (4):
+  • AVAXUSDT @ 6.191
+  • DOGEUSDT @ 0.06914
+  • ETCUSDT @ 6.51
+  • VIRTUALUSDT @ 0.5509
+
+🔴 Bearish sweeps: none
+
+— MEXC (SPOT) —
+
+🟢 Bullish sweeps (1):
+  • DOGEUSDT @ 0.06914
+
+🔴 Bearish sweeps (2):
+  • BEATUSDT @ 4.6204
+  • BTWUSDT @ 0.090873
+
+— KUCOIN (SPOT) —
+
+🟢 Bullish sweeps (2):
+  • AVAX-USDT @ 6.192
+  • DOGE-USDT @ 0.06914
+
+🔴 Bearish sweeps (1):
+  • BEAT-USDT @ 4.6109
+
+⚠️ Binance futures unavailable (HTTP 451 — likely geo-block on runner). Spot results above are complete.
