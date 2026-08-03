@@ -667,3 +667,42 @@
   • PUMP-USDT @ 0.002086
 
 ⚠️ Binance futures unavailable (HTTP 451 — likely geo-block on runner). Spot results above are complete.
+
+==================================================
+
+📊 Weekly Sweep Scan — 03 Aug 2026 (1w close)
+
+— BINANCE (SPOT) —
+
+🟢 Bullish sweeps (7):
+  • ALGOUSDT @ 0.086
+  • BFUSDUSDT @ 0.999
+  • CFXUSDT @ 0.04192
+  • DASHUSDT @ 31.5
+  • FETUSDT @ 0.1419
+  • ICPUSDT @ 2.077
+  • NILUSDT @ 0.03055
+
+🔴 Bearish sweeps (1):
+  • COTIUSDT @ 0.01285
+
+— MEXC (SPOT) —
+
+🟢 Bullish sweeps (2):
+  • DASHUSDT @ 31.52
+  • NILUSDT @ 0.03053
+
+🔴 Bearish sweeps (1):
+  • NUTXUSDT @ 0
+
+— KUCOIN (SPOT) —
+
+🟢 Bullish sweeps (3):
+  • DASH-USDT @ 29.66
+  • DEXE-USDT @ 2.7546
+  • FET-USDT @ 0.1378
+
+🔴 Bearish sweeps (1):
+  • US-USDT @ 0.045478
+
+⚠️ Binance futures unavailable (HTTP 451 — likely geo-block on runner). Spot results above are complete.
