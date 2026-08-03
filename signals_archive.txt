@@ -639,3 +639,31 @@
   • BEAT-USDT @ 4.6109
 
 ⚠️ Binance futures unavailable (HTTP 451 — likely geo-block on runner). Spot results above are complete.
+
+==================================================
+
+📊 Daily Sweep Scan — 03 Aug 2026 (1d close)
+
+— BINANCE (SPOT) —
+
+🟢 Bullish sweeps: none
+
+🔴 Bearish sweeps (2):
+  • JSTUSDT @ 0.10605
+  • PUMPUSDT @ 0.002086
+
+— MEXC (SPOT) —
+
+🟢 Bullish sweeps (1):
+  • ATTUSDT @ 0.0672
+
+🔴 Bearish sweeps: none
+
+— KUCOIN (SPOT) —
+
+🟢 Bullish sweeps: none
+
+🔴 Bearish sweeps (1):
+  • PUMP-USDT @ 0.002086
+
+⚠️ Binance futures unavailable (HTTP 451 — likely geo-block on runner). Spot results above are complete.
