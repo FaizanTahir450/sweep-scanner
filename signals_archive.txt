@@ -706,3 +706,39 @@
   • US-USDT @ 0.045478
 
 ⚠️ Binance futures unavailable (HTTP 451 — likely geo-block on runner). Spot results above are complete.
+
+==================================================
+
+📊 Daily Sweep Scan — 04 Aug 2026 (1d close)
+
+— BINANCE (SPOT) —
+
+🟢 Bullish sweeps (6):
+  • CRCLBUSDT @ 60.38
+  • GPSUSDT @ 0.00914
+  • HFTUSDT @ 0.009343
+  • MMTUSDT @ 0.1648
+  • VICUSDT @ 0.0524
+  • 币安人生USDT @ 0.5784
+
+🔴 Bearish sweeps (2):
+  • ENAUSDT @ 0.093
+  • WAXPUSDT @ 0.00416
+
+— MEXC (SPOT) —
+
+🟢 Bullish sweeps: none
+
+🔴 Bearish sweeps (1):
+  • ENAUSDT @ 0.09292
+
+— KUCOIN (SPOT) —
+
+🟢 Bullish sweeps: none
+
+🔴 Bearish sweeps (3):
+  • ALGO-USDT @ 0.0903
+  • ENA-USDT @ 0.0929
+  • ICNT-USDT @ 0.11281
+
+⚠️ Binance futures unavailable (HTTP 451 — likely geo-block on runner). Spot results above are complete.
