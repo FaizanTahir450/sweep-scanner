@@ -742,3 +742,37 @@
   • ICNT-USDT @ 0.11281
 
 ⚠️ Binance futures unavailable (HTTP 451 — likely geo-block on runner). Spot results above are complete.
+
+==================================================
+
+📊 Daily Sweep Scan — 05 Aug 2026 (1d close)
+
+— BINANCE (SPOT) —
+
+🟢 Bullish sweeps (1):
+  • GRAMUSDT @ 1.39
+
+🔴 Bearish sweeps (2):
+  • AVAXUSDT @ 6.688
+  • GOOGLBUSDT @ 379.54
+
+— MEXC (SPOT) —
+
+🟢 Bullish sweeps (2):
+  • BEATUSDT @ 2.5833
+  • GRAMUSDT @ 1.391
+
+🔴 Bearish sweeps: none
+
+— KUCOIN (SPOT) —
+
+🟢 Bullish sweeps (4):
+  • ACE-USDT @ 0.07144
+  • ALT-USDT @ 0.005681
+  • BEAT-USDT @ 2.5928
+  • GRAM-USDT @ 1.391
+
+🔴 Bearish sweeps (1):
+  • AVAX-USDT @ 6.688
+
+⚠️ Binance futures unavailable (HTTP 451 — likely geo-block on runner). Spot results above are complete.
