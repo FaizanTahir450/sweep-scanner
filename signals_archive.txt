@@ -806,3 +806,36 @@
   • SKR-USDT @ 0.007996
 
 ⚠️ Binance futures unavailable (HTTP 451 — likely geo-block on runner). Spot results above are complete.
+
+==================================================
+
+📊 Daily Sweep Scan — 07 Aug 2026 (1d close)
+
+— BINANCE (SPOT) —
+
+🟢 Bullish sweeps (3):
+  • AAVEUSDT @ 89.78
+  • JTOUSDT @ 0.4841
+  • WDCBUSDT @ 456.96
+
+🔴 Bearish sweeps (3):
+  • COOKIEUSDT @ 0.0105
+  • POWRUSDT @ 0.042
+  • ROBOUSDT @ 0.0143
+
+— MEXC (SPOT) —
+
+🟢 Bullish sweeps: none
+
+🔴 Bearish sweeps (1):
+  • BTWUSDT @ 0.193176
+
+— KUCOIN (SPOT) —
+
+🟢 Bullish sweeps (1):
+  • AAVE-USDT @ 89.768
+
+🔴 Bearish sweeps (1):
+  • CAP-USDT @ 0.030768
+
+⚠️ Binance futures unavailable (HTTP 451 — likely geo-block on runner). Spot results above are complete.
