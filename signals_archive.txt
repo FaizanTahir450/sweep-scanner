@@ -839,3 +839,51 @@
   • CAP-USDT @ 0.030768
 
 ⚠️ Binance futures unavailable (HTTP 451 — likely geo-block on runner). Spot results above are complete.
+
+==================================================
+
+📊 Daily Sweep Scan — 08 Aug 2026 (1d close)
+
+— BINANCE (SPOT) —
+
+🟢 Bullish sweeps (3):
+  • FETUSDT @ 0.1372
+  • INJUSDT @ 4.513
+  • ZKPUSDT @ 0.0452
+
+🔴 Bearish sweeps (6):
+  • ACEUSDT @ 0.1087
+  • KMNOUSDT @ 0.01923
+  • LITEBUSDT @ 893.54
+  • MSTRBUSDT @ 100.31
+  • SAGAUSDT @ 0.01371
+  • TWTUSDT @ 0.3923
+
+— MEXC (SPOT) —
+
+🟢 Bullish sweeps (3):
+  • HANDLUSDT @ 0.0028989
+  • INJUSDT @ 4.511
+  • QFIUSDT @ 55.383
+
+🔴 Bearish sweeps (3):
+  • BSBUSDT @ 0.16585
+  • KGENUSDT @ 0.2034
+  • USUSDT @ 0.05165
+
+— KUCOIN (SPOT) —
+
+🟢 Bullish sweeps (2):
+  • FET-USDT @ 0.1373
+  • INJ-USDT @ 4.51
+
+🔴 Bearish sweeps (7):
+  • ACE-USDT @ 0.10796
+  • H-USDT @ 0.079843
+  • KGEN-USDT @ 0.20336
+  • TRX-USDT @ 0.3276
+  • US-USDT @ 0.051484
+  • XAI-USDT @ 0.00695
+  • XAUM-USDT @ 4,340.62
+
+⚠️ Binance futures unavailable (HTTP 451 — likely geo-block on runner). Spot results above are complete.
