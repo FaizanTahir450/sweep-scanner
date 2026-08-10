@@ -915,3 +915,42 @@
   • BLUAI-USDT @ 0.020243
 
 ⚠️ Binance futures unavailable (HTTP 451 — likely geo-block on runner). Spot results above are complete.
+
+==================================================
+
+📊 Daily Sweep Scan — 10 Aug 2026 (1d close)
+
+— BINANCE (SPOT) —
+
+🟢 Bullish sweeps: none
+
+🔴 Bearish sweeps (8):
+  • 1MBABYDOGEUSDT @ 0.0003521
+  • BICOUSDT @ 0.04853
+  • IOTXUSDT @ 0.00285
+  • JOEUSDT @ 0.0298
+  • OGUSDT @ 2.682
+  • PENGUUSDT @ 0.006451
+  • PNUTUSDT @ 0.0432
+  • SAGAUSDT @ 0.0149
+
+— MEXC (SPOT) —
+
+🟢 Bullish sweeps (1):
+  • 龙虾USDT @ 0.022046
+
+🔴 Bearish sweeps (2):
+  • BICOUSDT @ 0.04847
+  • BLUAIUSDT @ 0.018111
+
+— KUCOIN (SPOT) —
+
+🟢 Bullish sweeps: none
+
+🔴 Bearish sweeps (4):
+  • BICO-USDT @ 0.0484
+  • BLUAI-USDT @ 0.018168
+  • IOTX-USDT @ 0.002851
+  • PENGU-USDT @ 0.006446
+
+⚠️ Binance futures unavailable (HTTP 451 — likely geo-block on runner). Spot results above are complete.
