@@ -954,3 +954,42 @@
   • PENGU-USDT @ 0.006446
 
 ⚠️ Binance futures unavailable (HTTP 451 — likely geo-block on runner). Spot results above are complete.
+
+==================================================
+
+📊 Daily Sweep Scan — 11 Aug 2026 (1d close)
+
+— BINANCE (SPOT) —
+
+🟢 Bullish sweeps (2):
+  • ONDOUSDT @ 0.34
+  • XRPUSDT @ 1.0123
+
+🔴 Bearish sweeps (5):
+  • ACTUSDT @ 0.0112
+  • BOMEUSDT @ 0.0008291
+  • CRVUSDT @ 0.2631
+  • FLOWUSDT @ 0.03064
+  • HOMEUSDT @ 0.00914
+
+— MEXC (SPOT) —
+
+🟢 Bullish sweeps (2):
+  • BEATUSDT @ 1.801
+  • XRPUSDT @ 1.0122
+
+🔴 Bearish sweeps (1):
+  • CRVUSDT @ 0.2631
+
+— KUCOIN (SPOT) —
+
+🟢 Bullish sweeps (3):
+  • BEAT-USDT @ 1.8024
+  • ONDO-USDT @ 0.33998
+  • XRP-USDT @ 1.0122
+
+🔴 Bearish sweeps (2):
+  • CRV-USDT @ 0.263
+  • NIL-USDT @ 0.04003
+
+⚠️ Binance futures unavailable (HTTP 451 — likely geo-block on runner). Spot results above are complete.
