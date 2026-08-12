@@ -993,3 +993,49 @@
   • NIL-USDT @ 0.04003
 
 ⚠️ Binance futures unavailable (HTTP 451 — likely geo-block on runner). Spot results above are complete.
+
+==================================================
+
+📊 Daily Sweep Scan — 12 Aug 2026 (1d close)
+
+— BINANCE (SPOT) —
+
+🟢 Bullish sweeps (2):
+  • JSTUSDT @ 0.10051
+  • NEARUSDT @ 1.621
+
+🔴 Bearish sweeps (10):
+  • BANANAS31USDT @ 0.009496
+  • BANANAUSDT @ 3.684
+  • CRCLBUSDT @ 71.15
+  • GENIUSUSDT @ 0.3731
+  • HOLOUSDT @ 0.0818
+  • LQTYUSDT @ 0.2084
+  • MAVUSDT @ 0.00914
+  • MITOUSDT @ 0.02433
+  • PROMUSDT @ 1.861
+  • TOWNSUSDT @ 0.00232
+
+— MEXC (SPOT) —
+
+🟢 Bullish sweeps (2):
+  • BEATUSDT @ 1.0912
+  • NEARUSDT @ 1.6201
+
+🔴 Bearish sweeps (2):
+  • HOLOUSDT @ 0.08178
+  • INXUSDT @ 0.007909
+
+— KUCOIN (SPOT) —
+
+🟢 Bullish sweeps (3):
+  • BEAT-USDT @ 1.0898
+  • NEAR-USDT @ 1.6207
+  • SNX-USDT @ 0.2037
+
+🔴 Bearish sweeps (3):
+  • HOLO-USDT @ 0.08214
+  • INX-USDT @ 0.007924
+  • PROM-USDT @ 1.868
+
+⚠️ Binance futures unavailable (HTTP 451 — likely geo-block on runner). Spot results above are complete.
