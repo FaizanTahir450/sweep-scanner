@@ -1039,3 +1039,36 @@
   • PROM-USDT @ 1.868
 
 ⚠️ Binance futures unavailable (HTTP 451 — likely geo-block on runner). Spot results above are complete.
+
+==================================================
+
+📊 Daily Sweep Scan — 13 Aug 2026 (1d close)
+
+— BINANCE (SPOT) —
+
+🟢 Bullish sweeps (4):
+  • AIGENSYNUSDT @ 0.02069
+  • BABYUSDT @ 0.01025
+  • GLMRUSDT @ 0.00731
+  • MEMEUSDT @ 0.000487
+
+🔴 Bearish sweeps (3):
+  • CBRSBUSDT @ 218.6
+  • OPENUSDT @ 0.1985
+  • RAREUSDT @ 0.01293
+
+— MEXC (SPOT) —
+
+🟢 Bullish sweeps (1):
+  • MXUSDT @ 1.6345
+
+🔴 Bearish sweeps: none
+
+— KUCOIN (SPOT) —
+
+🟢 Bullish sweeps (1):
+  • TEA-USDT @ 0.00004397
+
+🔴 Bearish sweeps: none
+
+⚠️ Binance futures unavailable (HTTP 451 — likely geo-block on runner). Spot results above are complete.
