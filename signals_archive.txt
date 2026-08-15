@@ -1097,3 +1097,45 @@
 🔴 Bearish sweeps: none
 
 ⚠️ Binance futures unavailable (HTTP 451 — likely geo-block on runner). Spot results above are complete.
+
+==================================================
+
+📊 Daily Sweep Scan — 15 Aug 2026 (1d close)
+
+— BINANCE (SPOT) —
+
+🟢 Bullish sweeps (8):
+  • ERAUSDT @ 0.0606
+  • HBARUSDT @ 0.0659
+  • KAITOUSDT @ 0.4055
+  • LTCUSDT @ 43.86
+  • MANTAUSDT @ 0.0568
+  • RAREUSDT @ 0.01153
+  • RUNEUSDT @ 0.419
+  • SCRTUSDT @ 0.0289
+
+🔴 Bearish sweeps (3):
+  • DOLOUSDT @ 0.02415
+  • RONINUSDT @ 0.0479
+  • WLFIUSDT @ 0.0556
+
+— MEXC (SPOT) —
+
+🟢 Bullish sweeps (2):
+  • KAITOUSDT @ 0.4056
+  • LTCUSDT @ 43.88
+
+🔴 Bearish sweeps: none
+
+— KUCOIN (SPOT) —
+
+🟢 Bullish sweeps (4):
+  • BDX-USDT @ 0.08251
+  • HBAR-USDT @ 0.06589
+  • ILY-USDT @ 0.3356
+  • US-USDT @ 0.016884
+
+🔴 Bearish sweeps (1):
+  • CROSS-USDT @ 0.10492
+
+⚠️ Binance futures unavailable (HTTP 451 — likely geo-block on runner). Spot results above are complete.
