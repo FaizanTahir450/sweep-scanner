@@ -1139,3 +1139,38 @@
   • CROSS-USDT @ 0.10492
 
 ⚠️ Binance futures unavailable (HTTP 451 — likely geo-block on runner). Spot results above are complete.
+
+==================================================
+
+📊 Daily Sweep Scan — 16 Aug 2026 (1d close)
+
+— BINANCE (SPOT) —
+
+🟢 Bullish sweeps: none
+
+🔴 Bearish sweeps (5):
+  • BOMEUSDT @ 0.0008478
+  • COWUSDT @ 0.141
+  • ETHFIUSDT @ 0.4784
+  • NILUSDT @ 0.04694
+  • ROBOUSDT @ 0.01405
+
+— MEXC (SPOT) —
+
+🟢 Bullish sweeps: none
+
+🔴 Bearish sweeps (3):
+  • ETHFIUSDT @ 0.4783
+  • NILUSDT @ 0.04692
+  • ROBOUSDT @ 0.01406
+
+— KUCOIN (SPOT) —
+
+🟢 Bullish sweeps: none
+
+🔴 Bearish sweeps (3):
+  • BDX-USDT @ 0.07954
+  • COW-USDT @ 0.1403
+  • ROBO-USDT @ 0.01408
+
+⚠️ Binance futures unavailable (HTTP 451 — likely geo-block on runner). Spot results above are complete.
