@@ -1209,3 +1209,36 @@
   • Q-USDT @ 0.024983
 
 ⚠️ Binance futures unavailable (HTTP 451 — likely geo-block on runner). Spot results above are complete.
+
+==================================================
+
+📊 Daily Sweep Scan — 18 Aug 2026 (1d close)
+
+— BINANCE (SPOT) —
+
+🟢 Bullish sweeps: none
+
+🔴 Bearish sweeps (3):
+  • COMPUSDT @ 17.73
+  • HAEDALUSDT @ 0.01705
+  • ONGUSDT @ 0.05515
+
+— MEXC (SPOT) —
+
+🟢 Bullish sweeps (1):
+  • XPINUSDT @ 0.0014696
+
+🔴 Bearish sweeps (1):
+  • 9BITUSDT @ 0.0502
+
+— KUCOIN (SPOT) —
+
+🟢 Bullish sweeps (1):
+  • XPIN-USDT @ 0.00147
+
+🔴 Bearish sweeps (3):
+  • ANSEM-USDT @ 0.2763
+  • BIO-USDT @ 0.02459
+  • XMR-USDT @ 415.67
+
+⚠️ Binance futures unavailable (HTTP 451 — likely geo-block on runner). Spot results above are complete.
