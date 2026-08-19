@@ -1242,3 +1242,44 @@
   • XMR-USDT @ 415.67
 
 ⚠️ Binance futures unavailable (HTTP 451 — likely geo-block on runner). Spot results above are complete.
+
+==================================================
+
+📊 Daily Sweep Scan — 19 Aug 2026 (1d close)
+
+— BINANCE (SPOT) —
+
+🟢 Bullish sweeps (6):
+  • DOTUSDT @ 0.752
+  • INJUSDT @ 4.085
+  • OPUSDT @ 0.0821
+  • PSGUSDT @ 0.473
+  • PYTHUSDT @ 0.0385
+  • SUIUSDT @ 0.6517
+
+🔴 Bearish sweeps (1):
+  • MORPHOUSDT @ 2.088
+
+— MEXC (SPOT) —
+
+🟢 Bullish sweeps (4):
+  • CASHCATUSDT @ 0.08989
+  • DOTUSDT @ 0.7513
+  • SUIUSDT @ 0.6518
+  • VELVETUSDT @ 0.6646
+
+🔴 Bearish sweeps: none
+
+— KUCOIN (SPOT) —
+
+🟢 Bullish sweeps (4):
+  • CASHCAT-USDT @ 0.09
+  • DOT-USDT @ 0.7513
+  • SUI-USDT @ 0.6521
+  • VELVET-USDT @ 0.66576
+
+🔴 Bearish sweeps (2):
+  • AGI-USDT @ 0.00249
+  • PIEVERSE-USDT @ 0.8684
+
+⚠️ Binance futures unavailable (HTTP 451 — likely geo-block on runner). Spot results above are complete.
