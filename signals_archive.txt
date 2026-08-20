@@ -1283,3 +1283,52 @@
   • PIEVERSE-USDT @ 0.8684
 
 ⚠️ Binance futures unavailable (HTTP 451 — likely geo-block on runner). Spot results above are complete.
+
+==================================================
+
+📊 Daily Sweep Scan — 20 Aug 2026 (1d close)
+
+— BINANCE (SPOT) —
+
+🟢 Bullish sweeps (5):
+  • AVGOBUSDT @ 366.22
+  • CBRSBUSDT @ 218.21
+  • KITEUSDT @ 0.0966
+  • PORTALUSDT @ 0.01043
+  • RLUSDUSDT @ 1.0008
+
+🔴 Bearish sweeps (8):
+  • BIOUSDT @ 0.02779
+  • BNBUSDT @ 627.51
+  • HEMIUSDT @ 0.00872
+  • LINKUSDT @ 10.557
+  • MVLLBUSDT @ 31.95
+  • NEARUSDT @ 1.731
+  • VIRTUALUSDT @ 0.6077
+  • WLDUSDT @ 0.3634
+
+— MEXC (SPOT) —
+
+🟢 Bullish sweeps: none
+
+🔴 Bearish sweeps (6):
+  • BNBUSDT @ 627.57
+  • HEMIUSDT @ 0.008731
+  • LINKUSDT @ 10.553
+  • NEARUSDT @ 1.7316
+  • WLDUSDT @ 0.3633
+  • XMRUSDT @ 422.47
+
+— KUCOIN (SPOT) —
+
+🟢 Bullish sweeps: none
+
+🔴 Bearish sweeps (6):
+  • BNB-USDT @ 627.583
+  • DASH-USDT @ 31.84
+  • KCS-USDT @ 7.266
+  • LINK-USDT @ 10.5563
+  • NEAR-USDT @ 1.7321
+  • WLD-USDT @ 0.3635
+
+⚠️ Binance futures unavailable (HTTP 451 — likely geo-block on runner). Spot results above are complete.
