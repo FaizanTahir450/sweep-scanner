@@ -1332,3 +1332,66 @@
   • WLD-USDT @ 0.3635
 
 ⚠️ Binance futures unavailable (HTTP 451 — likely geo-block on runner). Spot results above are complete.
+
+==================================================
+
+📊 Daily Sweep Scan — 21 Aug 2026 (1d close)
+
+— BINANCE (SPOT) —
+
+🟢 Bullish sweeps (1):
+  • BABABUSDT @ 130.19
+
+🔴 Bearish sweeps (23):
+  • ALTUSDT @ 0.00643
+  • ANKRUSDT @ 0.00362
+  • ASRUSDT @ 0.893
+  • CAKEUSDT @ 1.643
+  • CELOUSDT @ 0.06663
+  • CETUSUSDT @ 0.02367
+  • CKBUSDT @ 0.000885
+  • COMPUSDT @ 18.82
+  • CRVUSDT @ 0.2853
+  • HOODBUSDT @ 95.22
+  • ICPUSDT @ 2.388
+  • KAVAUSDT @ 0.0422
+  • LTCUSDT @ 47.82
+  • MTLUSDT @ 0.211
+  • NEXOUSDT @ 0.783
+  • ROSEUSDT @ 0.00589
+  • SANTOSUSDT @ 0.579
+  • SSVUSDT @ 2.396
+  • TRXUSDT @ 0.3375
+  • XTZUSDT @ 0.2216
+  • YBUSDT @ 0.0871
+  • ZECUSDT @ 568.91
+  • ZROUSDT @ 0.875
+
+— MEXC (SPOT) —
+
+🟢 Bullish sweeps (1):
+  • SHOTUSDT @ 0.0000456
+
+🔴 Bearish sweeps (8):
+  • CAKEUSDT @ 1.643
+  • CRVUSDT @ 0.2856
+  • LITUSDT @ 2.67
+  • LTCUSDT @ 47.82
+  • MXUSDT @ 1.6618
+  • TRXUSDT @ 0.3375
+  • ZECUSDT @ 569.43
+  • ZROUSDT @ 0.8755
+
+— KUCOIN (SPOT) —
+
+🟢 Bullish sweeps (1):
+  • ANTFUN-USDT @ 0.0404
+
+🔴 Bearish sweeps (5):
+  • CRV-USDT @ 0.2853
+  • ICP-USDT @ 2.388
+  • LIT-USDT @ 2.674
+  • ZEC-USDT @ 569.09
+  • ZRO-USDT @ 0.875
+
+⚠️ Binance futures unavailable (HTTP 451 — likely geo-block on runner). Spot results above are complete.
