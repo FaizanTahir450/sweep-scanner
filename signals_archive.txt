@@ -1452,3 +1452,118 @@
   • TRUMP-USDT @ 1.868
 
 ⚠️ Binance futures unavailable (HTTP 451 — likely geo-block on runner). Spot results above are complete.
+
+==================================================
+
+📊 Daily Sweep Scan — 23 Aug 2026 (1d close)
+
+— BINANCE (SPOT) —
+
+🟢 Bullish sweeps (6):
+  • 1MBABYDOGEUSDT @ 0.000378
+  • ACTUSDT @ 0.01119
+  • AIGENSYNUSDT @ 0.02046
+  • OPGUSDT @ 0.0964
+  • OPNUSDT @ 0.0558
+  • PARTIUSDT @ 0.0235
+
+🔴 Bearish sweeps (46):
+  • 1000SATSUSDT @ 0.00001209
+  • AEVOUSDT @ 0.02343
+  • ALGOUSDT @ 0.0924
+  • ALTUSDT @ 0.00652
+  • ARBUSDT @ 0.099
+  • ARKMUSDT @ 0.1071
+  • AUSDT @ 0.0731
+  • AWEUSDT @ 0.06488
+  • AXLUSDT @ 0.0418
+  • BANANAUSDT @ 4.037
+  • BFUSDUSDT @ 1
+  • BNSOLUSDT @ 105.8
+  • DCRUSDT @ 14.04
+  • FILUSDT @ 0.7617
+  • GASUSDT @ 1.188
+  • GNOUSDT @ 123.16
+  • HUMAUSDT @ 0.02194
+  • INJUSDT @ 4.935
+  • IQUSDT @ 0.000715
+  • KSMUSDT @ 3.63
+  • LAZIOUSDT @ 0.382
+  • LUNAUSDT @ 0.048
+  • MANAUSDT @ 0.0746
+  • MBLUSDT @ 0.000659
+  • METISUSDT @ 2.69
+  • NEARUSDT @ 1.877
+  • OGUSDT @ 2.688
+  • ONDOUSDT @ 0.3636
+  • OPUSDT @ 0.109
+  • PYTHUSDT @ 0.05215
+  • RAYUSDT @ 0.745
+  • REZUSDT @ 0.003075
+  • SCUSDT @ 0.000687
+  • SENTUSDT @ 0.01313
+  • SHELLUSDT @ 0.0234
+  • SOLUSDT @ 93.82
+  • STEEMUSDT @ 0.04412
+  • SUPERUSDT @ 0.0984
+  • SXTUSDT @ 0.00757
+  • TRBUSDT @ 18.81
+  • TRUMPUSDT @ 2.383
+  • TWTUSDT @ 0.4213
+  • XECUSDT @ 0.00000717
+  • XLMUSDT @ 0.1956
+  • XRPUSDT @ 1.4619
+  • YBUSDT @ 0.0912
+
+— MEXC (SPOT) —
+
+🟢 Bullish sweeps (1):
+  • BASEDUSDT @ 0.07445
+
+🔴 Bearish sweeps (15):
+  • ANSEMUSDT @ 0.27549
+  • ARBUSDT @ 0.09899
+  • CATEUSDT @ 0.081095
+  • FILUSDT @ 0.7617
+  • INJUSDT @ 4.938
+  • MELANIAUSDT @ 0.10797
+  • NEARUSDT @ 1.8768
+  • ONDOUSDT @ 0.3631
+  • PENDLEUSDT @ 1.678
+  • PIUSDT @ 0.09037
+  • PYTHUSDT @ 0.05215
+  • SOLUSDT @ 93.84
+  • XLMUSDT @ 0.1957
+  • XMRUSDT @ 432.63
+  • XRPUSDT @ 1.4618
+
+— KUCOIN (SPOT) —
+
+🟢 Bullish sweeps (4):
+  • ESPORTS-USDT @ 0.0145
+  • GRASS-USDT @ 0.3
+  • H-USDT @ 0.071964
+  • HMSTR-USDT @ 0.0001843
+
+🔴 Bearish sweeps (19):
+  • ANSEM-USDT @ 0.2751
+  • ARB-USDT @ 0.0991
+  • CRO-USDT @ 0.0574
+  • DASH-USDT @ 40.99
+  • FARTCOIN-USDT @ 0.1785
+  • FIL-USDT @ 0.7616
+  • INJ-USDT @ 4.945
+  • JASMY-USDT @ 0.004288
+  • MON-USDT @ 0.02818
+  • NEAR-USDT @ 1.8766
+  • ONDO-USDT @ 0.36361
+  • OP-USDT @ 0.1092
+  • PYTH-USDT @ 0.05212
+  • RAY-USDT @ 0.7451
+  • TRB-USDT @ 18.791
+  • TRUMP-USDT @ 2.383
+  • WIF-USDT @ 0.1958
+  • XLM-USDT @ 0.1956
+  • ZAMA-USDT @ 0.05286
+
+⚠️ Binance futures unavailable (HTTP 451 — likely geo-block on runner). Spot results above are complete.
