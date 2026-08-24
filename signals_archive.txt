@@ -1567,3 +1567,40 @@
   • ZAMA-USDT @ 0.05286
 
 ⚠️ Binance futures unavailable (HTTP 451 — likely geo-block on runner). Spot results above are complete.
+
+==================================================
+
+📊 Daily Sweep Scan — 24 Aug 2026 (1d close)
+
+— BINANCE (SPOT) —
+
+🟢 Bullish sweeps: none
+
+🔴 Bearish sweeps (4):
+  • LDOUSDT @ 0.4003
+  • PENGUUSDT @ 0.009897
+  • UNIUSDT @ 4.523
+  • ZROUSDT @ 1.181
+
+— MEXC (SPOT) —
+
+🟢 Bullish sweeps (1):
+  • USDGOUSDT @ 1
+
+🔴 Bearish sweeps (4):
+  • SEDAUSDT @ 0.02257
+  • TRACUSDT @ 0.3775
+  • UNIUSDT @ 4.526
+  • ZROUSDT @ 1.1814
+
+— KUCOIN (SPOT) —
+
+🟢 Bullish sweeps (1):
+  • NES-USDT @ 0.19596
+
+🔴 Bearish sweeps (3):
+  • PENGU-USDT @ 0.009899
+  • UNI-USDT @ 4.5225
+  • ZRO-USDT @ 1.181
+
+⚠️ Binance futures unavailable (HTTP 451 — likely geo-block on runner). Spot results above are complete.
