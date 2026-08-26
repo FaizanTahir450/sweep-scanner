@@ -1633,3 +1633,36 @@
   • PROM-USDT @ 3.629
 
 ⚠️ Binance futures unavailable (HTTP 451 — likely geo-block on runner). Spot results above are complete.
+
+==================================================
+
+📊 Daily Sweep Scan — 26 Aug 2026 (1d close)
+
+— BINANCE (SPOT) —
+
+🟢 Bullish sweeps: none
+
+🔴 Bearish sweeps (4):
+  • KMNOUSDT @ 0.02431
+  • SOLVUSDT @ 0.00283
+  • WIFUSDT @ 0.1954
+  • ZROUSDT @ 1.199
+
+— MEXC (SPOT) —
+
+🟢 Bullish sweeps: none
+
+🔴 Bearish sweeps (2):
+  • WIFUSDT @ 0.1952
+  • ZROUSDT @ 1.1981
+
+— KUCOIN (SPOT) —
+
+🟢 Bullish sweeps: none
+
+🔴 Bearish sweeps (3):
+  • FORTH-USDT @ 0.286
+  • WIF-USDT @ 0.1954
+  • ZRO-USDT @ 1.1972
+
+⚠️ Binance futures unavailable (HTTP 451 — likely geo-block on runner). Spot results above are complete.
