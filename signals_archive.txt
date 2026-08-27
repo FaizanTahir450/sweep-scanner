@@ -1666,3 +1666,35 @@
   • ZRO-USDT @ 1.1972
 
 ⚠️ Binance futures unavailable (HTTP 451 — likely geo-block on runner). Spot results above are complete.
+
+==================================================
+
+📊 Daily Sweep Scan — 27 Aug 2026 (1d close)
+
+— BINANCE (SPOT) —
+
+🟢 Bullish sweeps: none
+
+🔴 Bearish sweeps (5):
+  • CATIUSDT @ 0.05077
+  • FIDAUSDT @ 0.01977
+  • LSKUSDT @ 0.1059
+  • PORTALUSDT @ 0.0161
+  • PSGUSDT @ 0.506
+
+— MEXC (SPOT) —
+
+🟢 Bullish sweeps: none
+
+🔴 Bearish sweeps (1):
+  • CASHCATUSDT @ 0.23922
+
+— KUCOIN (SPOT) —
+
+🟢 Bullish sweeps: none
+
+🔴 Bearish sweeps (2):
+  • ANTFUN-USDT @ 0.044144
+  • BOB-USDT @ 0.00527
+
+⚠️ Binance futures unavailable (HTTP 451 — likely geo-block on runner). Spot results above are complete.
