@@ -1738,3 +1738,40 @@
   • XPR-USDT @ 0.002985
 
 ⚠️ Binance futures unavailable (HTTP 451 — likely geo-block on runner). Spot results above are complete.
+
+==================================================
+
+📊 Daily Sweep Scan — 29 Aug 2026 (1d close)
+
+— BINANCE (SPOT) —
+
+🟢 Bullish sweeps (1):
+  • JTOUSDT @ 0.4824
+
+🔴 Bearish sweeps (2):
+  • ENAUSDT @ 0.1624
+  • HUMAUSDT @ 0.02094
+
+— MEXC (SPOT) —
+
+🟢 Bullish sweeps: none
+
+🔴 Bearish sweeps (3):
+  • AIXPLAYUSDT @ 0.0001251
+  • ENAUSDT @ 0.1624
+  • LIGHTUSDT @ 0.2018
+
+— KUCOIN (SPOT) —
+
+🟢 Bullish sweeps (2):
+  • SAND-USDT @ 0.05822
+  • YOM-USDT @ 0.02053
+
+🔴 Bearish sweeps (5):
+  • BERT-USDT @ 0.0162
+  • ENA-USDT @ 0.1624
+  • MANTRA-USDT @ 0.00426
+  • XMR-USDT @ 472.41
+  • ZIG-USDT @ 0.04462
+
+⚠️ Binance futures unavailable (HTTP 451 — likely geo-block on runner). Spot results above are complete.
