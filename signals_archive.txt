@@ -1807,3 +1807,19 @@
 🔴 Bearish sweeps: none
 
 ⚠️ Binance futures unavailable (HTTP 451 — likely geo-block on runner). Spot results above are complete.
+
+==================================================
+
+📊 PSX Weekly Sweep Scan — 30 Aug 2026 (1w close)
+
+— PSX (EQUITIES) —
+
+🟢 Bullish sweeps: none
+
+🔴 Bearish sweeps (6):
+  • DADX @ 110
+  • DCR @ 41.3
+  • FIBLM @ 18.86
+  • GEMMEL @ 31.77
+  • POL @ 739.4
+  • POWER @ 23.36
