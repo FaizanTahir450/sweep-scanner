@@ -34,13 +34,16 @@ fire — that's three messages.)
   but candle CLOSES back above it.
 - Bearish sweep: candle wick goes ABOVE the most recent confirmed swing high,
   but candle CLOSES back below it.
-- A swing point needs 5 higher/lower bars on each side to be confirmed, and
-  the level is ignored if any candle already closed through it.
+- Swing points are **ATR-filtered ZigZag pivots**: a high/low only counts once
+  price has closed away from it by `ATR_MULT` × ATR (default 2.0), so minor
+  wiggles are ignored. The level must be **untapped** — no candle has closed
+  through it and no earlier wick has run it (the signal candle is the first).
 - The still-forming (current) candle is always excluded — signals fire only on
   closed candles.
 
 Alerts are kept simple — `⭐<score> SYMBOL @ price`, listed **best-score-first**.
-The **0–100 quality score** (volume spike + rejection strength + close location)
+The **0–100 quality score** (volume spike, rejection wick, close location, reclaim
+distance and swing size in ATRs)
 is a rank indicator only — it never changes which sweeps are detected. Trade
 levels (entry, stop = swept wick extreme, target = `TARGET_R`× risk) are computed
 and **logged** for evaluation but kept out of the message. `MIN_SCORE` (default
@@ -99,7 +102,10 @@ Done. It now runs automatically on schedule (all UTC): **daily** 00:15,
 
 | Setting            | Default    | Meaning                                        |
 |--------------------|-----------|-------------------------------------------------|
-| `SWING_STRENGTH`   | 5         | Bars each side to confirm a swing. Higher = only major highs/lows, fewer signals. |
+| `ATR_MULT`         | 2.0       | ATR multiple a close must reverse by to confirm a swing. 1.5 = more swings, 2.5–3 = only major ones. |
+| `REQUIRE_UNTAPPED` | 1         | Only first-time sweeps (no prior wick through the level). Set `0` to relax. |
+| `MARKET`           | crypto    | `crypto` or `psx` — which market the run scans (set by each workflow). |
+| `PSX_MIN_TURNOVER` | 0         | PSX only: min 20-day avg traded value (PKR) to include a stock; 0 = all. |
 | `MIN_QUOTE_VOLUME` | 500,000   | Skip pairs under $500k 24h volume. Lower = more coins (esp. MEXC/KuCoin long tail), more noise. |
 | `CANDLES`          | 120       | Candles of history examined (per timeframe).    |
 | `SCAN_FUTURES`     | True      | Binance USDT-M futures. Set False to skip.      |
