@@ -1775,3 +1775,35 @@
   • ZIG-USDT @ 0.04462
 
 ⚠️ Binance futures unavailable (HTTP 451 — likely geo-block on runner). Spot results above are complete.
+
+==================================================
+
+📊 Daily Sweep Scan — 30 Aug 2026 (1d close)
+
+— BINANCE (SPOT) —
+
+🟢 Bullish sweeps: none
+
+🔴 Bearish sweeps (4):
+  • ARPAUSDT @ 0.00963
+  • BANDUSDT @ 0.1846
+  • GIGGLEUSDT @ 40.18
+  • KNCUSDT @ 0.1214
+
+— MEXC (SPOT) —
+
+🟢 Bullish sweeps (1):
+  • ZIGUSDT @ 0.041804
+
+🔴 Bearish sweeps (3):
+  • 4USDT @ 0.017857
+  • GIGGLEUSDT @ 40.17
+  • VINUUSDT @ 0
+
+— KUCOIN (SPOT) —
+
+🟢 Bullish sweeps: none
+
+🔴 Bearish sweeps: none
+
+⚠️ Binance futures unavailable (HTTP 451 — likely geo-block on runner). Spot results above are complete.
