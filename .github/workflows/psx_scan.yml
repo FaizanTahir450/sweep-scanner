@@ -1,0 +1,72 @@
+name: PSX Sweep Scan
+
+on:
+  schedule:
+    - cron: "0 13 * * 1-5"   # daily  — 18:00 PKT Mon–Fri (PSX closes 15:30 Mon–Thu / 16:30 Fri; EOD data ~16:00 PKT)
+    - cron: "15 13 * * 5"    # weekly — 18:15 PKT Fridays (after the week's last session)
+  workflow_dispatch:
+    inputs:
+      timeframe:
+        description: "Timeframe to scan"
+        type: choice
+        default: daily
+        options: [daily, weekly]
+
+permissions:
+  contents: write
+
+# Same group as the crypto workflow so the two commit-backs never race.
+concurrency:
+  group: sweep-scan-signals
+  cancel-in-progress: false
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 55
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install requests
+
+      - name: Resolve timeframe
+        id: tf
+        run: |
+          INPUT="${{ github.event.inputs.timeframe }}"
+          SCHED="${{ github.event.schedule }}"
+          TF=1d
+          if [ "$INPUT" = "weekly" ] || [ "$SCHED" = "15 13 * * 5" ]; then TF=1w; fi
+          echo "tf=$TF" >> "$GITHUB_OUTPUT"
+          echo "Resolved timeframe: $TF"
+
+      - name: Run PSX scanner (scan + log new signals)
+        env:
+          MARKET: psx
+          TIMEFRAME: ${{ steps.tf.outputs.tf }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: python scanner.py
+
+      - name: Evaluate outcomes
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          DIGEST: "0"   # the weekly crypto run sends the combined digest
+        run: python evaluate.py
+
+      - name: Commit signal log, archive and PSX history cache
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add signals.jsonl signals_archive.txt psx_cache
+          if git diff --cached --quiet; then
+            echo "Nothing to commit."
+          else
+            git commit -m "chore: PSX scan — update signal log + cache [skip ci]"
+            git push || (git pull --rebase && git push)
+          fi

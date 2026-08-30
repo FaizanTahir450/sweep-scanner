@@ -29,7 +29,8 @@ sc.CANDLES  = int(os.environ.get("BACKTEST_CANDLES", "500"))   # deepen history 
 MIN_LEN = sc.ATR_PERIOD + 10   # matches analyze_sweep's minimum history requirement
 LISTERS = {"BINANCE": sc.get_binance_spot_symbols,
            "MEXC": sc.get_mexc_symbols,
-           "KUCOIN": sc.get_kucoin_symbols}
+           "KUCOIN": sc.get_kucoin_symbols,
+           "PSX": sc.get_psx_symbols}       # e.g. BACKTEST_EXCHANGES=PSX BACKTEST_TIMEFRAMES=1d,1w
 
 
 def backtest_symbol(exchange, symbol, timeframe):

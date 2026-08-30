@@ -21,15 +21,22 @@ Logic per symbol:
       Bearish sweep : high > swing_high AND close < swing_high
 Sends one consolidated Telegram message per run.
 
-Env vars: TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID (required); TIMEFRAME,
-SIGNALS_LOG, TARGET_R, EVAL_HORIZON, MIN_SCORE, ATR_MULT,
-REQUIRE_UNTAPPED (optional).
+Markets: MARKET=crypto (default: Binance/MEXC/KuCoin spot + Binance futures) or
+MARKET=psx (Pakistan Stock Exchange equities, daily/weekly, official PSX Data
+Portal + committed psx_cache/). Detection is identical for both.
+
+Env vars: TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID (required); MARKET, TIMEFRAME,
+SIGNALS_LOG, TARGET_R, EVAL_HORIZON, MIN_SCORE, ATR_MULT, REQUIRE_UNTAPPED,
+PSX_MIN_TURNOVER (optional).
 """
 
 import os
 import json
 import time
 from collections import namedtuple
+
+import re
+from datetime import datetime, date, timedelta, timezone
 
 import requests
 
@@ -45,6 +52,11 @@ MIN_QUOTE_VOLUME = 500_000     # skip pairs with < $500k 24h volume
 QUOTE_ASSET      = "USDT"
 SCAN_FUTURES     = True         # Binance USDT-M futures (geo-blocked on US runners)
 REQUEST_PAUSE    = 0.08        # seconds between kline requests (rate-limit safety)
+
+# Market: "crypto" (default) scans the crypto exchanges below; "psx" scans
+# Pakistan Stock Exchange equities (daily/weekly). Same detection logic either
+# way — only the data adapter, session calendar and message label differ.
+MARKET = os.environ.get("MARKET", "crypto").strip().lower()
 
 # Trade levels & evaluation
 TARGET_R     = float(os.environ.get("TARGET_R", "2"))       # reward multiple (stop = 1R)
@@ -225,9 +237,231 @@ def klines_for(exchange, symbol, timeframe):
         return binance_style_klines(MEXC_BASE, "/api/v3/klines", symbol, MEXC_INTERVALS[timeframe])
     if exchange == "KUCOIN":
         return kucoin_klines(symbol, timeframe)
+    if exchange == "PSX":
+        return psx_klines(symbol, timeframe)
     if exchange == "BINANCE FUT":
         return binance_style_klines(FUT_BASE, "/fapi/v1/klines", symbol, BINANCE_INTERVALS[timeframe])
     raise ValueError(f"unknown exchange: {exchange}")
+
+
+# ── PSX (Pakistan Stock Exchange) adapter ──────────────────────────
+# Data: the official PSX Data Portal (dps.psx.com.pk) — free, no key, raw
+# (unadjusted) EOD OHLCV via POST /historical, ONE MONTH per request. To keep
+# runs fast a per-symbol CSV history cache (psx_cache/<SYMBOL>.csv, committed
+# back by the Action) is maintained; each run fetches only the current month
+# (plus any months the cache is missing). SCSTrade (identical numbers, whole
+# history in one call) is the automatic fallback and the one-time backfill
+# source. PSX trades Mon-Fri; weekly candles are aggregated here from daily
+# bars (Mon-Fri weeks). Monthly is not supported for PSX.
+PSX_BASE  = "https://dps.psx.com.pk"
+SCS_BASE  = "https://www.scstrade.com"
+PSX_CACHE = os.environ.get("PSX_CACHE_DIR", "psx_cache")
+PSX_KEEP  = 650                      # daily rows kept per symbol (~2.6y ≈ 120 weekly candles)
+PSX_MIN_TURNOVER = float(os.environ.get("PSX_MIN_TURNOVER", "0"))  # PKR 20d avg close×volume; 0 = every equity
+PKT = timezone(timedelta(hours=5))
+PSX_STATE = {"latest_date": None}    # newest session date seen this run (holiday / staleness guard)
+# Non-equity instruments that share the equity list: rights "(R)/(Right)", preference
+# shares "(Pref)/(PRS)", participation term certificates "(Ptc)". Matched on name.
+_PSX_NON_EQUITY = re.compile(r"\((?:r\d*|right|prs|ptc|[^)]*pref[^)]*)\)", re.I)
+_PSX_TR = re.compile(r"<tr[^>]*>(.*?)</tr>", re.S)
+_PSX_TD = re.compile(r"<t[dh][^>]*>(.*?)</t[dh]>", re.S)
+
+
+def _pkt_now():
+    return datetime.now(PKT)
+
+
+def _date_ms(d):
+    """'YYYY-MM-DD' -> ms at 00:00 UTC — the candle id used in the signal log."""
+    y, m, dd = (int(x) for x in d.split("-"))
+    return int(datetime(y, m, dd, tzinfo=timezone.utc).timestamp() * 1000)
+
+
+def _psx_cache_path(sym):
+    return os.path.join(PSX_CACHE, f"{sym}.csv")
+
+
+def _psx_cache_read(sym):
+    """Cached daily rows (date, o, h, l, c, v), ascending."""
+    p = _psx_cache_path(sym)
+    if not os.path.exists(p):
+        return []
+    out = []
+    with open(p, encoding="utf-8") as f:
+        next(f, None)                                    # header
+        for line in f:
+            c = line.strip().split(",")
+            if len(c) == 6:
+                out.append((c[0], float(c[1]), float(c[2]), float(c[3]), float(c[4]), int(float(c[5]))))
+    return out
+
+
+def _fmt_px(x):
+    return f"{x:.4f}".rstrip("0").rstrip(".")
+
+
+def _psx_cache_write(sym, rows):
+    os.makedirs(PSX_CACHE, exist_ok=True)
+    with open(_psx_cache_path(sym), "w", encoding="utf-8", newline="") as f:
+        f.write("date,open,high,low,close,volume\n")
+        for d, o, h, l, c, v in rows[-PSX_KEEP:]:
+            f.write(f"{d},{_fmt_px(o)},{_fmt_px(h)},{_fmt_px(l)},{_fmt_px(c)},{v}\n")
+
+
+def _psx_portal_month(sym, year, month):
+    """Official portal: one month of EOD OHLCV (HTML table) -> rows."""
+    r = session.post(f"{PSX_BASE}/historical",
+                     data={"month": month, "year": year, "symbol": sym}, timeout=30)
+    r.raise_for_status()
+    rows = []
+    for tr in _PSX_TR.findall(r.text):
+        c = [re.sub(r"<[^>]+>", "", x).strip() for x in _PSX_TD.findall(tr)]
+        if len(c) < 6 or c[0].upper() == "DATE":
+            continue
+        try:
+            d = datetime.strptime(c[0], "%b %d, %Y").date().isoformat()
+            o, h, l, cl = (float(x.replace(",", "")) for x in c[1:5])
+            v = int(float(c[5].replace(",", "") or 0))
+        except ValueError:
+            continue
+        if cl > 0:
+            rows.append((d, o, h, l, cl, v))
+    return rows
+
+
+def _psx_scs_history(sym, start="01/01/2023"):
+    """SCSTrade fallback/backfill: whole history in one call -> rows (PKT dates)."""
+    end = (_pkt_now() + timedelta(days=1)).strftime("%m/%d/%Y")
+    r = session.post(f"{SCS_BASE}/stockscreening/SS_CompanySnapShotHP.aspx/chart",
+                     json={"par": sym, "date1": start, "date2": end},
+                     headers={"Content-Type": "application/json"}, timeout=30)
+    r.raise_for_status()
+    rows = []
+    for x in r.json().get("d") or []:
+        ms = int(re.search(r"-?\d+", x["trading_Date"]).group())
+        d = datetime.fromtimestamp(ms / 1000, tz=timezone.utc).astimezone(PKT).date().isoformat()
+        o, h, l, c, v = (x.get("trading_open"), x.get("trading_high"), x.get("trading_low"),
+                         x.get("trading_close"), x.get("trading_vol"))
+        if None in (o, h, l, c) or c <= 0:
+            continue
+        rows.append((d, float(o), float(h), float(l), float(c), int(v or 0)))
+    return rows
+
+
+def _psx_update_cache(sym):
+    """Merge fresh data into the symbol's cache. Returns daily rows, ascending."""
+    rows = {r[0]: r for r in _psx_cache_read(sym)}
+    today = _pkt_now().date()
+    last = max(rows) if rows else None
+    fresh = []
+    try:
+        if last and (today - date.fromisoformat(last)).days <= 100:
+            # portal: every month from the last cached month up to the current one (≤4)
+            y, m = today.year, today.month
+            ly, lm = int(last[:4]), int(last[5:7])
+            months = []
+            while (y, m) >= (ly, lm) and len(months) < 4:
+                months.append((y, m))
+                m -= 1
+                if m == 0:
+                    y, m = y - 1, 12
+            for yy, mm in months:
+                fresh += _psx_portal_month(sym, yy, mm)
+        else:                                            # empty/stale cache: full backfill
+            fresh = _psx_scs_history(sym)
+            if not fresh:                                # not on SCSTrade: last 3 months from the portal
+                y, m = today.year, today.month
+                for _ in range(3):
+                    fresh += _psx_portal_month(sym, y, m)
+                    m -= 1
+                    if m == 0:
+                        y, m = y - 1, 12
+    except Exception:
+        try:
+            fresh = _psx_scs_history(sym)
+        except Exception:
+            fresh = []
+    changed = False
+    for r in fresh:
+        old = rows.get(r[0])
+        if old is None or any(abs(a - b) > 1e-4 for a, b in zip(old[1:5], r[1:5])) or old[5] != r[5]:
+            rows[r[0]] = r
+            changed = True
+    out = [rows[k] for k in sorted(rows)][-PSX_KEEP:]
+    if changed:
+        _psx_cache_write(sym, out)
+    return out
+
+
+def get_psx_symbols():
+    """All listed PSX equities (no debt instruments / ETFs); optional turnover floor."""
+    syms = get_json(f"{PSX_BASE}/symbols")
+    eq = sorted(x["symbol"] for x in syms
+                if not x.get("isDebt") and not x.get("isETF")
+                and not _PSX_NON_EQUITY.search(x.get("name") or ""))
+    if PSX_MIN_TURNOVER > 0:
+        keep = []
+        for s in eq:
+            recent = _psx_cache_read(s)[-20:]
+            if recent and sum(r[4] * r[5] for r in recent) / len(recent) >= PSX_MIN_TURNOVER:
+                keep.append(s)
+        eq = keep
+    return eq
+
+
+def psx_klines(symbol, timeframe=TIMEFRAME):
+    """Klines for a PSX equity: daily rows from the cache (+fresh month), or Mon-Fri weekly aggregates."""
+    if timeframe not in ("1d", "1w"):
+        raise ValueError("PSX supports 1d / 1w only")
+    rows = _psx_update_cache(symbol)
+    now = _pkt_now()
+    today = now.date().isoformat()
+    if rows and rows[-1][0] == today and (now.hour, now.minute) < (16, 45):
+        rows = rows[:-1]                                 # session not over yet — treat as forming
+    if rows:
+        PSX_STATE["latest_date"] = max(PSX_STATE["latest_date"] or "", rows[-1][0])
+    if timeframe == "1d":
+        return Klines(highs=[r[2] for r in rows], lows=[r[3] for r in rows],
+                      closes=[r[4] for r in rows], opens=[_date_ms(r[0]) for r in rows],
+                      oprices=[r[1] for r in rows], vols=[r[5] for r in rows])
+    weeks, order = {}, []
+    for d, o, h, l, c, v in rows:
+        dd = date.fromisoformat(d)
+        key = dd.isocalendar()[:2]
+        if key not in weeks:
+            weeks[key] = [(dd - timedelta(days=dd.weekday())).isoformat(), o, h, l, c, v]
+            order.append(key)
+        else:
+            w = weeks[key]
+            w[2] = max(w[2], h); w[3] = min(w[3], l); w[4] = c; w[5] += v
+    wk = [weeks[k] for k in order]
+    if wk:                                               # drop the forming week (closed after Fri 17:00 PKT)
+        mon = date.fromisoformat(wk[-1][0])
+        fri_close = datetime(mon.year, mon.month, mon.day, 17, 0, tzinfo=PKT) + timedelta(days=4)
+        if now < fri_close:
+            wk = wk[:-1]
+    return Klines(highs=[w[2] for w in wk], lows=[w[3] for w in wk], closes=[w[4] for w in wk],
+                  opens=[_date_ms(w[0]) for w in wk], oprices=[w[1] for w in wk], vols=[w[5] for w in wk])
+
+
+def psx_session_check():
+    """(has_new_candle, wanted_candle_ts, note) for this run, from the newest session seen."""
+    latest = PSX_STATE["latest_date"]
+    now = _pkt_now()
+    today = now.date()
+    if not latest:
+        return False, None, "⚠️ PSX data unavailable this run (portal and fallback both failed)."
+    ld = date.fromisoformat(latest)
+    if TIMEFRAME == "1d":
+        if ld != today:
+            return False, None, f"PSX market closed today (last session {ld:%d %b %Y}) — no new daily candle."
+        return True, _date_ms(latest), ""
+    mon_latest = ld - timedelta(days=ld.weekday())
+    mon_today = today - timedelta(days=today.weekday())
+    fri_close = datetime(mon_today.year, mon_today.month, mon_today.day, 17, 0, tzinfo=PKT) + timedelta(days=4)
+    if mon_latest != mon_today or now < fri_close:
+        return False, None, f"No completed PSX week to scan yet (last session {ld:%d %b %Y})."
+    return True, _date_ms(mon_latest.isoformat()), ""
 
 
 # ── Swing detection (ATR-filtered ZigZag — real pivots, not noise) ──
@@ -586,39 +820,62 @@ def render_message(header, blocks, formatter):
 
 # ── Exchange registry (spot) ───────────────────────────────────────
 # (display name, symbol-listing fn, kline fn)
-SPOT_EXCHANGES = [
+CRYPTO_EXCHANGES = [
     ("BINANCE", get_binance_spot_symbols, lambda s: klines_for("BINANCE", s, TIMEFRAME)),
     ("MEXC",    get_mexc_symbols,         lambda s: klines_for("MEXC", s, TIMEFRAME)),
     ("KUCOIN",  get_kucoin_symbols,       lambda s: klines_for("KUCOIN", s, TIMEFRAME)),
 ]
+PSX_EXCHANGES = [
+    ("PSX", get_psx_symbols, lambda s: klines_for("PSX", s, TIMEFRAME)),
+]
+SPOT_EXCHANGES = PSX_EXCHANGES if MARKET == "psx" else CRYPTO_EXCHANGES
 
 
 # ── Main ───────────────────────────────────────────────────────────
 def main():
     date_str = time.strftime("%d %b %Y", time.gmtime())
     print(f"Timeframe: {TF_LABEL} ({TIMEFRAME}) | MIN_SCORE={MIN_SCORE}")
-    hdr = f"📊 {TF_LABEL} Sweep Scan — {date_str} ({TIMEFRAME} close)"
+    if MARKET == "psx" and TIMEFRAME not in ("1d", "1w"):
+        print("PSX supports daily/weekly only — nothing to do.")
+        return
+    market = "PSX " if MARKET == "psx" else ""
+    hdr = f"📊 {market}{TF_LABEL} Sweep Scan — {date_str} ({TIMEFRAME} close)"
     if MIN_SCORE:
         hdr += f"  [min score {MIN_SCORE}]"
     blocks = []           # collected once, rendered twice (Telegram + archive)
     all_signals = []
 
     # Spot exchanges — one failing (e.g. geo-block) never blocks the others
+    kind = "EQUITIES" if MARKET == "psx" else "SPOT"
     for display, list_symbols, fetch_klines in SPOT_EXCHANGES:
         try:
             syms = list_symbols()
             print(f"[{display}] symbols to scan: {len(syms)}")
             sigs, _ = scan(display, syms, fetch_klines)
             all_signals += sigs
-            blocks.append({"label": f"{display} (SPOT)",
+            blocks.append({"label": f"{display} ({kind})",
                            "bulls": [s for s in sigs if s["direction"] == "bull"],
                            "bears": [s for s in sigs if s["direction"] == "bear"]})
         except Exception as e:
             print(f"[{display}] scan failed: {type(e).__name__}: {e}")
             blocks.append({"note": f"⚠️ {display} spot scan unavailable ({type(e).__name__})."})
 
+    # PSX: only report the just-closed session/week; on holidays send a one-line note
+    if MARKET == "psx":
+        ok, want_ts, note = psx_session_check()
+        if not ok:
+            print(note)
+            send_telegram(f"{hdr}\n\n{note}")
+            append_archive(f"{hdr}\n\n{note}")
+            return
+        for b in blocks:
+            if "bulls" in b:
+                b["bulls"] = [s for s in b["bulls"] if s["candle_ts"] == want_ts]
+                b["bears"] = [s for s in b["bears"] if s["candle_ts"] == want_ts]
+        all_signals = [s for s in all_signals if s["candle_ts"] == want_ts]
+
     # Binance USDT-M futures (may be geo-blocked on some runners)
-    if SCAN_FUTURES:
+    if SCAN_FUTURES and MARKET == "crypto":
         try:
             fut_syms = get_futures_symbols()
             print(f"[BINANCE FUT] symbols to scan: {len(fut_syms)}")

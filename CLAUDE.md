@@ -15,6 +15,10 @@ The **timeframe** is selected at runtime via the `TIMEFRAME` env var
 (00:15 UTC), weekly (Mondays 00:15 UTC), monthly (1st 00:15 UTC) — each setting
 `TIMEFRAME` accordingly; a manual `workflow_dispatch` has a timeframe dropdown.
 
+A second market, **PSX (Pakistan Stock Exchange equities)**, runs through the
+*same* scanner with `MARKET=psx` (daily + weekly only) on its own workflow —
+see "PSX market" below.
+
 ## Files
 
 | File | Purpose |
@@ -24,35 +28,38 @@ The **timeframe** is selected at runtime via the `TIMEFRAME` env var
 | `backtest.py` | Read-only historical backtest: replays candles, fires the live `analyze_sweep` per bar, grades with `evaluate_outcome`, reports win% / expectancy by timeframe/direction/exchange. Run locally on demand; tune via `BACKTEST_*` env vars. Never writes signals.jsonl or Telegram. |
 | `signals.jsonl` | Append-only signal log, committed back by the Action each run. One JSON object per signal (levels + outcome). Created on first run; **not** gitignored. |
 | `signals_archive.txt` | Human-readable archive: a copy of every message in plain `SYMBOL @ price` style (`fmt_section_simple`), appended each run, committed back. Telegram uses `fmt_section` (`⭐score SYMBOL @ price`, best-first); both render from the same blocks via `render_message()`. Entry/stop/target are logged to `signals.jsonl` but shown in neither message. |
+| `.github/workflows/psx_scan.yml` | PSX workflow: crons `0 13 * * 1-5` (daily 18:00 PKT Mon–Fri) and `15 13 * * 5` (weekly Fri 18:15 PKT) + manual dropdown (daily/weekly). Runs `scanner.py` with `MARKET=psx`, then `evaluate.py`, then commits `signals.jsonl`, `signals_archive.txt` **and `psx_cache/`** back. Shares the `sweep-scan-signals` concurrency group with the crypto workflow. |
+| `psx_cache/<SYMBOL>.csv` | Committed per-symbol PSX daily history (`date,open,high,low,close,volume`, ≤650 rows ≈ 2.6y). Refreshed incrementally each run (current month from the portal); one-time backfill came from SCSTrade and was verified identical to the portal. ~500 files / ~13 MB. |
 | `.github/workflows/scan.yml` | Three crons (daily `15 0 * * *`, weekly `15 0 * * 1`, monthly `15 0 1 * *`) + manual `workflow_dispatch` with a timeframe dropdown. Steps: resolve timeframe → run scanner → run evaluate → commit `signals.jsonl` back. `permissions: contents: write` + a `concurrency` group (serializes the commit-back). Weekly run sets `DIGEST=1`. |
 | `README.md` | End-user setup guide (Telegram bot, GitHub secrets, manual trigger). |
 | `IMPROVEMENTS.md` | Backlog of strategy upgrades (some now built — see markers). |
 
 ## Signal logic — DO NOT change unless the user explicitly asks
 
-Implemented in `scanner.py`; treat as fixed spec:
+Implemented in `scanner.py`; treat as fixed spec (identical for crypto and PSX):
 
-- Find the most recent **confirmed** swing low/high — `SWING_STRENGTH = 5` bars
-  on each side.
-- The level must still be **intact**: no candle has *closed* beyond it since the
-  pivot (checked up to, but excluding, the last closed candle).
-- On the **last closed** daily candle:
-  - **Bullish sweep**: `low < swing_low` AND `close > swing_low`
-  - **Bearish sweep**: `high > swing_high` AND `close < swing_high`
-- Key functions: `last_valid_pivot()` (pivot + intact check) and
-  `check_sweep()` (returns `"bull"`, `"bear"`, or `None`). These are exchange-
-  agnostic — they take `(highs, lows, closes)` lists, so adding an exchange never
-  touches the signal logic.
-- `analyze_sweep()` is a **layer on top** of `check_sweep` (does not change it):
-  it adds entry/stop/target (stop = the sweep wick extreme, target = `TARGET_R`×
-  risk). If you change the level math, do it here, not in `check_sweep`.
-- `score_signal()` is another post-detection layer: a 0-100 rank from volume
-  spike + rejection wick + close location. It NEVER changes detection. `MIN_SCORE`
-  (default 0) is an opt-in filter applied in `scan()`; at 0 nothing is dropped.
-  Backtest note: win% is non-monotonic in score (mid-band best, top band regresses
-  — big-volume/deep-wick sweeps behave like breakouts). Recalibrate before relying
-  on `MIN_SCORE` to filter. Fetchers now return a `Klines` namedtuple that also
-  carries `oprices` (open price) and `vols` (volume) for scoring.
+- **Swings = ATR-filtered ZigZag** (`compute_atr` 14-period + `detect_pivots`): a
+  candidate high/low keeps extending while price makes new extremes and is only
+  *confirmed* once price CLOSES against it by `ATR_MULT × ATR` (default 2.0).
+  Smaller wiggles never become pivots. Pivots alternate H/L and carry the bar at
+  which they became known (`confirmed`) — no lookahead.
+- **Level selection** (`last_intact_swing`): the most recent confirmed swing that
+  is still sweepable — confirmed before the last candle, no candle has *closed*
+  beyond it since the pivot, and (with `REQUIRE_UNTAPPED`, default on) no earlier
+  *wick* has traded through it either (the signal candle must be the FIRST to run
+  the level). A broken nearer level falls through to the next older intact one.
+- **Sweep trigger** on the **last closed** candle (`analyze_sweep`):
+  - **Bullish**: `low < swing_low` AND `close > swing_low`
+  - **Bearish**: `high > swing_high` AND `close < swing_high`
+  Entry = close, stop = the sweep wick extreme, target = `TARGET_R`× risk.
+  `check_sweep()` is a thin wrapper returning `"bull"`/`"bear"`/`None`.
+- `score_signal(sig, k)` is a post-detection **ranking** layer (0–100: volume
+  spike, rejection wick, close location, reclaim distance, swing size in ATRs). It
+  never changes detection. `MIN_SCORE` (default 0) is an opt-in filter in `scan()`.
+- Fetchers return a `Klines` namedtuple `(highs, lows, closes, opens, oprices, vols)`;
+  `opens` are candle open/start times in ms and serve as each candle's id.
+- Backtest note (IMPROVEMENTS.md): none of the level-finders tested beat ~29% win
+  at 2R; the deployed ZigZag+untapped variant was kept by the owner's decision.
 
 ## Signal logging & evaluation
 
@@ -67,6 +74,35 @@ Implemented in `scanner.py`; treat as fixed spec:
   wins same-candle ties), or **expired** (mark-to-market R). Writes the file back.
 - The digest (win rate / avg R, overall + per timeframe/direction) is sent on the
   weekly run (`DIGEST=1`).
+
+## PSX market (`MARKET=psx`)
+
+- **Universe**: every listed PSX equity from the portal's `/symbols` (excludes
+  debt instruments, ETFs, and rights/preference-share instruments by name tag),
+  ~750 tickers of which ~440 trade on a given day. `PSX_MIN_TURNOVER` (PKR, 20-day
+  average close×volume; default 0 = off) is an optional liquidity floor.
+- **Data**: official **PSX Data Portal** `https://dps.psx.com.pk` — free, no key,
+  raw *unadjusted* EOD OHLCV via `POST /historical {month, year, symbol}` (HTML
+  table, ONE month per request; `/timeseries/eod/<SYM>` has no high/low so it is
+  not used). To keep runs ~10 min, `psx_cache/<SYMBOL>.csv` is kept and committed
+  back; each run fetches only the months since the cache's last date (≤4). Empty
+  or >100-day-stale caches are rebuilt from **SCSTrade**
+  (`POST scstrade.com/stockscreening/SS_CompanySnapShotHP.aspx/chart`, whole
+  history in one call; its `/Date(ms)/` stamps are PKT midnight → convert with
+  UTC+5). SCSTrade is also the automatic fallback when the portal errors; if it has
+  no data for a symbol, the last 3 portal months are used. Yahoo `.KA` was rejected
+  (null bars, blocks runners).
+- **Candles**: daily = one portal row per session; **weekly is aggregated locally**
+  from daily bars over Mon–Fri ISO weeks (id = Monday 00:00 UTC in ms). Monthly is
+  not supported for PSX. Forming-candle safety: a same-day bar is dropped before
+  16:45 PKT; the current week is dropped until Friday 17:00 PKT.
+- **Session guard** (`psx_session_check`, via `PSX_STATE["latest_date"]`): only
+  signals on the just-closed session (daily) / just-completed week (weekly) are
+  reported; on a holiday/no-new-candle day a one-line note is sent instead, so
+  stale candles never re-alert. Signals are logged with `exchange:"PSX"` into the
+  shared `signals.jsonl`; `evaluate.py` scores them through `klines_for("PSX", …)`.
+- **Caveat**: prices are unadjusted — bonus/rights issues create price gaps that
+  can look like sweeps. Timezone: all PSX dates are PKT (UTC+5, no DST).
 
 ## Architecture — adding/removing exchanges
 
@@ -107,6 +143,10 @@ Signals only ever fire on closed candles, on every timeframe.
 | `TIMEFRAME` (env) | 1d | `1d`/`1w`/`1M` (or daily/weekly/monthly). Selects per-exchange interval via `BINANCE_INTERVALS`/`MEXC_INTERVALS`/`KUCOIN_TYPES` (note MEXC weekly is `1W`) and the message label. |
 | `TARGET_R` (env) | 2 | Reward multiple for the target; stop = 1R (the sweep wick). |
 | `EVAL_HORIZON` (env) | 20 | Candles a signal has to resolve before it expires. |
+| `MARKET` (env) | crypto | `crypto` or `psx` — selects the exchange registry (`CRYPTO_EXCHANGES` / `PSX_EXCHANGES`), session calendar and message label. |
+| `ATR_MULT` (env) | 2.0 | ATR multiple a close must reverse by to confirm a ZigZag swing (1.5 = more swings, 2.5–3 = only major). |
+| `REQUIRE_UNTAPPED` (env) | 1 | `0` to allow sweeps of levels a prior wick already ran. |
+| `PSX_MIN_TURNOVER` (env) | 0 | PSX only: min 20-day avg traded value (PKR) to include a stock; 0 = every equity. |
 | `SIGNALS_LOG` (env) | signals.jsonl | Path to the signal log (override to a scratch path for local tests so the repo file isn't touched). |
 | `CANDLES` | 120 | Candles of history fetched per symbol (per timeframe). |
 | `MIN_QUOTE_VOLUME` | 500_000 | Skip pairs under $500k 24h quote volume. Applied to every exchange. Lower = more coins (esp. MEXC/KuCoin long tail), more noise. |

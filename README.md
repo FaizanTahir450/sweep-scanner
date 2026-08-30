@@ -5,6 +5,9 @@ Binance USDT-M futures when reachable) on **daily, weekly, and monthly** candles
 detects liquidity sweeps / Swing Failure Patterns, and sends you a Telegram
 alert. Runs free on GitHub Actions — no PC, no server, nothing manual.
 
+The **same strategy also scans every Pakistan Stock Exchange (PSX) equity** on
+daily and weekly candles — see *PSX stocks* below.
+
 **Timeframes & schedule (all times UTC):**
 - **Daily** — every day at 00:15, after the 1D candle closes.
 - **Weekly** — Mondays at 00:15, after the 1W candle closes.
@@ -12,6 +15,19 @@ alert. Runs free on GitHub Actions — no PC, no server, nothing manual.
 
 Each timeframe sends its own Telegram message. (On a Monday-the-1st all three
 fire — that's three messages.)
+
+**PSX stocks (Pakistan Stock Exchange):**
+- Universe: all ~750 listed equities (no debt, ETFs, rights or preference shares).
+- Data: the official **PSX Data Portal** (free, no key, unadjusted EOD OHLCV), with
+  a committed history cache (`psx_cache/`) so each run only fetches the current
+  month; SCSTrade is the automatic fallback.
+- Schedule (PKT): **daily 18:00 Mon–Fri**, **weekly Fri 18:15** — after the close
+  and the portal's EOD publish. Separate Telegram message (`📊 PSX Daily Sweep
+  Scan …`). On market holidays you get a one-line "market closed" note.
+- Manual run: Actions → **PSX Sweep Scan** → Run workflow → daily / weekly.
+- Same signal rules, levels, score and outcome tracking as crypto (`exchange: PSX`
+  in `signals.jsonl`). Prices are unadjusted, so bonus/rights gaps can show up as
+  sweeps — sanity-check those.
 
 **Signal logic (same on every timeframe):**
 - Bullish sweep: candle wick goes BELOW the most recent confirmed swing low,
