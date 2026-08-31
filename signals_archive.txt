@@ -1854,3 +1854,30 @@
   • O-USDT @ 0.53437
 
 ⚠️ Binance futures unavailable (HTTP 451 — likely geo-block on runner). Spot results above are complete.
+
+==================================================
+
+📊 Weekly Sweep Scan — 31 Aug 2026 (1w close)
+
+— BINANCE (SPOT) —
+
+🟢 Bullish sweeps (1):
+  • UUSDT @ 0.9996
+
+🔴 Bearish sweeps (1):
+  • ONGUSDT @ 0.10397
+
+— MEXC (SPOT) —
+
+🟢 Bullish sweeps: none
+
+🔴 Bearish sweeps: none
+
+— KUCOIN (SPOT) —
+
+🟢 Bullish sweeps: none
+
+🔴 Bearish sweeps (1):
+  • LTC-USDT @ 50.51
+
+⚠️ Binance futures unavailable (HTTP 451 — likely geo-block on runner). Spot results above are complete.
