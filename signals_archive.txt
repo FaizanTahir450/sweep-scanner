@@ -1823,3 +1823,34 @@
   • GEMMEL @ 31.77
   • POL @ 739.4
   • POWER @ 23.36
+
+==================================================
+
+📊 Daily Sweep Scan — 31 Aug 2026 (1d close)
+
+— BINANCE (SPOT) —
+
+🟢 Bullish sweeps (2):
+  • APTUSDT @ 0.518
+  • NOMUSDT @ 0.0015
+
+🔴 Bearish sweeps (4):
+  • ERAUSDT @ 0.0664
+  • LISTAUSDT @ 0.0691
+  • ORCAUSDT @ 1.288
+  • TNSRUSDT @ 0.0373
+
+— MEXC (SPOT) —
+
+🟢 Bullish sweeps: none
+
+🔴 Bearish sweeps: none
+
+— KUCOIN (SPOT) —
+
+🟢 Bullish sweeps: none
+
+🔴 Bearish sweeps (1):
+  • O-USDT @ 0.53437
+
+⚠️ Binance futures unavailable (HTTP 451 — likely geo-block on runner). Spot results above are complete.
