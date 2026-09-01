@@ -1955,3 +1955,23 @@ PSX market closed today (last session 31 Aug 2026) — no new daily candle.
   • FLR-USDT @ 0.00706
 
 ⚠️ Binance futures unavailable (HTTP 451 — likely geo-block on runner). Spot results above are complete.
+
+==================================================
+
+📊 PSX Daily Sweep Scan — 01 Sep 2026 (1d close)
+
+— PSX (EQUITIES) —
+
+🟢 Bullish sweeps (6):
+  • AGTL @ 358.22
+  • FPRM @ 10.96
+  • GCWL @ 15.4
+  • HUMNL @ 10.14
+  • ICL @ 133.91
+  • TELE @ 7.72
+
+🔴 Bearish sweeps (4):
+  • EPCL @ 35.64
+  • OLPM @ 25.87
+  • TPL @ 23.79
+  • UCAPM @ 6.63
