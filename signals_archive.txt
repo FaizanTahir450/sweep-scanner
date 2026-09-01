@@ -1887,3 +1887,29 @@
 📊 PSX Daily Sweep Scan — 31 Aug 2026 (1d close)
 
 PSX market closed today (last session 31 Aug 2026) — no new daily candle.
+
+==================================================
+
+📊 Monthly Sweep Scan — 01 Sep 2026 (1M close)
+
+— BINANCE (SPOT) —
+
+🟢 Bullish sweeps (1):
+  • ZILUSDT @ 0.002586
+
+🔴 Bearish sweeps: none
+
+— MEXC (SPOT) —
+
+🟢 Bullish sweeps: none
+
+🔴 Bearish sweeps: none
+
+— KUCOIN (SPOT) —
+
+🟢 Bullish sweeps (1):
+  • STX-USDT @ 0.244
+
+🔴 Bearish sweeps: none
+
+⚠️ Binance futures unavailable (HTTP 451 — likely geo-block on runner). Spot results above are complete.
