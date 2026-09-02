@@ -1975,3 +1975,42 @@ PSX market closed today (last session 31 Aug 2026) — no new daily candle.
   • OLPM @ 25.87
   • TPL @ 23.79
   • UCAPM @ 6.63
+
+==================================================
+
+📊 Daily Sweep Scan — 02 Sep 2026 (1d close)
+
+— BINANCE (SPOT) —
+
+🟢 Bullish sweeps (1):
+  • DELLBUSDT @ 459.38
+
+🔴 Bearish sweeps (4):
+  • IQUSDT @ 0.000776
+  • NOTUSDT @ 0.00044
+  • SCUSDT @ 0.000912
+  • SUSHIUSDT @ 0.1998
+
+— MEXC (SPOT) —
+
+🟢 Bullish sweeps (1):
+  • ULTIMAUSDT @ 2,150.5
+
+🔴 Bearish sweeps (2):
+  • MARSCOINUSDT @ 0.06643
+  • UAIUSDT @ 0.5584
+
+— KUCOIN (SPOT) —
+
+🟢 Bullish sweeps (2):
+  • FARTCOIN-USDT @ 0.1677
+  • ZIG-USDT @ 0.03544
+
+🔴 Bearish sweeps (5):
+  • AGT-USDT @ 0.014768
+  • ARB-USDT @ 0.1104
+  • CLO-USDT @ 0.13867
+  • NOT-USDT @ 0.0004402
+  • UAI-USDT @ 0.55756
+
+⚠️ Binance futures unavailable (HTTP 451 — likely geo-block on runner). Spot results above are complete.
