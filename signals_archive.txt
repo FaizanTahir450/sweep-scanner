@@ -2055,3 +2055,35 @@ PSX market closed today (last session 31 Aug 2026) — no new daily candle.
   • AGIL @ 164.1
   • BCL @ 82.21
   • SIEM @ 1,627.17
+
+==================================================
+
+📊 Daily Sweep Scan — 03 Sep 2026 (1d close)
+
+— BINANCE (SPOT) —
+
+🟢 Bullish sweeps (1):
+  • AVGOBUSDT @ 363.77
+
+🔴 Bearish sweeps (5):
+  • FFUSDT @ 0.10526
+  • LAUSDT @ 0.066
+  • MINAUSDT @ 0.071
+  • PYTHUSDT @ 0.05737
+  • SIGNUSDT @ 0.0088
+
+— MEXC (SPOT) —
+
+🟢 Bullish sweeps (1):
+  • GRAMUSDT @ 1.333
+
+🔴 Bearish sweeps (1):
+  • PYTHUSDT @ 0.05736
+
+— KUCOIN (SPOT) —
+
+🟢 Bullish sweeps: none
+
+🔴 Bearish sweeps: none
+
+⚠️ Binance futures unavailable (HTTP 451 — likely geo-block on runner). Spot results above are complete.
