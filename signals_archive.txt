@@ -2087,3 +2087,25 @@ PSX market closed today (last session 31 Aug 2026) — no new daily candle.
 🔴 Bearish sweeps: none
 
 ⚠️ Binance futures unavailable (HTTP 451 — likely geo-block on runner). Spot results above are complete.
+
+==================================================
+
+📊 PSX Daily Sweep Scan — 03 Sep 2026 (1d close)
+
+— PSX (EQUITIES) —
+
+🟢 Bullish sweeps (7):
+  • DFML @ 16.42
+  • DFSM @ 13.26
+  • GCWL @ 15.36
+  • IBLHL @ 45.31
+  • JDMT @ 129.89
+  • KAPCO @ 27.06
+  • WAFI @ 168.53
+
+🔴 Bearish sweeps (5):
+  • ADMM @ 60.17
+  • BAPL @ 38.59
+  • DAAG @ 102.13
+  • NRSL @ 41.86
+  • PAKD @ 124.38
