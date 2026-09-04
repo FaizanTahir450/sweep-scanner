@@ -2109,3 +2109,34 @@ PSX market closed today (last session 31 Aug 2026) — no new daily candle.
   • DAAG @ 102.13
   • NRSL @ 41.86
   • PAKD @ 124.38
+
+==================================================
+
+📊 Daily Sweep Scan — 04 Sep 2026 (1d close)
+
+— BINANCE (SPOT) —
+
+🟢 Bullish sweeps: none
+
+🔴 Bearish sweeps (6):
+  • ARUSDT @ 2.617
+  • CATIUSDT @ 0.05445
+  • HIVEUSDT @ 0.0462
+  • NIGHTUSDT @ 0.02164
+  • NVDABUSDT @ 229.72
+  • PUNDIXUSDT @ 0.0937
+
+— MEXC (SPOT) —
+
+🟢 Bullish sweeps (1):
+  • MITOUSDT @ 0.01707
+
+🔴 Bearish sweeps: none
+
+— KUCOIN (SPOT) —
+
+🟢 Bullish sweeps: none
+
+🔴 Bearish sweeps: none
+
+⚠️ Binance futures unavailable (HTTP 451 — likely geo-block on runner). Spot results above are complete.
