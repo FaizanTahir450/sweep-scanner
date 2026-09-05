@@ -2170,3 +2170,38 @@ PSX market closed today (last session 31 Aug 2026) — no new daily candle.
   • GUSM @ 10.68
   • SHEZ @ 250.47
   • THCCL @ 79.68
+
+==================================================
+
+📊 Daily Sweep Scan — 05 Sep 2026 (1d close)
+
+— BINANCE (SPOT) —
+
+🟢 Bullish sweeps (2):
+  • AVAUSDT @ 0.1724
+  • ROBOUSDT @ 0.01202
+
+🔴 Bearish sweeps (6):
+  • FORMUSDT @ 0.2717
+  • GMEBUSDT @ 19.2
+  • LPTUSDT @ 1.45
+  • PENDLEUSDT @ 1.922
+  • SAHARAUSDT @ 0.00927
+  • SIGNUSDT @ 0.0097
+
+— MEXC (SPOT) —
+
+🟢 Bullish sweeps: none
+
+🔴 Bearish sweeps (1):
+  • PENDLEUSDT @ 1.923
+
+— KUCOIN (SPOT) —
+
+🟢 Bullish sweeps (1):
+  • ZEST-USDT @ 0.12036
+
+🔴 Bearish sweeps (1):
+  • SPX-USDT @ 0.6004
+
+⚠️ Binance futures unavailable (HTTP 451 — likely geo-block on runner). Spot results above are complete.
