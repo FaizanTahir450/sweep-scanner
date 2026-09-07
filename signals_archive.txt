@@ -2320,3 +2320,31 @@ PSX market closed today (last session 31 Aug 2026) — no new daily candle.
   • UAI-USDT @ 0.4361
 
 ⚠️ Binance futures unavailable (HTTP 451 — likely geo-block on runner). Spot results above are complete.
+
+==================================================
+
+📊 PSX Daily Sweep Scan — 07 Sep 2026 (1d close)
+
+— PSX (EQUITIES) —
+
+🟢 Bullish sweeps (14):
+  • ARUJ @ 10.98
+  • BBFL @ 41.46
+  • CHCC @ 294.75
+  • FCIBL @ 33.71
+  • FCSC @ 5.31
+  • GFIL @ 28.48
+  • HINOON @ 922.05
+  • HTL @ 38.79
+  • INDU @ 1,886.56
+  • JSBL @ 12.63
+  • KOHTM @ 109.96
+  • LIVEN @ 32.54
+  • OLPL @ 47.99
+  • UBL @ 428.98
+
+🔴 Bearish sweeps (4):
+  • AICL @ 96.94
+  • IREIT @ 8.36
+  • PRET @ 557.81
+  • SLYT @ 19.59
