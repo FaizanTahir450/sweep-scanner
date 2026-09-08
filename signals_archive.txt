@@ -2348,3 +2348,48 @@ PSX market closed today (last session 31 Aug 2026) — no new daily candle.
   • IREIT @ 8.36
   • PRET @ 557.81
   • SLYT @ 19.59
+
+==================================================
+
+📊 Daily Sweep Scan — 08 Sep 2026 (1d close)
+
+— BINANCE (SPOT) —
+
+🟢 Bullish sweeps (1):
+  • SOXSBUSDT @ 43.4
+
+🔴 Bearish sweeps (9):
+  • FETUSDT @ 0.1832
+  • FILUSDT @ 0.8369
+  • KSMUSDT @ 3.96
+  • LTCUSDT @ 55.21
+  • LUNAUSDT @ 0.0485
+  • MUBUSDT @ 1,035.38
+  • ORCAUSDT @ 1.54
+  • REZUSDT @ 0.003188
+  • YGGUSDT @ 0.0243
+
+— MEXC (SPOT) —
+
+🟢 Bullish sweeps (2):
+  • BLUAIUSDT @ 0.010907
+  • PLAYUSDT @ 0.03523
+
+🔴 Bearish sweeps (3):
+  • FETUSDT @ 0.1833
+  • FILUSDT @ 0.8369
+  • LTCUSDT @ 55.22
+
+— KUCOIN (SPOT) —
+
+🟢 Bullish sweeps (3):
+  • AEON-USDT @ 0.05201
+  • BLUAI-USDT @ 0.010915
+  • PLAY-USDT @ 0.03528
+
+🔴 Bearish sweeps (3):
+  • FET-USDT @ 0.1832
+  • FIL-USDT @ 0.8374
+  • LUNA-USDT @ 0.0485
+
+⚠️ Binance futures unavailable (HTTP 451 — likely geo-block on runner). Spot results above are complete.
