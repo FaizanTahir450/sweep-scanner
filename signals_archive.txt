@@ -2422,3 +2422,49 @@ PSX market closed today (last session 31 Aug 2026) — no new daily candle.
   • EFUG @ 125.09
   • OCTOPUS @ 29.57
   • PPVC @ 38.12
+
+==================================================
+
+📊 Daily Sweep Scan — 09 Sep 2026 (1d close)
+
+— BINANCE (SPOT) —
+
+🟢 Bullish sweeps: none
+
+🔴 Bearish sweeps (14):
+  • AVNTUSDT @ 0.1059
+  • DOGSUSDT @ 0.00004995
+  • DRAMBUSDT @ 60.7
+  • GUSDT @ 0.00405
+  • HAEDALUSDT @ 0.01949
+  • IRENBUSDT @ 46.7
+  • KORUBUSDT @ 23.63
+  • LITEBUSDT @ 975.16
+  • NEWTUSDT @ 0.04465
+  • QIUSDT @ 0.001405
+  • QNTUSDT @ 67.02
+  • SEIUSDT @ 0.04953
+  • SOMIUSDT @ 0.1322
+  • SOPHUSDT @ 0.0059
+
+— MEXC (SPOT) —
+
+🟢 Bullish sweeps (1):
+  • SEDAUSDT @ 0.02058
+
+🔴 Bearish sweeps (3):
+  • GUSDT @ 0.004042
+  • SOPHUSDT @ 0.005882
+  • STONKUSDT @ 0.166109
+
+— KUCOIN (SPOT) —
+
+🟢 Bullish sweeps: none
+
+🔴 Bearish sweeps (4):
+  • AVNT-USDT @ 0.10584
+  • DOGS-USDT @ 0.00004999
+  • SEI-USDT @ 0.04954
+  • SOPH-USDT @ 0.0059
+
+⚠️ Binance futures unavailable (HTTP 451 — likely geo-block on runner). Spot results above are complete.
