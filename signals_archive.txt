@@ -2468,3 +2468,25 @@ PSX market closed today (last session 31 Aug 2026) — no new daily candle.
   • SOPH-USDT @ 0.0059
 
 ⚠️ Binance futures unavailable (HTTP 451 — likely geo-block on runner). Spot results above are complete.
+
+==================================================
+
+📊 PSX Daily Sweep Scan — 09 Sep 2026 (1d close)
+
+— PSX (EQUITIES) —
+
+🟢 Bullish sweeps (12):
+  • 786 @ 21.44
+  • AIRLINK @ 128.32
+  • AVN @ 28.75
+  • CEPB @ 26.72
+  • GGGL @ 7.78
+  • IDRT @ 35.09
+  • IML @ 22.22
+  • NBP @ 181.59
+  • NESTLE @ 7,431.67
+  • SHFA @ 459.95
+  • SMCPL @ 40.99
+  • UPFL @ 24,500
+
+🔴 Bearish sweeps: none
