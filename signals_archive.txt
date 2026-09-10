@@ -2490,3 +2490,53 @@ PSX market closed today (last session 31 Aug 2026) — no new daily candle.
   • UPFL @ 24,500
 
 🔴 Bearish sweeps: none
+
+==================================================
+
+📊 Daily Sweep Scan — 10 Sep 2026 (1d close)
+
+— BINANCE (SPOT) —
+
+🟢 Bullish sweeps (9):
+  • ALLOUSDT @ 0.226
+  • BBUSDT @ 0.00824
+  • DEXEUSDT @ 1.818
+  • DODOUSDT @ 0.01709
+  • GUNUSDT @ 0.00276
+  • HMSTRUSDT @ 0.0001635
+  • LAYERUSDT @ 0.0689
+  • SCRUSDT @ 0.02016
+  • SYNUSDT @ 0.08835
+
+🔴 Bearish sweeps (6):
+  • COTIUSDT @ 0.01849
+  • GMEBUSDT @ 19.99
+  • LITEBUSDT @ 986.18
+  • RAYUSDT @ 1.2437
+  • SCUSDT @ 0.000963
+  • WDCBUSDT @ 483.08
+
+— MEXC (SPOT) —
+
+🟢 Bullish sweeps (1):
+  • DOSUSDT @ 0.20562
+
+🔴 Bearish sweeps (4):
+  • ATOMUSDT @ 1.856
+  • TNKUSDT @ 0.14316
+  • USELESSUSDT @ 0.224919
+  • 牛来USDT @ 0.078561
+
+— KUCOIN (SPOT) —
+
+🟢 Bullish sweeps (2):
+  • APR-USDT @ 0.1515
+  • DOS-USDT @ 0.2061
+
+🔴 Bearish sweeps (4):
+  • COTI-USDT @ 0.01847
+  • RAY-USDT @ 1.244
+  • TRUTH-USDT @ 0.014074
+  • USELESS-USDT @ 0.22519
+
+⚠️ Binance futures unavailable (HTTP 451 — likely geo-block on runner). Spot results above are complete.
