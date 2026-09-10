@@ -2540,3 +2540,36 @@ PSX market closed today (last session 31 Aug 2026) — no new daily candle.
   • USELESS-USDT @ 0.22519
 
 ⚠️ Binance futures unavailable (HTTP 451 — likely geo-block on runner). Spot results above are complete.
+
+==================================================
+
+📊 PSX Daily Sweep Scan — 10 Sep 2026 (1d close)
+
+— PSX (EQUITIES) —
+
+🟢 Bullish sweeps (22):
+  • ASC @ 8.39
+  • ATBA @ 169.96
+  • BIPL @ 24.46
+  • DCL @ 9.8
+  • FECTC @ 97.16
+  • FFC @ 532.34
+  • FHAM @ 31.03
+  • FRCL @ 86.82
+  • GRYL @ 19.15
+  • KOSM @ 5.18
+  • LUCK @ 408.03
+  • MIRKS @ 30.35
+  • MUGHALC @ 62
+  • NAGC @ 77
+  • NETSOL @ 119.9
+  • NPL @ 63.3
+  • PAKD @ 119.48
+  • QTECH @ 36.63
+  • TBL @ 8.92
+  • TRIPF @ 132.9
+  • UCAPM @ 5.67
+  • UPFL @ 24,499
+
+🔴 Bearish sweeps (1):
+  • PAKL @ 57.76
