@@ -2612,3 +2612,101 @@ PSX market closed today (last session 31 Aug 2026) — no new daily candle.
 🔴 Bearish sweeps: none
 
 ⚠️ Binance futures unavailable (HTTP 451 — likely geo-block on runner). Spot results above are complete.
+
+==================================================
+
+📊 PSX Daily Sweep Scan — 11 Sep 2026 (1d close)
+
+— PSX (EQUITIES) —
+
+🟢 Bullish sweeps (87):
+  • ADMM @ 53.6
+  • AGIL @ 151.76
+  • AGTL @ 351.4
+  • AHCL @ 14.95
+  • AHL @ 130.78
+  • AKDSL @ 34.59
+  • BAFL @ 55.19
+  • BBFL @ 40.75
+  • BCL @ 67.73
+  • BELA @ 54.07
+  • BFAGRO @ 30.67
+  • BIFO @ 115.21
+  • BLUEX @ 6.16
+  • BNWM @ 62.95
+  • BTL @ 900.6
+  • CEPB @ 26.5
+  • CPHL @ 71.08
+  • CPPL @ 96.01
+  • CSAP @ 91.26
+  • DWAE @ 21.73
+  • ENGROH @ 264.12
+  • EPQL @ 23.68
+  • FABL @ 91.31
+  • FATIMA @ 150.02
+  • FEROZ @ 348
+  • FTMM @ 18.72
+  • FZCM @ 244.21
+  • GATM @ 22.63
+  • GCIL @ 33.42
+  • GUSM @ 9.04
+  • HUMNL @ 10.17
+  • IDRT @ 35.66
+  • IDYM @ 129.86
+  • ILP @ 100.95
+  • IPAK @ 38
+  • IREIT @ 8.07
+  • ITTEFAQ @ 7.81
+  • JSBL @ 12.25
+  • JSML @ 51.08
+  • KOHC @ 90.18
+  • KOSM @ 5.22
+  • KTML @ 42.08
+  • LIVEN @ 31.79
+  • LOADS @ 12.86
+  • LSECL @ 5.75
+  • LUCK @ 416.68
+  • MFFL @ 168.04
+  • MFL @ 38.93
+  • MSCL @ 21.03
+  • MTL @ 302.93
+  • NCL @ 36.01
+  • NETSOL @ 120.17
+  • OBOY @ 17.36
+  • OCTOPUS @ 29.01
+  • OGDC @ 320.83
+  • PACE @ 10.08
+  • PAKQATAR @ 17.51
+  • PAKRI @ 15.57
+  • PICT @ 40.74
+  • PIOC @ 247.55
+  • PNSC @ 504.27
+  • POWER @ 22.02
+  • PPL @ 218.86
+  • QUET @ 14.68
+  • RPL @ 15.07
+  • SARC @ 89.76
+  • SEARL @ 79.91
+  • SELECT @ 26.11
+  • SERT @ 38.04
+  • SHFA @ 445
+  • SITC @ 736.25
+  • SLGL @ 14.19
+  • SLM @ 23.33
+  • SPL @ 46.86
+  • SPWL @ 8.29
+  • SSOM @ 417.59
+  • STCL @ 9.36
+  • SUTM @ 110.11
+  • SYS @ 123.54
+  • TOMCL @ 32
+  • TREET @ 21.78
+  • TSMF @ 15.41
+  • UBDL @ 26.11
+  • UNIC @ 11.55
+  • UPFL @ 24,797.77
+  • ZAHID @ 62.86
+  • ZAL @ 38.13
+
+🔴 Bearish sweeps (1):
+  • MUREB @ 908.55
