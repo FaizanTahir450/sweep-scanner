@@ -2573,3 +2573,42 @@ PSX market closed today (last session 31 Aug 2026) — no new daily candle.
 
 🔴 Bearish sweeps (1):
   • PAKL @ 57.76
+
+==================================================
+
+📊 Daily Sweep Scan — 11 Sep 2026 (1d close)
+
+— BINANCE (SPOT) —
+
+🟢 Bullish sweeps (1):
+  • 币安人生USDT @ 0.4643
+
+🔴 Bearish sweeps (8):
+  • ANIMEUSDT @ 0.00293
+  • CKBUSDT @ 0.001053
+  • EGLDUSDT @ 4.804
+  • LSKUSDT @ 0.1186
+  • NEWTUSDT @ 0.04575
+  • PSGUSDT @ 0.468
+  • STRAXUSDT @ 0.00958
+  • VTHOUSDT @ 0.000581
+
+— MEXC (SPOT) —
+
+🟢 Bullish sweeps: none
+
+🔴 Bearish sweeps (4):
+  • FRONGUSDT @ 0.009409
+  • JUGGERNAUTUSDT @ 0.01177
+  • KASUSDT @ 0.035391
+  • VTHOUSDT @ 0.0005808
+
+— KUCOIN (SPOT) —
+
+🟢 Bullish sweeps (2):
+  • ANSEM-USDT @ 0.1545
+  • CARDS-USDT @ 0.1233
+
+🔴 Bearish sweeps: none
+
+⚠️ Binance futures unavailable (HTTP 451 — likely geo-block on runner). Spot results above are complete.
