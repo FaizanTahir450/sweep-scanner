@@ -2838,3 +2838,22 @@ PSX market closed today (last session 31 Aug 2026) — no new daily candle.
   • VTHO-USDT @ 0.00078
 
 ⚠️ Binance futures unavailable (HTTP 451 — likely geo-block on runner). Spot results above are complete.
+
+==================================================
+
+📊 PSX Daily Sweep Scan — 14 Sep 2026 (1d close)
+
+— PSX (EQUITIES) —
+
+🟢 Bullish sweeps (5):
+  • ARCTM @ 38.28
+  • JSBL @ 12.05
+  • MUREB @ 902.25
+  • STYLERS @ 47.85
+  • UDPL @ 112.21
+
+🔴 Bearish sweeps (4):
+  • ARPL @ 436.41
+  • GVGL @ 55.73
+  • KCL @ 161.87
+  • PSYL @ 149.98
