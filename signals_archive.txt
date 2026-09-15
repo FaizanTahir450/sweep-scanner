@@ -2857,3 +2857,45 @@ PSX market closed today (last session 31 Aug 2026) — no new daily candle.
   • GVGL @ 55.73
   • KCL @ 161.87
   • PSYL @ 149.98
+
+==================================================
+
+📊 Daily Sweep Scan — 15 Sep 2026 (1d close)
+
+— BINANCE (SPOT) —
+
+🟢 Bullish sweeps (7):
+  • ENAUSDT @ 0.1432
+  • KATUSDT @ 0.00441
+  • QQQBUSDT @ 709.52
+  • SOPHUSDT @ 0.00396
+  • SUIUSDT @ 0.7209
+  • TQQQBUSDT @ 69.33
+  • XAUTUSDT @ 4,290.19
+
+🔴 Bearish sweeps (4):
+  • ALTUSDT @ 0.00672
+  • MTLUSDT @ 0.324
+  • REDUSDT @ 0.1401
+  • XLMUSDT @ 0.1916
+
+— MEXC (SPOT) —
+
+🟢 Bullish sweeps (2):
+  • GOLD(PAXG)USDT @ 4,295
+  • GOLD(XAUT)USDT @ 4,290
+
+🔴 Bearish sweeps (3):
+  • BTWUSDT @ 0.582163
+  • REALUSDT @ 0.01911
+  • XLMUSDT @ 0.1916
+
+— KUCOIN (SPOT) —
+
+🟢 Bullish sweeps (1):
+  • XAUT-USDT @ 4,290.7
+
+🔴 Bearish sweeps (1):
+  • XLM-USDT @ 0.1916
+
+⚠️ Binance futures unavailable (HTTP 451 — likely geo-block on runner). Spot results above are complete.
