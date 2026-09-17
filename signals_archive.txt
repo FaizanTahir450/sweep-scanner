@@ -2971,3 +2971,52 @@ PSX market closed today (last session 31 Aug 2026) — no new daily candle.
   • AGL @ 48.98
   • CENI @ 66
   • MTL @ 300.45
+
+==================================================
+
+📊 Daily Sweep Scan — 17 Sep 2026 (1d close)
+
+— BINANCE (SPOT) —
+
+🟢 Bullish sweeps (11):
+  • ACMUSDT @ 0.262
+  • BABYUSDT @ 0.01074
+  • ENSUSDT @ 5.45
+  • GRAMUSDT @ 1.317
+  • HBARUSDT @ 0.0739
+  • IOTAUSDT @ 0.0392
+  • QNTUSDT @ 61.1
+  • RONINUSDT @ 0.0481
+  • SHIBUSDT @ 0.00000499
+  • TAOUSDT @ 222
+  • XLMUSDT @ 0.1839
+
+🔴 Bearish sweeps: none
+
+— MEXC (SPOT) —
+
+🟢 Bullish sweeps (5):
+  • BRUSDT @ 0.6534
+  • GRAMUSDT @ 1.317
+  • SHIBUSDT @ 0.00000499
+  • TAOUSDT @ 221.9
+  • XLMUSDT @ 0.1839
+
+🔴 Bearish sweeps (1):
+  • BULLAUSDT @ 0.1165
+
+— KUCOIN (SPOT) —
+
+🟢 Bullish sweeps (7):
+  • BR-USDT @ 0.65439
+  • GRAM-USDT @ 1.316
+  • HBAR-USDT @ 0.07394
+  • ILY-USDT @ 0.3237
+  • SHIB-USDT @ 0.00000499
+  • TAO-USDT @ 222.01
+  • XLM-USDT @ 0.1837
+
+🔴 Bearish sweeps (1):
+  • BULLA-USDT @ 0.11415
+
+⚠️ Binance futures unavailable (HTTP 451 — likely geo-block on runner). Spot results above are complete.
