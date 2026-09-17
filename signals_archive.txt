@@ -3020,3 +3020,21 @@ PSX market closed today (last session 31 Aug 2026) — no new daily candle.
   • BULLA-USDT @ 0.11415
 
 ⚠️ Binance futures unavailable (HTTP 451 — likely geo-block on runner). Spot results above are complete.
+
+==================================================
+
+📊 PSX Daily Sweep Scan — 17 Sep 2026 (1d close)
+
+— PSX (EQUITIES) —
+
+🟢 Bullish sweeps (6):
+  • AHTM @ 89.9
+  • COLG @ 1,125.32
+  • GHNI @ 1,103.1
+  • NATF @ 350.15
+  • PRWM @ 63.06
+  • UDPL @ 108.4
+
+🔴 Bearish sweeps (2):
+  • ALAC @ 24.68
+  • SHEZ @ 268.04
