@@ -3133,3 +3133,79 @@ PSX market closed today (last session 31 Aug 2026) — no new daily candle.
   • INJ-USDT @ 6.678
 
 ⚠️ Binance futures unavailable (HTTP 451 — likely geo-block on runner). Spot results above are complete.
+
+==================================================
+
+📊 Daily Sweep Scan — 20 Sep 2026 (1d close)
+
+— BINANCE (SPOT) —
+
+🟢 Bullish sweeps: none
+
+🔴 Bearish sweeps (28):
+  • AAVEUSDT @ 141.07
+  • ADAUSDT @ 0.2278
+  • AWEUSDT @ 0.06446
+  • CHZUSDT @ 0.01538
+  • CKBUSDT @ 0.00124
+  • COMPUSDT @ 21.29
+  • DYDXUSDT @ 0.13274
+  • EPICUSDT @ 0.4648
+  • ETHUSDT @ 2,632.69
+  • FILUSDT @ 0.9619
+  • FLOWUSDT @ 0.0305
+  • IOUSDT @ 0.1433
+  • MEMEUSDT @ 0.000577
+  • MINAUSDT @ 0.1054
+  • ONDOUSDT @ 0.4203
+  • OPUSDT @ 0.1216
+  • REDUSDT @ 0.1492
+  • RENDERUSDT @ 1.574
+  • REQUSDT @ 0.056
+  • ROSEUSDT @ 0.00769
+  • SHIBUSDT @ 0.00000551
+  • SNXUSDT @ 0.2311
+  • SSVUSDT @ 3.155
+  • SUSDT @ 0.03347
+  • THEUSDT @ 0.0778
+  • WBETHUSDT @ 2,909.19
+  • WCTUSDT @ 0.04014
+  • ZKUSDT @ 0.01132
+
+— MEXC (SPOT) —
+
+🟢 Bullish sweeps: none
+
+🔴 Bearish sweeps (9):
+  • ADAUSDT @ 0.2279
+  • B2USDT @ 0.5221
+  • EPICUSDT @ 0.4647
+  • ETHUSDT @ 2,632.67
+  • FILUSDT @ 0.9617
+  • KASUSDT @ 0.039157
+  • ONDOUSDT @ 0.42028
+  • OPUSDT @ 0.12163
+  • SHIBUSDT @ 0.00000551
+
+— KUCOIN (SPOT) —
+
+🟢 Bullish sweeps (1):
+  • CAP-USDT @ 0.04787
+
+🔴 Bearish sweeps (14):
+  • AAVE-USDT @ 141.098
+  • ADA-USDT @ 0.2278
+  • B2-USDT @ 0.5197
+  • ETH-USDT @ 2,632.61
+  • FIL-USDT @ 0.9622
+  • JUP-USDT @ 0.2819
+  • KAS-USDT @ 0.03914
+  • ONDO-USDT @ 0.42035
+  • OP-USDT @ 0.1216
+  • RENDER-USDT @ 1.576
+  • S-USDT @ 0.03353
+  • SHIB-USDT @ 0.00000551
+  • VVV-USDT @ 25.826
+  • ZIG-USDT @ 0.05308
+
+⚠️ Binance futures unavailable (HTTP 451 — likely geo-block on runner). Spot results above are complete.
