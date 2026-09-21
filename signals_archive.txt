@@ -3254,3 +3254,20 @@ PSX market closed today (last session 31 Aug 2026) — no new daily candle.
   • UB-USDT @ 0.122559
 
 ⚠️ Binance futures unavailable (HTTP 451 — likely geo-block on runner). Spot results above are complete.
+
+==================================================
+
+📊 PSX Daily Sweep Scan — 21 Sep 2026 (1d close)
+
+— PSX (EQUITIES) —
+
+🟢 Bullish sweeps (1):
+  • PIM @ 51.25
+
+🔴 Bearish sweeps (6):
+  • FTMM @ 20.02
+  • JSRR @ 10.78
+  • MCBIM @ 163.57
+  • PNSC @ 534.91
+  • SINDM @ 30.91
+  • SYM @ 12.99
