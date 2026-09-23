@@ -3387,3 +3387,18 @@ PSX market closed today (last session 31 Aug 2026) — no new daily candle.
   • XDC-USDT @ 0.03101
 
 ⚠️ Binance futures unavailable (HTTP 451 — likely geo-block on runner). Spot results above are complete.
+
+==================================================
+
+📊 PSX Daily Sweep Scan — 23 Sep 2026 (1d close)
+
+— PSX (EQUITIES) —
+
+🟢 Bullish sweeps (3):
+  • ARPL @ 400.32
+  • BFMOD @ 20.27
+  • LPL @ 19.61
+
+🔴 Bearish sweeps (2):
+  • QUICE @ 32.46
+  • SHEZ @ 294.19
