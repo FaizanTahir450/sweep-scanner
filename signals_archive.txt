@@ -3402,3 +3402,69 @@ PSX market closed today (last session 31 Aug 2026) — no new daily candle.
 🔴 Bearish sweeps (2):
   • QUICE @ 32.46
   • SHEZ @ 294.19
+
+==================================================
+
+📊 Daily Sweep Scan — 24 Sep 2026 (1d close)
+
+— BINANCE (SPOT) —
+
+🟢 Bullish sweeps (1):
+  • HEMIUSDT @ 0.00605
+
+🔴 Bearish sweeps (26):
+  • 0GUSDT @ 0.2457
+  • ADAUSDT @ 0.2384
+  • AEVOUSDT @ 0.02476
+  • API3USDT @ 0.2627
+  • BARDUSDT @ 0.1364
+  • BATUSDT @ 0.0874
+  • DIAUSDT @ 0.1432
+  • EIGENUSDT @ 0.233
+  • EULUSDT @ 1.418
+  • FLOWUSDT @ 0.03138
+  • GPSUSDT @ 0.01223
+  • GRTUSDT @ 0.02488
+  • ICPUSDT @ 2.925
+  • KAIAUSDT @ 0.0327
+  • MOVEUSDT @ 0.009056
+  • NOMUSDT @ 0.001988
+  • PENGUUSDT @ 0.009746
+  • PORTOUSDT @ 0.452
+  • RAREUSDT @ 0.01264
+  • SKYUSDT @ 0.06997
+  • SNXUSDT @ 0.2314
+  • TSLABUSDT @ 380.14
+  • TURBOUSDT @ 0.001017
+  • XAIUSDT @ 0.00791
+  • XLMUSDT @ 0.2021
+  • ZKUSDT @ 0.0112
+
+— MEXC (SPOT) —
+
+🟢 Bullish sweeps: none
+
+🔴 Bearish sweeps (5):
+  • ADAUSDT @ 0.2385
+  • ICPUSDT @ 2.924
+  • LITUSDT @ 5.3128
+  • PENGUUSDT @ 0.009745
+  • XLMUSDT @ 0.2022
+
+— KUCOIN (SPOT) —
+
+🟢 Bullish sweeps (2):
+  • ASTER-USDT @ 0.6939
+  • PIPEDOG-USDT @ 0.002084
+
+🔴 Bearish sweeps (8):
+  • ADA-USDT @ 0.2385
+  • EUL-USDT @ 1.418
+  • FOLKS-USDT @ 2.2884
+  • ICP-USDT @ 2.924
+  • PENGU-USDT @ 0.009746
+  • SKY-USDT @ 0.07
+  • TSLAX-USDT @ 380.62
+  • XLM-USDT @ 0.2021
+
+⚠️ Binance futures unavailable (HTTP 451 — likely geo-block on runner). Spot results above are complete.
