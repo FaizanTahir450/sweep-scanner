@@ -3514,3 +3514,9 @@ PSX market closed today (last session 31 Aug 2026) — no new daily candle.
 📊 PSX Daily Sweep Scan — 25 Sep 2026 (1d close)
 
 ⚠️ PSX data unavailable this run (portal and fallback both failed).
+
+==================================================
+
+📊 PSX Weekly Sweep Scan — 25 Sep 2026 (1w close)
+
+⚠️ PSX data unavailable this run (portal and fallback both failed).
