@@ -1,6 +1,6 @@
 # Liquidity Sweep Scanner (Multi-Exchange → Telegram)
 
-Scans every liquid USDT spot pair across **Binance, MEXC, and KuCoin** (plus
+Scans every liquid USDT spot pair across **Binance, Bitget, MEXC, and KuCoin** (plus
 Binance USDT-M futures when reachable) on **daily, weekly, and monthly** candles,
 detects liquidity sweeps / Swing Failure Patterns, and sends you a Telegram
 alert. Runs free on GitHub Actions — no PC, no server, nothing manual.
@@ -106,7 +106,8 @@ Done. It now runs automatically on schedule (all UTC): **daily** 00:15,
 | `REQUIRE_UNTAPPED` | 1         | Only first-time sweeps (no prior wick through the level). Set `0` to relax. |
 | `MARKET`           | crypto    | `crypto` or `psx` — which market the run scans (set by each workflow). |
 | `PSX_MIN_TURNOVER` | 0         | PSX only: min 20-day avg traded value (PKR) to include a stock; 0 = all. |
-| `MIN_QUOTE_VOLUME` | 500,000   | Skip pairs under $500k 24h volume. Lower = more coins (esp. MEXC/KuCoin long tail), more noise. |
+| `MIN_QUOTE_VOLUME` | 500,000   | Skip pairs under $500k 24h volume (Binance, MEXC, KuCoin). Lower = more coins (esp. MEXC/KuCoin long tail), more noise. |
+| `BITGET_MIN_QUOTE_VOLUME` | 100,000 | Bitget's own volume floor — its spot volume is ~1/5 of Binance's, so the global $500k would leave only ~60 pairs (~190 at $100k). |
 | `CANDLES`          | 120       | Candles of history examined (per timeframe).    |
 | `SCAN_FUTURES`     | True      | Binance USDT-M futures. Set False to skip.      |
 | `TARGET_R`         | 2         | Reward multiple for the target (stop = 1R).     |
@@ -123,13 +124,16 @@ of `scanner.py` — each entry is `(display_name, symbol_lister, kline_fetcher)`
 
 ## Notes
 - Spot exchanges scanned: **Binance** (via `data-api.binance.vision`, a public
-  mirror that works from any region), **MEXC** (`api.mexc.com`), and **KuCoin**
-  (`api.kucoin.com`). If any one exchange is unreachable from the runner, you'll
+  mirror that works from any region), **Bitget** (`api.bitget.com`), **MEXC**
+  (`api.mexc.com`), and **KuCoin**
+  (`api.kucoin.com`). Gold tokens (PAXG, XAUT) are scanned like any other coin;
+  stablecoins, fiat tokens and leveraged tokens are skipped. If any one exchange
+  is unreachable from the runner, you'll
   see a ⚠️ note for just that exchange and the others still report normally.
 - **Binance futures** (`fapi.binance.com`) has no geo-free mirror, so on GitHub's
   US-based runners it's usually geo-blocked — you'll see a ⚠️ note and spot
   results are unaffected. To scan futures, run from a non-US machine.
-- Weekly candles: Binance/MEXC weeks start Monday (UTC); KuCoin weeks start
+- Weekly candles: Binance/Bitget/MEXC weeks start Monday (UTC); KuCoin weeks start
   Thursday. So each exchange reports its own last *closed* weekly candle — the
   boundaries differ slightly by exchange. Monthly candles are calendar-month
   aligned everywhere.

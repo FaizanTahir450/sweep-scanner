@@ -13,8 +13,8 @@ touch signals.jsonl or send Telegram.
 Tuning via env:
   BACKTEST_TIMEFRAMES  default "1d,1w,1M"
   BACKTEST_MAX_SYMBOLS default 0 (all liquid symbols; set e.g. 40 for a quick run)
-  BACKTEST_CANDLES     default 500 (history depth for Binance/MEXC; KuCoin ~100)
-  BACKTEST_EXCHANGES   default "BINANCE,MEXC,KUCOIN"
+  BACKTEST_CANDLES     default 500 (history depth for Binance/MEXC; Bitget 300 daily / 100 weekly; KuCoin ~100)
+  BACKTEST_EXCHANGES   default "BINANCE,BITGET,MEXC,KUCOIN"
 """
 
 import os
@@ -23,11 +23,12 @@ import scanner as sc
 
 TIMEFRAMES  = os.environ.get("BACKTEST_TIMEFRAMES", "1d,1w,1M").split(",")
 MAX_SYMBOLS = int(os.environ.get("BACKTEST_MAX_SYMBOLS", "0"))
-EXCHANGES   = os.environ.get("BACKTEST_EXCHANGES", "BINANCE,MEXC,KUCOIN").split(",")
+EXCHANGES   = os.environ.get("BACKTEST_EXCHANGES", "BINANCE,BITGET,MEXC,KUCOIN").split(",")
 sc.CANDLES  = int(os.environ.get("BACKTEST_CANDLES", "500"))   # deepen history (Binance/MEXC)
 
 MIN_LEN = sc.ATR_PERIOD + 10   # matches analyze_sweep's minimum history requirement
 LISTERS = {"BINANCE": sc.get_binance_spot_symbols,
+           "BITGET": sc.get_bitget_symbols,
            "MEXC": sc.get_mexc_symbols,
            "KUCOIN": sc.get_kucoin_symbols,
            "PSX": sc.get_psx_symbols}       # e.g. BACKTEST_EXCHANGES=PSX BACKTEST_TIMEFRAMES=1d,1w

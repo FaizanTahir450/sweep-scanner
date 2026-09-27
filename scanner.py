@@ -21,7 +21,7 @@ Logic per symbol:
       Bearish sweep : high > swing_high AND close < swing_high
 Sends one consolidated Telegram message per run.
 
-Markets: MARKET=crypto (default: Binance/MEXC/KuCoin spot + Binance futures) or
+Markets: MARKET=crypto (default: Binance/Bitget/MEXC/KuCoin spot + Binance futures) or
 MARKET=psx (Pakistan Stock Exchange equities, daily/weekly, official PSX Data
 Portal + committed psx_cache/). Detection is identical for both.
 
@@ -48,7 +48,8 @@ ATR_MULT         = float(os.environ.get("ATR_MULT", "2.0"))
 REQUIRE_UNTAPPED = os.environ.get("REQUIRE_UNTAPPED", "1") != "0"
                                # True → only FIRST-time sweeps (no prior wick through level)
 CANDLES          = 120         # candles of history to fetch (per timeframe)
-MIN_QUOTE_VOLUME = 500_000     # skip pairs with < $500k 24h volume
+MIN_QUOTE_VOLUME = 500_000     # skip pairs with < $500k 24h volume (Binance, MEXC, KuCoin, futures)
+BITGET_MIN_QUOTE_VOLUME = 100_000  # Bitget-only floor: its spot volume is ~1/5 of Binance's, so $500k would leave ~60 pairs
 QUOTE_ASSET      = "USDT"
 SCAN_FUTURES     = True         # Binance USDT-M futures (geo-blocked on US runners)
 REQUEST_PAUSE    = 0.08        # seconds between kline requests (rate-limit safety)
@@ -85,6 +86,8 @@ TF_LABEL  = {"1d": "Daily", "1w": "Weekly", "1M": "Monthly"}[TIMEFRAME]
 BINANCE_INTERVALS = {"1d": "1d",   "1w": "1w",    "1M": "1M"}   # Binance spot + futures
 MEXC_INTERVALS    = {"1d": "1d",   "1w": "1W",    "1M": "1M"}   # MEXC uses "1W"
 KUCOIN_TYPES      = {"1d": "1day", "1w": "1week", "1M": "1month"}
+BITGET_GRANULARITY = {"1d": "1Dutc", "1w": "1Wutc", "1M": "1Mutc"}  # UTC-aligned (plain 1day/1week/1M are UTC+8)
+BITGET_PLAIN       = {"1d": "1day",  "1w": "1week", "1M": "1M"}     # UTC+8 fallback for brand-new listings
 BINANCE_INTERVAL  = BINANCE_INTERVALS[TIMEFRAME]               # for logging
 
 # Exchange REST bases
@@ -92,12 +95,18 @@ SPOT_BASE   = "https://data-api.binance.vision"   # geo-unrestricted Binance spo
 FUT_BASE    = "https://fapi.binance.com"          # Binance futures (may be geo-blocked)
 MEXC_BASE   = "https://api.mexc.com"              # MEXC (Binance-compatible API)
 KUCOIN_BASE = "https://api.kucoin.com"            # KuCoin
+BITGET_BASE = "https://api.bitget.com"            # Bitget
 
 # Leveraged tokens & stablecoin bases we don't want to scan
 EXCLUDE_SUFFIXES = ("UPUSDT", "DOWNUSDT", "BULLUSDT", "BEARUSDT")
-KUCOIN_LEV_SUFFIXES = ("3L", "3S", "5L", "5S")   # e.g. BTC3L, ETH3S
+KUCOIN_LEV_SUFFIXES = ("3L", "3S", "5L", "5S")   # e.g. BTC3L, ETH3S (KuCoin + Bitget)
+# Gold tokens (PAXG, XAUT) are deliberately NOT here — the owner wants them scanned like any coin.
 STABLE_BASES = {"USDC", "FDUSD", "TUSD", "BUSD", "DAI", "USDP", "EUR", "AEUR",
-                "EURI", "PAXG", "XUSD", "USDE", "USD1"}
+                "EURI", "XUSD", "USDE", "USD1",
+                # more stables / fiat tokens listed on Bitget, MEXC and KuCoin
+                "USDD", "PYUSD", "USDS", "RLUSD", "FRAX", "LUSD", "GUSD", "USDX",
+                "BFUSD", "SUSD", "USDJ", "CUSD", "USDY", "USDTB", "USDL", "USDB",
+                "USDR", "USD0", "USDGO", "U", "EURC", "TRY", "BRL", "GBP", "JPY", "ARS"}
 
 # Parallel per-candle arrays (ascending, closed candles only). `opens` are candle
 # open/start times in ms (each candle's id); `oprices` open prices; `vols` volume.
@@ -186,6 +195,33 @@ def get_kucoin_symbols():
     return sorted(out)
 
 
+def get_bitget_symbols():
+    """Active Bitget spot USDT symbols passing Bitget's own volume floor
+    (BITGET_MIN_QUOTE_VOLUME — its spot volume is much thinner than Binance's).
+    Bitget also lists ~2,600 tokenized stocks / pre-IPO tokens whose base has a
+    lowercase prefix (rNKE, preOPAI); real coin tickers are all-uppercase, so any
+    base containing a lowercase letter is skipped. Pairs whose openTime is still
+    in the future have no candles yet and are skipped too."""
+    syms = get_json(f"{BITGET_BASE}/api/v2/spot/public/symbols").get("data") or []
+    tick = get_json(f"{BITGET_BASE}/api/v2/spot/market/tickers").get("data") or []
+    vol = {t["symbol"]: float(t.get("usdtVolume") or t.get("quoteVolume") or 0) for t in tick}
+    now_ms = time.time() * 1000
+    out = []
+    for s in syms:
+        sym = s["symbol"]                                # e.g. "BTCUSDT"
+        base = s.get("baseCoin") or ""
+        if (s.get("status") == "online"
+                and s.get("quoteCoin") == QUOTE_ASSET
+                and base.isupper()
+                and float(s.get("openTime") or 0) <= now_ms
+                and not sym.endswith(EXCLUDE_SUFFIXES)
+                and not base.endswith(KUCOIN_LEV_SUFFIXES)
+                and base not in STABLE_BASES
+                and vol.get(sym, 0) >= BITGET_MIN_QUOTE_VOLUME):
+            out.append(sym)
+    return sorted(out)
+
+
 # ── Kline fetchers (return Klines; ascending, closed candles only) ──
 def binance_style_klines(base, path, symbol, interval):
     """Binance & MEXC share this exact kline format (works for 1d/1w/1M)."""
@@ -203,10 +239,12 @@ def binance_style_klines(base, path, symbol, interval):
     )
 
 
-def _kucoin_candle_closed(start, now_s, timeframe):
-    """KuCoin candles give only a start time. Decide if the period has ended."""
+def _start_candle_closed(start, now_s, timeframe, tz_offset=0):
+    """KuCoin/Bitget candles give only a START time. Decide if the period has ended.
+    tz_offset (seconds) shifts the calendar for monthly candles that start at a
+    non-UTC midnight (Bitget's UTC+8 fallback)."""
     if timeframe == "1M":                                # calendar month (variable length)
-        st, nw = time.gmtime(start), time.gmtime(now_s)
+        st, nw = time.gmtime(start + tz_offset), time.gmtime(now_s + tz_offset)
         return (st.tm_year, st.tm_mon) < (nw.tm_year, nw.tm_mon)
     dur = 86400 if timeframe == "1d" else 604800         # day / week: fixed duration
     return start + dur <= now_s
@@ -218,7 +256,7 @@ def kucoin_klines(symbol, timeframe=TIMEFRAME):
                     params={"type": KUCOIN_TYPES[timeframe], "symbol": symbol}).get("data") or []
     now_s = int(time.time())
     rows = [r for r in reversed(data)                    # -> ascending, closed only
-            if _kucoin_candle_closed(int(r[0]), now_s, timeframe)]
+            if _start_candle_closed(int(r[0]), now_s, timeframe)]
     return Klines(
         highs=[float(r[3]) for r in rows],
         lows=[float(r[4]) for r in rows],
@@ -226,6 +264,35 @@ def kucoin_klines(symbol, timeframe=TIMEFRAME):
         opens=[int(r[0]) * 1000 for r in rows],          # start time (ms) — candle id
         oprices=[float(r[1]) for r in rows],             # open price
         vols=[float(r[5]) for r in rows],                # volume
+    )
+
+
+def bitget_klines(symbol, timeframe=TIMEFRAME):
+    """Bitget candles are ascending: [start_ms, open, high, low, close, baseVol, usdtVol, quoteVol].
+    One call returns at most 300 daily / 100 weekly / all monthly candles. Brand-new
+    listings have no UTC-aligned (*utc) candles yet and answer HTTP 400 (code 48001)
+    -> fall back to the UTC+8 candles, shifting the month calendar by 8 h."""
+    url = f"{BITGET_BASE}/api/v2/spot/market/candles"
+    tz_offset = 0
+    try:
+        data = get_json(url, params={"symbol": symbol, "granularity": BITGET_GRANULARITY[timeframe],
+                                     "limit": min(CANDLES, 1000)}).get("data") or []
+    except requests.HTTPError as e:
+        if e.response is None or e.response.status_code != 400:
+            raise
+        data = get_json(url, params={"symbol": symbol, "granularity": BITGET_PLAIN[timeframe],
+                                     "limit": min(CANDLES, 1000)}).get("data") or []
+        tz_offset = 8 * 3600
+    now_s = int(time.time())
+    rows = [r for r in data                              # ascending, closed only
+            if _start_candle_closed(int(r[0]) // 1000, now_s, timeframe, tz_offset)]
+    return Klines(
+        highs=[float(r[2]) for r in rows],
+        lows=[float(r[3]) for r in rows],
+        closes=[float(r[4]) for r in rows],
+        opens=[int(r[0]) for r in rows],                 # start time (ms) — candle id
+        oprices=[float(r[1]) for r in rows],             # open price
+        vols=[float(r[5]) for r in rows],                # base volume
     )
 
 
@@ -237,6 +304,8 @@ def klines_for(exchange, symbol, timeframe):
         return binance_style_klines(MEXC_BASE, "/api/v3/klines", symbol, MEXC_INTERVALS[timeframe])
     if exchange == "KUCOIN":
         return kucoin_klines(symbol, timeframe)
+    if exchange == "BITGET":
+        return bitget_klines(symbol, timeframe)
     if exchange == "PSX":
         return psx_klines(symbol, timeframe)
     if exchange == "BINANCE FUT":
@@ -822,6 +891,7 @@ def render_message(header, blocks, formatter):
 # (display name, symbol-listing fn, kline fn)
 CRYPTO_EXCHANGES = [
     ("BINANCE", get_binance_spot_symbols, lambda s: klines_for("BINANCE", s, TIMEFRAME)),
+    ("BITGET",  get_bitget_symbols,       lambda s: klines_for("BITGET", s, TIMEFRAME)),
     ("MEXC",    get_mexc_symbols,         lambda s: klines_for("MEXC", s, TIMEFRAME)),
     ("KUCOIN",  get_kucoin_symbols,       lambda s: klines_for("KUCOIN", s, TIMEFRAME)),
 ]

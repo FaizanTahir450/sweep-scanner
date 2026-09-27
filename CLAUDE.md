@@ -5,7 +5,7 @@ Guidance for future Claude Code sessions working in this repo.
 ## What this project is
 
 A single-file Python scanner that runs **on GitHub Actions**, scans liquid USDT
-spot pairs across **multiple exchanges (Binance, MEXC, KuCoin)** plus Binance
+spot pairs across **multiple exchanges (Binance, Bitget, MEXC, KuCoin)** plus Binance
 USDT-M futures on **daily / weekly / monthly** candles, detects **liquidity
 sweeps / Swing Failure Patterns (SFP)**, and sends a consolidated **Telegram**
 message per run. No server, no manual step.
@@ -114,22 +114,35 @@ exchanges are wired up in the **`SPOT_EXCHANGES`** registry near the bottom of
 it, each exchange wrapped in try/except so one failing (e.g. geo-block) emits a
 ⚠️ note without blocking the others. Binance/MEXC share `binance_style_klines()`
 (identical kline format); KuCoin uses `kucoin_klines()` (newest-first, different
-column order). Binance futures is handled as a separate block after the registry.
+column order); Bitget uses `bitget_klines()` (ascending, start time only). Binance
+futures is handled as a separate block after the registry.
 
 ## Data sources
 
 - **Binance spot**: `https://data-api.binance.vision` — public geo-unrestricted
   mirror (GitHub runners are US-based; the main Binance API blocks US IPs).
+- **Bitget**: `https://api.bitget.com` — `/api/v2/spot/public/symbols`
+  (`status == "online"`, `quoteCoin`, `openTime` must already be in the past) +
+  `/api/v2/spot/market/tickers` (`usdtVolume` = USDT 24h volume). ~3,100 online USDT
+  pairs, of which ~2,600 are tokenized stocks / pre-IPO tokens with a lowercase-prefixed
+  base (`rNKE`, `preOPAI`) → only all-uppercase bases are kept (~510 coins). Spot volume
+  is far thinner than Binance (BTC ≈ 1/4 of Binance's), so Bitget has its own floor
+  `BITGET_MIN_QUOTE_VOLUME` ($100k → ~190 pairs; the global $500k would leave ~60). Candles
+  `/api/v2/spot/market/candles` are ascending `[start_ms, open, high, low, close,
+  baseVol, usdtVol, quoteVol]`, at most 300 daily / 100 weekly per call; use the UTC
+  granularities `1Dutc/1Wutc/1Mutc` (plain `1day/1week/1M` are UTC+8). Brand-new
+  listings without `*utc` data answer HTTP 400 (code 48001) → fallback to the UTC+8
+  candles with an 8 h shift in the month-closure check. Weeks start **Monday** UTC.
 - **MEXC**: `https://api.mexc.com` — Binance-compatible API; `status == "1"`
   means trading. Reachable from US runners.
 - **KuCoin**: `https://api.kucoin.com` — `volValue` = USDT 24h volume; candles are
   newest-first `[start, open, close, high, low, ...]`; leveraged tokens end in
-  `3L/3S/5L/5S`. Candles give only a *start* time, so `_kucoin_candle_closed()`
+  `3L/3S/5L/5S`. Candles give only a *start* time, so `_start_candle_closed()`
   decides the forming candle by fixed duration (day/week) or calendar month.
   KuCoin weeks start **Thursday** (Binance/MEXC weeks start Monday) — expected.
 
 **Forming-candle safety:** the current (unclosed) candle is always dropped —
-Binance/MEXC via `close_time <= now`, KuCoin via `_kucoin_candle_closed()`.
+Binance/MEXC via `close_time <= now`, KuCoin/Bitget via `_start_candle_closed()`.
 Signals only ever fire on closed candles, on every timeframe.
 - **Binance futures (USDT-M)**: `https://fapi.binance.com` — no geo mirror; usually
   geo-blocked on US runners, so it typically emits a ⚠️ note. To scan it, run from
@@ -140,7 +153,7 @@ Signals only ever fire on closed candles, on every timeframe.
 | Setting | Default | Meaning |
 |---------|---------|---------|
 | `SWING_STRENGTH` | 5 | Bars each side to confirm a swing point. |
-| `TIMEFRAME` (env) | 1d | `1d`/`1w`/`1M` (or daily/weekly/monthly). Selects per-exchange interval via `BINANCE_INTERVALS`/`MEXC_INTERVALS`/`KUCOIN_TYPES` (note MEXC weekly is `1W`) and the message label. |
+| `TIMEFRAME` (env) | 1d | `1d`/`1w`/`1M` (or daily/weekly/monthly). Selects per-exchange interval via `BINANCE_INTERVALS`/`MEXC_INTERVALS`/`KUCOIN_TYPES`/`BITGET_GRANULARITY` (note MEXC weekly is `1W`, Bitget uses the `*utc` granularities) and the message label. |
 | `TARGET_R` (env) | 2 | Reward multiple for the target; stop = 1R (the sweep wick). |
 | `EVAL_HORIZON` (env) | 20 | Candles a signal has to resolve before it expires. |
 | `MARKET` (env) | crypto | `crypto` or `psx` — selects the exchange registry (`CRYPTO_EXCHANGES` / `PSX_EXCHANGES`), session calendar and message label. |
@@ -149,13 +162,16 @@ Signals only ever fire on closed candles, on every timeframe.
 | `PSX_MIN_TURNOVER` (env) | 0 | PSX only: min 20-day avg traded value (PKR) to include a stock; 0 = every equity. |
 | `SIGNALS_LOG` (env) | signals.jsonl | Path to the signal log (override to a scratch path for local tests so the repo file isn't touched). |
 | `CANDLES` | 120 | Candles of history fetched per symbol (per timeframe). |
-| `MIN_QUOTE_VOLUME` | 500_000 | Skip pairs under $500k 24h quote volume. Applied to every exchange. Lower = more coins (esp. MEXC/KuCoin long tail), more noise. |
+| `MIN_QUOTE_VOLUME` | 500_000 | Skip pairs under $500k 24h quote volume. Applied to Binance spot/futures, MEXC and KuCoin. Lower = more coins (esp. MEXC/KuCoin long tail), more noise. |
+| `BITGET_MIN_QUOTE_VOLUME` | 100_000 | Bitget-only volume floor (owner's choice 2026-09-27: Bitget spot is ~1/5 of Binance's volume, so the global floor left only ~60 pairs; $100k ≈ 190 pairs). |
 | `QUOTE_ASSET` | "USDT" | Quote asset filter. |
 | `SCAN_FUTURES` | True | Binance USDT-M futures. Set False to skip. |
 | `REQUEST_PAUSE` | 0.08 | Seconds between kline requests (rate-limit safety). |
 
-Leveraged tokens (Binance/MEXC `UP/DOWN/BULL/BEAR` suffixes, KuCoin `3L/3S/5L/5S`)
-and stablecoin bases are excluded on every exchange.
+Leveraged tokens (Binance/MEXC `UP/DOWN/BULL/BEAR` suffixes, KuCoin/Bitget `3L/3S/5L/5S`)
+and stablecoin / fiat bases (`STABLE_BASES`) are excluded on every exchange. **Gold
+tokens (PAXG, XAUT) are deliberately scanned** — the owner asked for gold "as a coin"
+on 2026-09-27; do not add them to `STABLE_BASES`.
 
 ## Secrets / configuration — SECURITY
 
