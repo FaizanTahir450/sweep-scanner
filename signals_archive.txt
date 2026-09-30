@@ -3710,3 +3710,48 @@ PSX market closed today (last session 31 Aug 2026) — no new daily candle.
 📊 PSX Daily Sweep Scan — 29 Sep 2026 (1d close)
 
 ⚠️ PSX data unavailable this run (portal and fallback both failed).
+
+==================================================
+
+📊 Daily Sweep Scan — 30 Sep 2026 (1d close)
+
+— BINANCE (SPOT) —
+
+🟢 Bullish sweeps: none
+
+🔴 Bearish sweeps (3):
+  • AVAXUSDT @ 11.436
+  • CRVUSDT @ 0.3811
+  • ETHFIUSDT @ 0.7735
+
+— BITGET (SPOT) —
+
+🟢 Bullish sweeps (1):
+  • QUBICUSDT @ 0.00000048
+
+🔴 Bearish sweeps (3):
+  • AVAXUSDT @ 11.44
+  • CRVUSDT @ 0.3811
+  • ETHFIUSDT @ 0.7719
+
+— MEXC (SPOT) —
+
+🟢 Bullish sweeps (2):
+  • BDXUSDT @ 0.07562
+  • ULTIMAUSDT @ 1,729.36
+
+🔴 Bearish sweeps (3):
+  • AVAXUSDT @ 11.443
+  • CRVUSDT @ 0.3807
+  • ETHFIUSDT @ 0.7735
+
+— KUCOIN (SPOT) —
+
+🟢 Bullish sweeps (1):
+  • TSLAX-USDT @ 353.2
+
+🔴 Bearish sweeps (2):
+  • CRV-USDT @ 0.3814
+  • SYRUP-USDT @ 0.2352
+
+⚠️ Binance futures unavailable (HTTP 451 — likely geo-block on runner). Spot results above are complete.
