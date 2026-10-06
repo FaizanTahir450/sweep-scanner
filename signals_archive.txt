@@ -4128,3 +4128,36 @@ PSX market closed today (last session 31 Aug 2026) — no new daily candle.
   • ZEUS-USDT @ 0.00351
 
 ⚠️ Binance futures unavailable (HTTP 451 — likely geo-block on runner). Spot results above are complete.
+
+==================================================
+
+📊 PSX Daily Sweep Scan — 06 Oct 2026 (1d close)
+
+— PSX (EQUITIES) —
+
+🟢 Bullish sweeps (20):
+  • ANL @ 8.89
+  • ANSM @ 23.22
+  • ENGROH @ 264.28
+  • FEM @ 10.54
+  • INIL @ 161.94
+  • ISL @ 78.99
+  • JKSM @ 333.43
+  • KEL @ 5.59
+  • KOHP @ 20.03
+  • KOIL @ 33.42
+  • KPUS @ 702.26
+  • KTML @ 40.62
+  • MCB @ 385.89
+  • MCBIM @ 154.6
+  • NRSL @ 35.13
+  • PIL @ 4.85
+  • SEL @ 24.85
+  • SLGL @ 13.24
+  • SSML @ 17.16
+  • TOMCL @ 28.86
+
+🔴 Bearish sweeps (3):
+  • ATRL @ 1,203.92
+  • MACFL @ 69.92
+  • NAGC @ 92.46
