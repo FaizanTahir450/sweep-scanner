@@ -28,7 +28,7 @@ see "PSX market" below.
 | `backtest.py` | Read-only historical backtest: replays candles, fires the live `analyze_sweep` per bar, grades with `evaluate_outcome`, reports win% / expectancy by timeframe/direction/exchange. Run locally on demand; tune via `BACKTEST_*` env vars. Never writes signals.jsonl or Telegram. |
 | `signals.jsonl` | Append-only signal log, committed back by the Action each run. One JSON object per signal (levels + outcome). Created on first run; **not** gitignored. |
 | `signals_archive.txt` | Human-readable archive: a copy of every message in plain `SYMBOL @ price` style (`fmt_section_simple`), appended each run, committed back. Telegram uses `fmt_section` (`⭐score SYMBOL @ price`, best-first); both render from the same blocks via `render_message()`. Entry/stop/target are logged to `signals.jsonl` but shown in neither message. |
-| `.github/workflows/psx_scan.yml` | PSX workflow: crons `0 13 * * 1-5` (daily 18:00 PKT Mon–Fri) and `15 13 * * 5` (weekly Fri 18:15 PKT) + manual dropdown (daily/weekly). Runs `scanner.py` with `MARKET=psx`, then `evaluate.py`, then commits `signals.jsonl`, `signals_archive.txt` **and `psx_cache/`** back. Shares the `sweep-scan-signals` concurrency group with the crypto workflow. |
+| `.github/workflows/psx_scan.yml` | PSX workflow: crons `0 13 * * 1-5` (daily 18:00 PKT Mon–Fri) and `15 13 * * 5` (weekly Fri 18:15 PKT) + manual dropdown (daily/weekly) and a **dry_run** switch (`DRY_RUN=1`: message printed in the job log, nothing sent, evaluate + commit skipped). Checks out `ref: main` so a queued run starts from the branch tip. Runs `scanner.py` with `MARKET=psx`, then `evaluate.py`, then commits `signals.jsonl`, `signals_archive.txt` **and `psx_cache/`** back. Shares the `sweep-scan-signals` concurrency group with the crypto workflow. |
 | `psx_cache/<SYMBOL>.csv` | Committed per-symbol PSX daily history (`date,open,high,low,close,volume`, ≤650 rows ≈ 2.6y). Refreshed incrementally each run (current month from the portal); one-time backfill came from SCSTrade and was verified identical to the portal. ~500 files / ~13 MB. |
 | `.github/workflows/scan.yml` | Three crons (daily `15 0 * * *`, weekly `15 0 * * 1`, monthly `15 0 1 * *`) + manual `workflow_dispatch` with a timeframe dropdown. Steps: resolve timeframe → run scanner → run evaluate → commit `signals.jsonl` back. `permissions: contents: write` + a `concurrency` group (serializes the commit-back). Weekly run sets `DIGEST=1`. |
 | `README.md` | End-user setup guide (Telegram bot, GitHub secrets, manual trigger). |
@@ -77,21 +77,36 @@ Implemented in `scanner.py`; treat as fixed spec (identical for crypto and PSX):
 
 ## PSX market (`MARKET=psx`)
 
-- **Universe**: every listed PSX equity from the portal's `/symbols` (excludes
-  debt instruments, ETFs, and rights/preference-share instruments by name tag),
-  ~750 tickers of which ~440 trade on a given day. `PSX_MIN_TURNOVER` (PKR, 20-day
-  average close×volume; default 0 = off) is an optional liquidity floor.
-- **Data**: official **PSX Data Portal** `https://dps.psx.com.pk` — free, no key,
-  raw *unadjusted* EOD OHLCV via `POST /historical {month, year, symbol}` (HTML
-  table, ONE month per request; `/timeseries/eod/<SYM>` has no high/low so it is
-  not used). To keep runs ~10 min, `psx_cache/<SYMBOL>.csv` is kept and committed
-  back; each run fetches only the months since the cache's last date (≤4). Empty
-  or >100-day-stale caches are rebuilt from **SCSTrade**
-  (`POST scstrade.com/stockscreening/SS_CompanySnapShotHP.aspx/chart`, whole
-  history in one call; its `/Date(ms)/` stamps are PKT midnight → convert with
-  UTC+5). SCSTrade is also the automatic fallback when the portal errors; if it has
-  no data for a symbol, the last 3 portal months are used. Yahoo `.KA` was rejected
-  (null bars, blocks runners).
+- **The PSX Data Portal (`dps.psx.com.pk`) has answered its data routes with an
+  HTML 404 since ~2026-09-15** (`/symbols`, `POST /historical`, `/market-watch`),
+  which silently broke this scan until 2026-10-06 (every run sent only "PSX data
+  unavailable"). `_psx_portal_alive()` now probes `/symbols` ONCE per run
+  (`PSX_SRC["portal"]`) and the whole run uses either the portal path (when it
+  returns JSON again) or the replacement below — the owner wants PSX-first with
+  fallback, so the portal code is kept.
+- **Universe** (`get_psx_symbols`): portal alive → its `/symbols` list (no debt,
+  ETFs, rights/preference shares by name tag). Portal down → **TradingView's
+  screener** `POST scanner.tradingview.com/pakistan/scan` (`type == stock`,
+  `subtype == common`, ~482 names; columns name/description/type/subtype/time/
+  open/high/low/close/volume; unknown column names return HTTP 400) **plus every
+  `psx_cache/` symbol that traded in the last 60 days**. Share-class tickers of a
+  listed company (`CPS/PRS/PS/R` suffix: ASLPS, GCWLR) are dropped.
+  `PSX_MIN_TURNOVER` (PKR, 20-day average close×volume; default 0 = off) is an
+  optional liquidity floor.
+- **Candles** (`_psx_update_cache`): `psx_cache/<SYMBOL>.csv` is kept and
+  committed back. Portal alive → the months since the cache's last date (≤4,
+  `POST /historical {month, year, symbol}`, HTML table). Portal down → **SCS Trade**
+  (`POST scstrade.com/stockscreening/SS_CompanySnapShotHP.aspx/chart`
+  `{"par": SYM, "date1": MM/DD/YYYY, "date2": MM/DD/YYYY}`, raw unadjusted exchange
+  prices, newest-first `d[]` rows, `/Date(ms)/` = PKT midnight → convert with
+  UTC+5, empty `d` = no data, retried 3× on transport/5xx) from a week before the
+  cache's last date (full history from 2023 when the cache is empty or >100 days
+  stale) — ~0.2 s per symbol, so a full run is ~2 min. If **TradingView's
+  `time` column** (latest bar's open, UTC → PKT date = session) shows a newer
+  session than SCS Trade has published, that row's OHLCV is appended as the
+  latest bar (SCS Trade can lag the 18:00 PKT run); SCS Trade's own bar replaces
+  it on the next run if it differs. Yahoo `.KA` was rejected by the owner
+  (dividend-adjusted history drifts from exchange prices, ~1 in 8 symbols missing).
 - **Candles**: daily = one portal row per session; **weekly is aggregated locally**
   from daily bars over Mon–Fri ISO weeks (id = Monday 00:00 UTC in ms). Monthly is
   not supported for PSX. Forming-candle safety: a same-day bar is dropped before
@@ -161,6 +176,7 @@ Signals only ever fire on closed candles, on every timeframe.
 | `REQUIRE_UNTAPPED` (env) | 1 | `0` to allow sweeps of levels a prior wick already ran. |
 | `PSX_MIN_TURNOVER` (env) | 0 | PSX only: min 20-day avg traded value (PKR) to include a stock; 0 = every equity. |
 | `SIGNALS_LOG` (env) | signals.jsonl | Path to the signal log (override to a scratch path for local tests so the repo file isn't touched). |
+| `DRY_RUN` (env) | 0 | `1` = print the Telegram message in the log instead of sending it; no signal log / archive writes (the PSX cache is still refreshed). |
 | `CANDLES` | 120 | Candles of history fetched per symbol (per timeframe). |
 | `MIN_QUOTE_VOLUME` | 500_000 | Skip pairs under $500k 24h quote volume. Applied to Binance spot/futures, MEXC and KuCoin. Lower = more coins (esp. MEXC/KuCoin long tail), more noise. |
 | `BITGET_MIN_QUOTE_VOLUME` | 100_000 | Bitget-only volume floor (owner's choice 2026-09-27: Bitget spot is ~1/5 of Binance's volume, so the global floor left only ~60 pairs; $100k ≈ 190 pairs). |

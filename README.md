@@ -17,14 +17,19 @@ Each timeframe sends its own Telegram message. (On a Monday-the-1st all three
 fire — that's three messages.)
 
 **PSX stocks (Pakistan Stock Exchange):**
-- Universe: all ~750 listed equities (no debt, ETFs, rights or preference shares).
-- Data: the official **PSX Data Portal** (free, no key, unadjusted EOD OHLCV), with
-  a committed history cache (`psx_cache/`) so each run only fetches the current
-  month; SCSTrade is the automatic fallback.
+- Universe: every common stock on TradingView's PSX screener (~480) plus any
+  cached symbol that traded in the last 60 days (no debt, ETFs, rights or
+  preference shares).
+- Data: the official **PSX Data Portal** when it answers (its data routes have been
+  down since mid-September 2026), otherwise **SCS Trade** (raw, unadjusted EOD
+  OHLCV, one call per stock) with TradingView supplying the latest session's bar
+  if SCS Trade has not published it yet. A committed history cache (`psx_cache/`)
+  keeps each run to ~2 minutes.
 - Schedule (PKT): **daily 18:00 Mon–Fri**, **weekly Fri 18:15** — after the close
   and the portal's EOD publish. Separate Telegram message (`📊 PSX Daily Sweep
   Scan …`). On market holidays you get a one-line "market closed" note.
-- Manual run: Actions → **PSX Sweep Scan** → Run workflow → daily / weekly.
+- Manual run: Actions → **PSX Sweep Scan** → Run workflow → daily / weekly, with
+  an optional *dry run* that prints the message in the job log instead of sending it.
 - Same signal rules, levels, score and outcome tracking as crypto (`exchange: PSX`
   in `signals.jsonl`). Prices are unadjusted, so bonus/rights gaps can show up as
   sweeps — sanity-check those.

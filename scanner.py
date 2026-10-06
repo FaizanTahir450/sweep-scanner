@@ -22,12 +22,13 @@ Logic per symbol:
 Sends one consolidated Telegram message per run.
 
 Markets: MARKET=crypto (default: Binance/Bitget/MEXC/KuCoin spot + Binance futures) or
-MARKET=psx (Pakistan Stock Exchange equities, daily/weekly, official PSX Data
-Portal + committed psx_cache/). Detection is identical for both.
+MARKET=psx (Pakistan Stock Exchange equities, daily/weekly; PSX Data Portal when
+it answers, else TradingView universe + SCS Trade candles; committed psx_cache/).
+Detection is identical for both.
 
 Env vars: TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID (required); MARKET, TIMEFRAME,
 SIGNALS_LOG, TARGET_R, EVAL_HORIZON, MIN_SCORE, ATR_MULT, REQUIRE_UNTAPPED,
-PSX_MIN_TURNOVER (optional).
+PSX_MIN_TURNOVER, DRY_RUN (optional).
 """
 
 import os
@@ -71,6 +72,7 @@ SIGNALS_ARCHIVE = os.environ.get("SIGNALS_ARCHIVE", "signals_archive.txt")
 # shown/logged. Raise it to only keep higher-quality setups. The core detection
 # (check_sweep) is never affected by scoring.
 MIN_SCORE   = int(os.environ.get("MIN_SCORE", "0"))
+DRY_RUN     = os.environ.get("DRY_RUN", "0").strip() == "1"   # print the message; no Telegram, no signal log / archive
 VOL_LOOKBACK = 20              # candles for the average-volume baseline
 
 # Timeframe: daily / weekly / monthly. Set via TIMEFRAME env (1d/1w/1M or a
@@ -329,6 +331,11 @@ PSX_KEEP  = 650                      # daily rows kept per symbol (~2.6y ≈ 120
 PSX_MIN_TURNOVER = float(os.environ.get("PSX_MIN_TURNOVER", "0"))  # PKR 20d avg close×volume; 0 = every equity
 PKT = timezone(timedelta(hours=5))
 PSX_STATE = {"latest_date": None}    # newest session date seen this run (holiday / staleness guard)
+TV_SCAN    = "https://scanner.tradingview.com/pakistan/scan"   # universe + latest-session bar while the portal is down
+TV_COLUMNS = ["name", "description", "type", "subtype", "time", "open", "high", "low", "close", "volume"]
+PSX_SESSION_CUTOFF = (16, 45)        # PKT: before this, today's bar may still be forming
+_PSX_SHARE_CLASS = ("CPS", "PRS", "PS", "R")   # preference / rights tickers of a listed company (ASLPS, GCWLR)
+PSX_SRC = {"portal": None, "tv": None}         # per-run probes: portal alive? / TradingView (names, bars)
 # Non-equity instruments that share the equity list: rights "(R)/(Right)", preference
 # shares "(Pref)/(PRS)", participation term certificates "(Ptc)". Matched on name.
 _PSX_NON_EQUITY = re.compile(r"\((?:r\d*|right|prs|ptc|[^)]*pref[^)]*)\)", re.I)
@@ -398,58 +405,135 @@ def _psx_portal_month(sym, year, month):
     return rows
 
 
-def _psx_scs_history(sym, start="01/01/2023"):
-    """SCSTrade fallback/backfill: whole history in one call -> rows (PKT dates)."""
+def _psx_scs_history(sym, start="01/01/2023", tries=3):
+    """SCS Trade: daily bars from `start` (MM/DD/YYYY) to tomorrow in ONE call -> ascending
+    rows (PKT dates). Raw exchange prices. Empty list = SCS Trade has no prices for the
+    symbol; transport / 5xx / bad-JSON errors are retried `tries` times, then raised."""
     end = (_pkt_now() + timedelta(days=1)).strftime("%m/%d/%Y")
-    r = session.post(f"{SCS_BASE}/stockscreening/SS_CompanySnapShotHP.aspx/chart",
-                     json={"par": sym, "date1": start, "date2": end},
-                     headers={"Content-Type": "application/json"}, timeout=30)
-    r.raise_for_status()
-    rows = []
-    for x in r.json().get("d") or []:
-        ms = int(re.search(r"-?\d+", x["trading_Date"]).group())
-        d = datetime.fromtimestamp(ms / 1000, tz=timezone.utc).astimezone(PKT).date().isoformat()
-        o, h, l, c, v = (x.get("trading_open"), x.get("trading_high"), x.get("trading_low"),
-                         x.get("trading_close"), x.get("trading_vol"))
-        if None in (o, h, l, c) or c <= 0:
+    err = None
+    for attempt in range(tries):
+        try:
+            r = session.post(f"{SCS_BASE}/stockscreening/SS_CompanySnapShotHP.aspx/chart",
+                             json={"par": sym, "date1": start, "date2": end},
+                             headers={"Content-Type": "application/json"}, timeout=(15, 60))
+            if r.status_code == 429 or r.status_code >= 500:
+                raise requests.HTTPError(f"HTTP {r.status_code}", response=r)
+            r.raise_for_status()
+            data = r.json().get("d") or []
+            break
+        except (requests.RequestException, ValueError) as e:
+            err = e
+            if attempt < tries - 1:
+                time.sleep(2.0 * (attempt + 1))
+    else:
+        raise err
+    rows = {}
+    for x in data:
+        m = re.search(r"-?\d+", x.get("trading_Date") or "")
+        c = x.get("trading_close")
+        if not m or not c or c <= 0:
             continue
-        rows.append((d, float(o), float(h), float(l), float(c), int(v or 0)))
-    return rows
+        d = datetime.fromtimestamp(int(m.group()) / 1000, tz=timezone.utc).astimezone(PKT).date().isoformat()
+        rows[d] = (d, float(x.get("trading_open") or c), float(x.get("trading_high") or c),
+                   float(x.get("trading_low") or c), float(c), int(x.get("trading_vol") or 0))
+    return [rows[k] for k in sorted(rows)]
+
+
+def _psx_portal_alive():
+    """Probe the portal's /symbols ONCE per run: True only if it answers JSON (its data
+    routes have returned a branded HTML 404 since ~2026-09-15)."""
+    if PSX_SRC["portal"] is None:
+        try:
+            r = session.get(f"{PSX_BASE}/symbols", timeout=15)
+            PSX_SRC["portal"] = r.status_code == 200 and "json" in (r.headers.get("Content-Type") or "").lower()
+        except Exception:
+            PSX_SRC["portal"] = False
+        print("[PSX] data portal " + ("alive -> portal data" if PSX_SRC["portal"]
+                                      else "down -> TradingView universe + SCS Trade candles"))
+    return PSX_SRC["portal"]
+
+
+def _psx_tradingview():
+    """TradingView's PSX screener, ONCE per run: ({sym: name}, {sym: (date, o, h, l, c, v)})
+    for every common stock. `time` is the latest bar's open (UTC) -> its PKT date is the
+    session the OHLC belongs to; a bar for today is dropped before PSX_SESSION_CUTOFF."""
+    if PSX_SRC["tv"] is None:
+        names, bars = {}, {}
+        try:
+            body = {"columns": TV_COLUMNS, "filter": [{"left": "type", "operation": "equal", "right": "stock"}],
+                    "range": [0, 5000], "sort": {"sortBy": "name", "sortOrder": "asc"}}
+            r = session.post(TV_SCAN, json=body, timeout=(15, 60))
+            r.raise_for_status()
+            now = _pkt_now()
+            today = now.date().isoformat()
+            final = (now.hour, now.minute) >= PSX_SESSION_CUTOFF
+            for x in r.json().get("data") or []:
+                d = x.get("d") or []
+                if len(d) < len(TV_COLUMNS):
+                    continue
+                sym, desc, typ, sub, t, o, h, l, c, v = d[:len(TV_COLUMNS)]
+                if typ != "stock" or sub != "common" or not sym:
+                    continue
+                names[sym] = (desc or "").strip()
+                if not t or not c or c <= 0:
+                    continue
+                bd = datetime.fromtimestamp(int(t), tz=timezone.utc).astimezone(PKT).date().isoformat()
+                if bd == today and not final:
+                    continue
+                bars[sym] = (bd, float(o or c), float(h or c), float(l or c), float(c), int(v or 0))
+            print(f"[PSX] TradingView screener: {len(names)} common stocks, {len(bars)} latest bars")
+        except Exception as e:
+            print(f"[PSX] TradingView screener failed: {type(e).__name__}: {e}")
+        PSX_SRC["tv"] = (names, bars)
+    return PSX_SRC["tv"]
 
 
 def _psx_update_cache(sym):
-    """Merge fresh data into the symbol's cache. Returns daily rows, ascending."""
+    """Merge fresh data into the symbol's cache. Returns daily rows, ascending.
+    Portal alive: the months since the cache's last date (<=4; SCS Trade backfills an
+    empty/stale cache). Portal down: SCS Trade from a week before the cache's last date
+    (full history when empty/stale), plus TradingView's bar for the latest session when
+    SCS Trade has not published it yet (SCS Trade can lag the 18:00 PKT run)."""
     rows = {r[0]: r for r in _psx_cache_read(sym)}
     today = _pkt_now().date()
     last = max(rows) if rows else None
+    stale = not last or (today - date.fromisoformat(last)).days > 100
     fresh = []
     try:
-        if last and (today - date.fromisoformat(last)).days <= 100:
-            # portal: every month from the last cached month up to the current one (≤4)
-            y, m = today.year, today.month
-            ly, lm = int(last[:4]), int(last[5:7])
-            months = []
-            while (y, m) >= (ly, lm) and len(months) < 4:
-                months.append((y, m))
-                m -= 1
-                if m == 0:
-                    y, m = y - 1, 12
-            for yy, mm in months:
-                fresh += _psx_portal_month(sym, yy, mm)
-        else:                                            # empty/stale cache: full backfill
-            fresh = _psx_scs_history(sym)
-            if not fresh:                                # not on SCSTrade: last 3 months from the portal
+        if _psx_portal_alive():
+            if not stale:
+                # portal: every month from the last cached month up to the current one (<=4)
                 y, m = today.year, today.month
-                for _ in range(3):
-                    fresh += _psx_portal_month(sym, y, m)
+                ly, lm = int(last[:4]), int(last[5:7])
+                months = []
+                while (y, m) >= (ly, lm) and len(months) < 4:
+                    months.append((y, m))
                     m -= 1
                     if m == 0:
                         y, m = y - 1, 12
+                for yy, mm in months:
+                    fresh += _psx_portal_month(sym, yy, mm)
+            else:                                        # empty/stale cache: full backfill
+                fresh = _psx_scs_history(sym)
+                if not fresh:                            # not on SCS Trade: last 3 months from the portal
+                    y, m = today.year, today.month
+                    for _ in range(3):
+                        fresh += _psx_portal_month(sym, y, m)
+                        m -= 1
+                        if m == 0:
+                            y, m = y - 1, 12
+        else:
+            start = "01/01/2023" if stale else (date.fromisoformat(last) - timedelta(days=7)).strftime("%m/%d/%Y")
+            fresh = _psx_scs_history(sym, start)
     except Exception:
         try:
             fresh = _psx_scs_history(sym)
         except Exception:
             fresh = []
+    tv = _psx_tradingview()[1].get(sym)                  # latest-session bar if SCS Trade lacks it
+    newest = max([r[0] for r in fresh] + ([last] if last else []), default=None)
+    if tv and (newest is None or tv[0] > newest):
+        fresh.append(tv)
     changed = False
     for r in fresh:
         old = rows.get(r[0])
@@ -463,11 +547,36 @@ def _psx_update_cache(sym):
 
 
 def get_psx_symbols():
-    """All listed PSX equities (no debt instruments / ETFs); optional turnover floor."""
-    syms = get_json(f"{PSX_BASE}/symbols")
-    eq = sorted(x["symbol"] for x in syms
-                if not x.get("isDebt") and not x.get("isETF")
-                and not _PSX_NON_EQUITY.search(x.get("name") or ""))
+    """PSX common equities to scan. Portal alive: its /symbols list (no debt / ETFs /
+    rights / preference shares). Portal down: TradingView's screener (~480 common stocks)
+    merged with every symbol in psx_cache/ that traded in the last 60 days. Share-class
+    tickers of a listed company (ASLPS, GCWLR) are dropped; PSX_MIN_TURNOVER is optional."""
+    if _psx_portal_alive():
+        syms = get_json(f"{PSX_BASE}/symbols")
+        eq = {x["symbol"] for x in syms
+              if not x.get("isDebt") and not x.get("isETF")
+              and not _PSX_NON_EQUITY.search(x.get("name") or "")}
+        src = f"portal ({len(eq)})"
+    else:
+        names, _ = _psx_tradingview()
+        eq = set(names)
+        src = f"TradingView ({len(eq)})"
+        cutoff = (_pkt_now().date() - timedelta(days=60)).isoformat()
+        cached = set()
+        if os.path.isdir(PSX_CACHE):
+            for f in os.listdir(PSX_CACHE):
+                if f.endswith(".csv"):
+                    r = _psx_cache_read(f[:-4])
+                    if r and r[-1][0] >= cutoff:
+                        cached.add(f[:-4])
+        src += f" + cache ({len(cached - eq)} more)"
+        eq |= cached
+        if not eq:
+            raise RuntimeError("PSX universe unavailable: portal down, TradingView failed, cache empty")
+    eq = {s for s in eq if not any(s.endswith(suf) and len(s) > len(suf) and s[:-len(suf)] in eq
+                                   for suf in _PSX_SHARE_CLASS)}
+    print(f"[PSX] universe: {src} -> {len(eq)} equities")
+    eq = sorted(eq)
     if PSX_MIN_TURNOVER > 0:
         keep = []
         for s in eq:
@@ -904,7 +1013,7 @@ SPOT_EXCHANGES = PSX_EXCHANGES if MARKET == "psx" else CRYPTO_EXCHANGES
 # ── Main ───────────────────────────────────────────────────────────
 def main():
     date_str = time.strftime("%d %b %Y", time.gmtime())
-    print(f"Timeframe: {TF_LABEL} ({TIMEFRAME}) | MIN_SCORE={MIN_SCORE}")
+    print(f"Timeframe: {TF_LABEL} ({TIMEFRAME}) | MIN_SCORE={MIN_SCORE} | DRY_RUN={DRY_RUN}")
     if MARKET == "psx" and TIMEFRAME not in ("1d", "1w"):
         print("PSX supports daily/weekly only — nothing to do.")
         return
@@ -935,6 +1044,9 @@ def main():
         ok, want_ts, note = psx_session_check()
         if not ok:
             print(note)
+            if DRY_RUN:
+                print("DRY RUN - note not sent.")
+                return
             send_telegram(f"{hdr}\n\n{note}")
             append_archive(f"{hdr}\n\n{note}")
             return
@@ -960,6 +1072,10 @@ def main():
         except Exception as e:
             blocks.append({"note": f"⚠️ Binance futures scan failed: {type(e).__name__}"})
 
+    if DRY_RUN:
+        print("\n----- DRY RUN: message that would be sent -----\n" + render_message(hdr, blocks, fmt_section)
+              + "\n----- (no Telegram, no signal log / archive) -----")
+        return
     send_telegram(render_message(hdr, blocks, fmt_section))          # detailed → Telegram
     print("Telegram message sent.")
 

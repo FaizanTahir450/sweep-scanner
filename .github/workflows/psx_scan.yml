@@ -11,6 +11,10 @@ on:
         type: choice
         default: daily
         options: [daily, weekly]
+      dry_run:
+        description: "Dry run - print the message in the job log, send nothing, commit nothing"
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -26,6 +30,8 @@ jobs:
     timeout-minutes: 55
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: main            # start from the branch TIP even when queued behind a run that committed state
 
       - uses: actions/setup-python@v5
         with:
@@ -48,11 +54,13 @@ jobs:
         env:
           MARKET: psx
           TIMEFRAME: ${{ steps.tf.outputs.tf }}
+          DRY_RUN: ${{ inputs.dry_run == true && '1' || '0' }}
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         run: python scanner.py
 
       - name: Evaluate outcomes
+        if: ${{ inputs.dry_run != true }}
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
@@ -60,6 +68,7 @@ jobs:
         run: python evaluate.py
 
       - name: Commit signal log, archive and PSX history cache
+        if: ${{ inputs.dry_run != true }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
