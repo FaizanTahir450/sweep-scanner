@@ -4161,3 +4161,47 @@ PSX market closed today (last session 31 Aug 2026) — no new daily candle.
   • ATRL @ 1,203.92
   • MACFL @ 69.92
   • NAGC @ 92.46
+
+==================================================
+
+📊 Daily Sweep Scan — 07 Oct 2026 (1d close)
+
+— BINANCE (SPOT) —
+
+🟢 Bullish sweeps: none
+
+🔴 Bearish sweeps (6):
+  • ASRUSDT @ 0.896
+  • C98USDT @ 0.01804
+  • ESPUSDT @ 0.11767
+  • LAZIOUSDT @ 0.399
+  • NBISBUSDT @ 250.29
+  • TRBUSDT @ 22.87
+
+— BITGET (SPOT) —
+
+🟢 Bullish sweeps: none
+
+🔴 Bearish sweeps (3):
+  • DMCUSDT @ 0.0003698
+  • ROLLUSDT @ 0.09962
+  • TRBUSDT @ 22.86
+
+— MEXC (SPOT) —
+
+🟢 Bullish sweeps: none
+
+🔴 Bearish sweeps (1):
+  • MRVLONUSDT @ 288.92
+
+— KUCOIN (SPOT) —
+
+🟢 Bullish sweeps: none
+
+🔴 Bearish sweeps (4):
+  • C98-USDT @ 0.01798
+  • CAP-USDT @ 0.087897
+  • ELIZAOS-USDT @ 0.000584
+  • TRB-USDT @ 22.883
+
+⚠️ Binance futures unavailable (HTTP 451 — likely geo-block on runner). Spot results above are complete.
