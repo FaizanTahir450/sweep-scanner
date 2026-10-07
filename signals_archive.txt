@@ -4205,3 +4205,9 @@ PSX market closed today (last session 31 Aug 2026) — no new daily candle.
   • TRB-USDT @ 22.883
 
 ⚠️ Binance futures unavailable (HTTP 451 — likely geo-block on runner). Spot results above are complete.
+
+==================================================
+
+📊 PSX Daily Sweep Scan — 07 Oct 2026 (1d close)
+
+PSX market closed today (last session 07 Oct 2026) — no new daily candle.
