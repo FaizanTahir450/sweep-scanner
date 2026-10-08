@@ -4259,3 +4259,9 @@ PSX market closed today (last session 07 Oct 2026) — no new daily candle.
   • W-USDT @ 0.01614
 
 ⚠️ Binance futures unavailable (HTTP 451 — likely geo-block on runner). Spot results above are complete.
+
+==================================================
+
+📊 PSX Daily Sweep Scan — 08 Oct 2026 (1d close)
+
+PSX market closed today (last session 08 Oct 2026) — no new daily candle.
