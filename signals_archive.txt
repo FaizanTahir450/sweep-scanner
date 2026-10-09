@@ -4367,3 +4367,32 @@ PSX market closed today (last session 08 Oct 2026) — no new daily candle.
   • DWSM @ 7.3
   • TBL @ 9.33
   • TREET @ 23.72
+
+==================================================
+
+📊 PSX Weekly Sweep Scan — 09 Oct 2026 (1w close)
+
+— PSX (EQUITIES) —
+
+🟢 Bullish sweeps (15):
+  • AIRLINK @ 118.58
+  • BPL @ 48.04
+  • CEPB @ 25.34
+  • CSIL @ 5.11
+  • EPCL @ 31.86
+  • FFL @ 14.03
+  • KHTC @ 269.06
+  • KOHP @ 23.47
+  • KOIL @ 37.41
+  • KPUS @ 745.47
+  • KTML @ 39.86
+  • SEARL @ 77.86
+  • SLGL @ 13.18
+  • TOMCL @ 28.9
+  • ZIL @ 301.19
+
+🔴 Bearish sweeps (4):
+  • FPRM @ 13.09
+  • NAGC @ 87.2
+  • PIM @ 63.25
+  • POL @ 764.29
