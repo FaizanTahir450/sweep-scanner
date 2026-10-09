@@ -4344,3 +4344,26 @@ PSX market closed today (last session 08 Oct 2026) — no new daily candle.
   • WIN-USDT @ 0.00005421
 
 ⚠️ Binance futures unavailable (HTTP 451 — likely geo-block on runner). Spot results above are complete.
+
+==================================================
+
+📊 PSX Daily Sweep Scan — 09 Oct 2026 (1d close)
+
+— PSX (EQUITIES) —
+
+🟢 Bullish sweeps (8):
+  • BLUEX @ 5.51
+  • CCM @ 39.48
+  • CLOV @ 6.09
+  • LPL @ 18.55
+  • PINL @ 9.56
+  • PKGS @ 686.9
+  • SPEL @ 39.37
+  • WAFI @ 154.83
+
+🔴 Bearish sweeps (5):
+  • CHAS @ 84.37
+  • DOL @ 31.65
+  • DWSM @ 7.3
+  • TBL @ 9.33
+  • TREET @ 23.72
