@@ -4265,3 +4265,82 @@ PSX market closed today (last session 07 Oct 2026) — no new daily candle.
 📊 PSX Daily Sweep Scan — 08 Oct 2026 (1d close)
 
 PSX market closed today (last session 08 Oct 2026) — no new daily candle.
+
+==================================================
+
+📊 Daily Sweep Scan — 09 Oct 2026 (1d close)
+
+— BINANCE (SPOT) —
+
+🟢 Bullish sweeps (10):
+  • 1000CHEEMSUSDT @ 0.000502
+  • AVAXUSDT @ 10.076
+  • AWEUSDT @ 0.062
+  • CBRSBUSDT @ 168.23
+  • CVCUSDT @ 0.02586
+  • DASHUSDT @ 50.58
+  • GIGGLEUSDT @ 34.84
+  • YBUSDT @ 0.0777
+  • ZENUSDT @ 6.235
+  • ZKCUSDT @ 0.0383
+
+🔴 Bearish sweeps (10):
+  • ALGOUSDT @ 0.1174
+  • AMPUSDT @ 0.000693
+  • AMZNBUSDT @ 254.85
+  • CTSIUSDT @ 0.03298
+  • ERAUSDT @ 0.0635
+  • RLCUSDT @ 0.8835
+  • SKLUSDT @ 0.0051
+  • STRKUSDT @ 0.05557
+  • WINUSDT @ 0.00005417
+  • 币安人生USDT @ 0.5161
+
+— BITGET (SPOT) —
+
+🟢 Bullish sweeps (3):
+  • AVAXUSDT @ 10.074
+  • PIUSDT @ 0.08075
+  • ZENUSDT @ 6.251
+
+🔴 Bearish sweeps (8):
+  • AIAUSDT @ 0.081681
+  • ALGOUSDT @ 0.11741
+  • CBKUSDT @ 0.2012
+  • CTSIUSDT @ 0.03286
+  • ERAUSDT @ 0.06326
+  • RLCUSDT @ 0.8825
+  • SKLUSDT @ 0.005106
+  • STRKUSDT @ 0.05563
+
+— MEXC (SPOT) —
+
+🟢 Bullish sweeps (4):
+  • AVAXUSDT @ 10.072
+  • DASHUSDT @ 50.55
+  • STONKUSDT @ 0.150043
+  • WLDUSDT @ 0.4797
+
+🔴 Bearish sweeps (4):
+  • ALGOUSDT @ 0.11736
+  • BATONUSDT @ 0.014497
+  • BDXUSDT @ 0.07632
+  • STRKUSDT @ 0.05559
+
+— KUCOIN (SPOT) —
+
+🟢 Bullish sweeps (3):
+  • DASH-USDT @ 50.62
+  • KAS-USDT @ 0.0392
+  • WLD-USDT @ 0.4799
+
+🔴 Bearish sweeps (7):
+  • ALGO-USDT @ 0.1175
+  • AMP-USDT @ 0.000696
+  • HIPPO-USDT @ 0.000174
+  • RLC-USDT @ 0.8813
+  • STRK-USDT @ 0.05565
+  • TEA-USDT @ 0.00004133
+  • WIN-USDT @ 0.00005421
+
+⚠️ Binance futures unavailable (HTTP 451 — likely geo-block on runner). Spot results above are complete.
