@@ -4396,3 +4396,42 @@ PSX market closed today (last session 08 Oct 2026) — no new daily candle.
   • NAGC @ 87.2
   • PIM @ 63.25
   • POL @ 764.29
+
+==================================================
+
+📊 Daily Sweep Scan — 10 Oct 2026 (1d close)
+
+— BINANCE (SPOT) —
+
+🟢 Bullish sweeps: none
+
+🔴 Bearish sweeps (2):
+  • GMTUSDT @ 0.00947
+  • TSLABUSDT @ 383.04
+
+— BITGET (SPOT) —
+
+🟢 Bullish sweeps (1):
+  • WLFIUSDT @ 0.05703
+
+🔴 Bearish sweeps (3):
+  • BSBUSDT @ 0.10299
+  • GMTUSDT @ 0.00953
+  • LIGHTUSDT @ 0.20378
+
+— MEXC (SPOT) —
+
+🟢 Bullish sweeps: none
+
+🔴 Bearish sweeps (1):
+  • RLCUSDT @ 1.032
+
+— KUCOIN (SPOT) —
+
+🟢 Bullish sweeps: none
+
+🔴 Bearish sweeps (2):
+  • TSLAX-USDT @ 382.88
+  • ZK-USDT @ 0.01413
+
+⚠️ Binance futures unavailable (HTTP 451 — likely geo-block on runner). Spot results above are complete.
