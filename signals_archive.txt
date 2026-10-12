@@ -4534,3 +4534,44 @@ PSX market closed today (last session 08 Oct 2026) — no new daily candle.
   • ROSE-USDT @ 0.00915
 
 ⚠️ Binance futures unavailable (HTTP 451 — likely geo-block on runner). Spot results above are complete.
+
+==================================================
+
+📊 Weekly Sweep Scan — 12 Oct 2026 (1w close)
+
+— BINANCE (SPOT) —
+
+🟢 Bullish sweeps: none
+
+🔴 Bearish sweeps (5):
+  • AMPUSDT @ 0.00064
+  • NMRUSDT @ 13.55
+  • ORCAUSDT @ 2.356
+  • RADUSDT @ 0.302
+  • TRBUSDT @ 19.49
+
+— BITGET (SPOT) —
+
+🟢 Bullish sweeps: none
+
+🔴 Bearish sweeps (4):
+  • NMRUSDT @ 13.547
+  • ORCAUSDT @ 2.356
+  • PUMPBTCUSDT @ 0.0025
+  • SKYUSDT @ 0.08093
+
+— MEXC (SPOT) —
+
+🟢 Bullish sweeps: none
+
+🔴 Bearish sweeps (1):
+  • FOXSYUSDT @ 0.0029562
+
+— KUCOIN (SPOT) —
+
+🟢 Bullish sweeps: none
+
+🔴 Bearish sweeps (1):
+  • VELO-USDT @ 0.005319
+
+⚠️ Binance futures unavailable (HTTP 451 — likely geo-block on runner). Spot results above are complete.
