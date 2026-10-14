@@ -2,8 +2,10 @@ name: PSX Sweep Scan
 
 on:
   schedule:
-    - cron: "0 13 * * 1-5"   # daily  — 18:00 PKT Mon–Fri (PSX closes 15:30 Mon–Thu / 16:30 Fri; EOD data ~16:00 PKT)
-    - cron: "15 13 * * 5"    # weekly — 18:15 PKT Fridays (after the week's last session)
+    # Off the top of the hour: GitHub delays top-of-hour schedules most (this run has fired
+    # up to 8.5 h late). The scanner compares session to session, so lateness is harmless.
+    - cron: "23 12 * * 1-5"  # daily  — 17:23 PKT Mon–Fri (PSX closes 15:30 Mon–Thu / 16:30 Fri; bar final by ~16:45)
+    - cron: "37 12 * * 5"    # weekly — 17:37 PKT Fridays (after the week's last session)
   workflow_dispatch:
     inputs:
       timeframe:
@@ -46,7 +48,7 @@ jobs:
           INPUT="${{ github.event.inputs.timeframe }}"
           SCHED="${{ github.event.schedule }}"
           TF=1d
-          if [ "$INPUT" = "weekly" ] || [ "$SCHED" = "15 13 * * 5" ]; then TF=1w; fi
+          if [ "$INPUT" = "weekly" ] || [ "$SCHED" = "37 12 * * 5" ]; then TF=1w; fi
           echo "tf=$TF" >> "$GITHUB_OUTPUT"
           echo "Resolved timeframe: $TF"
 

@@ -25,9 +25,11 @@ fire — that's three messages.)
   OHLCV, one call per stock) with TradingView supplying the latest session's bar
   if SCS Trade has not published it yet. A committed history cache (`psx_cache/`)
   keeps each run to ~2 minutes.
-- Schedule (PKT): **daily 18:00 Mon–Fri**, **weekly Fri 18:15** — after the close
-  and the portal's EOD publish. Separate Telegram message (`📊 PSX Daily Sweep
-  Scan …`). On market holidays you get a one-line "market closed" note.
+- Schedule (PKT): **daily 17:23 Mon–Fri**, **weekly Fri 17:37** — after the close,
+  once the day's bar is final. GitHub often runs crons hours late; the scanner
+  reports the session that should have closed by then, so a late run still
+  delivers the day. Separate Telegram message (`📊 PSX Daily Sweep Scan …`, dated
+  by the session). On market holidays you get a one-line "market closed" note.
 - Manual run: Actions → **PSX Sweep Scan** → Run workflow → daily / weekly, with
   an optional *dry run* that prints the message in the job log instead of sending it.
 - Same signal rules, levels, score and outcome tracking as crypto (`exchange: PSX`

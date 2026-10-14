@@ -622,23 +622,47 @@ def psx_klines(symbol, timeframe=TIMEFRAME):
                   opens=[_date_ms(w[0]) for w in wk], oprices=[w[1] for w in wk], vols=[w[5] for w in wk])
 
 
+def _psx_expected_session(now):
+    """The newest session that must be CLOSED by `now` (PKT): today if it is a weekday past
+    PSX_SESSION_CUTOFF, otherwise the previous weekday. Independent of how late the cron
+    fires — GitHub has delayed the 18:00 PKT run past midnight PKT several times."""
+    d = now.date()
+    if d.weekday() >= 5 or (now.hour, now.minute) < PSX_SESSION_CUTOFF:
+        d -= timedelta(days=1)
+        while d.weekday() >= 5:
+            d -= timedelta(days=1)
+    return d
+
+
+def _psx_expected_week(now):
+    """Monday of the newest Mon–Fri week whose Friday 17:00 PKT close has passed."""
+    today = now.date()
+    mon = today - timedelta(days=today.weekday())
+    fri_close = datetime(mon.year, mon.month, mon.day, 17, 0, tzinfo=PKT) + timedelta(days=4)
+    return mon if now >= fri_close else mon - timedelta(days=7)
+
+
 def psx_session_check():
-    """(has_new_candle, wanted_candle_ts, note) for this run, from the newest session seen."""
+    """(has_new_candle, wanted_candle_ts, note) for this run: the newest session seen in the
+    data must be the session expected to have closed by now (daily) / belong to the newest
+    completed Mon–Fri week (weekly). Compares session to session, never to the run's own
+    calendar date, so a cron that drifts past midnight PKT still reports the day."""
     latest = PSX_STATE["latest_date"]
     now = _pkt_now()
-    today = now.date()
     if not latest:
         return False, None, "⚠️ PSX data unavailable this run (portal and fallback both failed)."
     ld = date.fromisoformat(latest)
     if TIMEFRAME == "1d":
-        if ld != today:
-            return False, None, f"PSX market closed today (last session {ld:%d %b %Y}) — no new daily candle."
+        want = _psx_expected_session(now)
+        if ld != want:
+            return False, None, (f"PSX market closed on {want:%d %b %Y} (last session {ld:%d %b %Y}) "
+                                 f"— no new daily candle.")
         return True, _date_ms(latest), ""
     mon_latest = ld - timedelta(days=ld.weekday())
-    mon_today = today - timedelta(days=today.weekday())
-    fri_close = datetime(mon_today.year, mon_today.month, mon_today.day, 17, 0, tzinfo=PKT) + timedelta(days=4)
-    if mon_latest != mon_today or now < fri_close:
-        return False, None, f"No completed PSX week to scan yet (last session {ld:%d %b %Y})."
+    mon_want = _psx_expected_week(now)
+    if mon_latest != mon_want:
+        return False, None, (f"No completed PSX week to scan (week of {mon_want:%d %b %Y}; "
+                             f"last session {ld:%d %b %Y}).")
     return True, _date_ms(mon_latest.isoformat()), ""
 
 
@@ -952,6 +976,14 @@ def send_telegram(text):
         resp.raise_for_status()
 
 
+def already_sent(hdr, path=SIGNALS_ARCHIVE):
+    """True if a message with this exact header is already in the archive (same run fired twice)."""
+    if not os.path.exists(path):
+        return False
+    with open(path, encoding="utf-8") as f:
+        return any(line.rstrip("\n") == hdr for line in f)
+
+
 def append_archive(text, path=SIGNALS_ARCHIVE):
     """Append a copy of the sent Telegram message to the plain-text archive."""
     divider = ("\n" + "=" * 50 + "\n\n") if os.path.exists(path) and os.path.getsize(path) else ""
@@ -1013,6 +1045,10 @@ SPOT_EXCHANGES = PSX_EXCHANGES if MARKET == "psx" else CRYPTO_EXCHANGES
 # ── Main ───────────────────────────────────────────────────────────
 def main():
     date_str = time.strftime("%d %b %Y", time.gmtime())
+    if MARKET == "psx":                                  # label by the session reported, not the run's date
+        now_pkt = _pkt_now()
+        sess = _psx_expected_session(now_pkt) if TIMEFRAME == "1d" else _psx_expected_week(now_pkt) + timedelta(days=4)
+        date_str = sess.strftime("%d %b %Y")
     print(f"Timeframe: {TF_LABEL} ({TIMEFRAME}) | MIN_SCORE={MIN_SCORE} | DRY_RUN={DRY_RUN}")
     if MARKET == "psx" and TIMEFRAME not in ("1d", "1w"):
         print("PSX supports daily/weekly only — nothing to do.")
@@ -1047,6 +1083,9 @@ def main():
             if DRY_RUN:
                 print("DRY RUN - note not sent.")
                 return
+            if already_sent(hdr):
+                print("Already sent for this session (duplicate run) — not sending again.")
+                return
             send_telegram(f"{hdr}\n\n{note}")
             append_archive(f"{hdr}\n\n{note}")
             return
@@ -1075,6 +1114,11 @@ def main():
     if DRY_RUN:
         print("\n----- DRY RUN: message that would be sent -----\n" + render_message(hdr, blocks, fmt_section)
               + "\n----- (no Telegram, no signal log / archive) -----")
+        return
+    if already_sent(hdr):                                # GitHub sometimes fires a cron twice
+        print(f"Message '{hdr}' is already in {SIGNALS_ARCHIVE} (duplicate run) — not sending again.")
+        added = log_signals(all_signals)
+        print(f"Signal log: {added} new / {len(all_signals)} found -> {SIGNALS_LOG}")
         return
     send_telegram(render_message(hdr, blocks, fmt_section))          # detailed → Telegram
     print("Telegram message sent.")

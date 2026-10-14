@@ -28,7 +28,7 @@ see "PSX market" below.
 | `backtest.py` | Read-only historical backtest: replays candles, fires the live `analyze_sweep` per bar, grades with `evaluate_outcome`, reports win% / expectancy by timeframe/direction/exchange. Run locally on demand; tune via `BACKTEST_*` env vars. Never writes signals.jsonl or Telegram. |
 | `signals.jsonl` | Append-only signal log, committed back by the Action each run. One JSON object per signal (levels + outcome). Created on first run; **not** gitignored. |
 | `signals_archive.txt` | Human-readable archive: a copy of every message in plain `SYMBOL @ price` style (`fmt_section_simple`), appended each run, committed back. Telegram uses `fmt_section` (`⭐score SYMBOL @ price`, best-first); both render from the same blocks via `render_message()`. Entry/stop/target are logged to `signals.jsonl` but shown in neither message. |
-| `.github/workflows/psx_scan.yml` | PSX workflow: crons `0 13 * * 1-5` (daily 18:00 PKT Mon–Fri) and `15 13 * * 5` (weekly Fri 18:15 PKT) + manual dropdown (daily/weekly) and a **dry_run** switch (`DRY_RUN=1`: message printed in the job log, nothing sent, evaluate + commit skipped). Checks out `ref: main` so a queued run starts from the branch tip. Runs `scanner.py` with `MARKET=psx`, then `evaluate.py`, then commits `signals.jsonl`, `signals_archive.txt` **and `psx_cache/`** back. Shares the `sweep-scan-signals` concurrency group with the crypto workflow. |
+| `.github/workflows/psx_scan.yml` | PSX workflow: crons `23 12 * * 1-5` (daily 17:23 PKT Mon–Fri) and `37 12 * * 5` (weekly Fri 17:37 PKT) — off the top of the hour, where GitHub's delays are worst + manual dropdown (daily/weekly) and a **dry_run** switch (`DRY_RUN=1`: message printed in the job log, nothing sent, evaluate + commit skipped). Checks out `ref: main` so a queued run starts from the branch tip. Runs `scanner.py` with `MARKET=psx`, then `evaluate.py`, then commits `signals.jsonl`, `signals_archive.txt` **and `psx_cache/`** back. Shares the `sweep-scan-signals` concurrency group with the crypto workflow. |
 | `psx_cache/<SYMBOL>.csv` | Committed per-symbol PSX daily history (`date,open,high,low,close,volume`, ≤650 rows ≈ 2.6y). Refreshed incrementally each run (current month from the portal); one-time backfill came from SCSTrade and was verified identical to the portal. ~500 files / ~13 MB. |
 | `.github/workflows/scan.yml` | Three crons (daily `15 0 * * *`, weekly `15 0 * * 1`, monthly `15 0 1 * *`) + manual `workflow_dispatch` with a timeframe dropdown. Steps: resolve timeframe → run scanner → run evaluate → commit `signals.jsonl` back. `permissions: contents: write` + a `concurrency` group (serializes the commit-back). Weekly run sets `DIGEST=1`. |
 | `README.md` | End-user setup guide (Telegram bot, GitHub secrets, manual trigger). |
@@ -112,9 +112,16 @@ Implemented in `scanner.py`; treat as fixed spec (identical for crypto and PSX):
   not supported for PSX. Forming-candle safety: a same-day bar is dropped before
   16:45 PKT; the current week is dropped until Friday 17:00 PKT.
 - **Session guard** (`psx_session_check`, via `PSX_STATE["latest_date"]`): only
-  signals on the just-closed session (daily) / just-completed week (weekly) are
-  reported; on a holiday/no-new-candle day a one-line note is sent instead, so
-  stale candles never re-alert. Signals are logged with `exchange:"PSX"` into the
+  signals on the session expected to have closed by run time (daily:
+  `_psx_expected_session` = today if a weekday past 16:45 PKT, else the previous
+  weekday) / the newest completed Mon–Fri week (`_psx_expected_week`) are reported;
+  otherwise a one-line "market closed on <date>" note. It compares session to
+  session, NEVER to the run's own calendar date: GitHub fired the 18:00 PKT cron up
+  to 8.5 h late (past midnight PKT) on 2026-10-07/08/12/13 and the old `ld != today`
+  check silently discarded those days' sweeps. The PSX header is dated by the
+  reported session, not the run time. `already_sent(hdr)` skips the Telegram send
+  when the archive already holds that header (GitHub double-fired the cron on
+  2026-10-09); signals are still logged. Signals are logged with `exchange:"PSX"` into the
   shared `signals.jsonl`; `evaluate.py` scores them through `klines_for("PSX", …)`.
 - **Caveat**: prices are unadjusted — bonus/rights issues create price gaps that
   can look like sweeps. Timezone: all PSX dates are PKT (UTC+5, no DST).
