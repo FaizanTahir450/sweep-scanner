@@ -4762,3 +4762,21 @@ PSX market closed today (last session 13 Oct 2026) — no new daily candle.
   • AVA-USDT @ 0.2691
 
 ⚠️ Binance futures unavailable (HTTP 451 — likely geo-block on runner). Spot results above are complete.
+
+==================================================
+
+📊 PSX Daily Sweep Scan — 15 Oct 2026 (1d close)
+
+— PSX (EQUITIES) —
+
+🟢 Bullish sweeps (3):
+  • EXIDE @ 385.92
+  • NCL @ 35.08
+  • POML @ 141.23
+
+🔴 Bearish sweeps (5):
+  • AGTL @ 368.54
+  • BWHL @ 224.97
+  • DSIL @ 20.2
+  • DWSM @ 8.58
+  • IML @ 23.51
