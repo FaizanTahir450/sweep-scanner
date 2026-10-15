@@ -4718,3 +4718,47 @@ PSX market closed today (last session 13 Oct 2026) — no new daily candle.
   • HAEL @ 26.9
   • KSTM @ 14.31
   • PASL @ 2.97
+
+==================================================
+
+📊 Daily Sweep Scan — 15 Oct 2026 (1d close)
+
+— BINANCE (SPOT) —
+
+🟢 Bullish sweeps (2):
+  • SAHARAUSDT @ 0.00808
+  • SSVUSDT @ 2.653
+
+🔴 Bearish sweeps (2):
+  • AVAUSDT @ 0.2685
+  • AXLUSDT @ 0.0599
+
+— BITGET (SPOT) —
+
+🟢 Bullish sweeps (3):
+  • COAIUSDT @ 0.2628
+  • INUSDT @ 0.02965
+  • TMXUSDT @ 0.008724
+
+🔴 Bearish sweeps (3):
+  • AIAVUSDT @ 0.000951
+  • AVAUSDT @ 0.2689
+  • AXLUSDT @ 0.06002
+
+— MEXC (SPOT) —
+
+🟢 Bullish sweeps (1):
+  • ENAUSDT @ 0.19579
+
+🔴 Bearish sweeps: none
+
+— KUCOIN (SPOT) —
+
+🟢 Bullish sweeps (2):
+  • FOLKS-USDT @ 1.9118
+  • TAG-USDT @ 0.0005768
+
+🔴 Bearish sweeps (1):
+  • AVA-USDT @ 0.2691
+
+⚠️ Binance futures unavailable (HTTP 451 — likely geo-block on runner). Spot results above are complete.
