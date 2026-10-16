@@ -4780,3 +4780,136 @@ PSX market closed today (last session 13 Oct 2026) — no new daily candle.
   • DSIL @ 20.2
   • DWSM @ 8.58
   • IML @ 23.51
+
+==================================================
+
+📊 Daily Sweep Scan — 16 Oct 2026 (1d close)
+
+— BINANCE (SPOT) —
+
+🟢 Bullish sweeps (52):
+  • AIGENSYNUSDT @ 0.01824
+  • ANIMEUSDT @ 0.00328
+  • AVGOBUSDT @ 342.22
+  • AXTIBUSDT @ 57.64
+  • BNCBUSDT @ 4.71
+  • CVXUSDT @ 2.009
+  • DEXEUSDT @ 1.776
+  • DOGEUSDT @ 0.08115
+  • ETHUSDT @ 2,442.08
+  • FORMUSDT @ 0.2558
+  • GENIUSUSDT @ 0.3007
+  • GIGGLEUSDT @ 34.91
+  • HYPERUSDT @ 0.0663
+  • ICPUSDT @ 3.055
+  • IDUSDT @ 0.033
+  • IMXUSDT @ 0.1651
+  • INTCBUSDT @ 94.71
+  • KAITOUSDT @ 0.2994
+  • KORUBUSDT @ 11.65
+  • LDOUSDT @ 0.4034
+  • LITEBUSDT @ 868.07
+  • LUNAUSDT @ 0.0442
+  • LUNCUSDT @ 0.00004842
+  • MBLUSDT @ 0.000723
+  • MUBUSDT @ 924.01
+  • NEIROUSDT @ 0.00007858
+  • NEOUSDT @ 2.322
+  • NEWTUSDT @ 0.04492
+  • NXPCUSDT @ 0.2089
+  • ONDOUSDT @ 0.4688
+  • ORDIUSDT @ 3.947
+  • PENDLEUSDT @ 2.059
+  • PIXELUSDT @ 0.00559
+  • QNTUSDT @ 204.61
+  • RAYUSDT @ 1.8276
+  • REUSDT @ 0.4196
+  • SAGAUSDT @ 0.02003
+  • SAHARAUSDT @ 0.00797
+  • SOXLBUSDT @ 104.57
+  • SPCXBUSDT @ 148.34
+  • SSVUSDT @ 2.583
+  • TSMBUSDT @ 423.34
+  • TWTUSDT @ 0.4953
+  • USUALUSDT @ 0.01069
+  • VETUSDT @ 0.007106
+  • VTHOUSDT @ 0.000638
+  • WBETHUSDT @ 2,707.52
+  • XAIUSDT @ 0.00861
+  • XPLUSDT @ 0.08579
+  • ZILUSDT @ 0.003307
+  • ZKCUSDT @ 0.0363
+  • 币安人生USDT @ 0.4795
+
+🔴 Bearish sweeps (1):
+  • CRCLBUSDT @ 85.6
+
+— BITGET (SPOT) —
+
+🟢 Bullish sweeps (25):
+  • ALUSDT @ 0.001679
+  • ANIMEUSDT @ 0.003278
+  • BLESSUSDT @ 0.0077541
+  • BSBUSDT @ 0.09048
+  • COAIUSDT @ 0.2556
+  • CYSUSDT @ 0.12725
+  • DEBITUSDT @ 1.5255
+  • DGAIUSDT @ 0.902259
+  • DOGEUSDT @ 0.08115
+  • ETHUSDT @ 2,442.1
+  • GENIUSUSDT @ 0.30077
+  • GOATUSDT @ 0.01572
+  • ICPUSDT @ 3.057
+  • LABUSDT @ 0.04442
+  • LDOUSDT @ 0.4038
+  • NXPCUSDT @ 0.20891
+  • ONDOUSDT @ 0.4687
+  • PENDLEUSDT @ 2.06
+  • QNTUSDT @ 204.54
+  • RAYUSDT @ 1.827
+  • REUSDT @ 0.41989
+  • RIVERUSDT @ 1.084
+  • TACUSDT @ 0.001253
+  • VTHOUSDT @ 0.0006393
+  • XPLUSDT @ 0.08579
+
+🔴 Bearish sweeps: none
+
+— MEXC (SPOT) —
+
+🟢 Bullish sweeps (13):
+  • BDXUSDT @ 0.07342
+  • BSBUSDT @ 0.09072
+  • DGAIUSDT @ 0.9027
+  • DOGEUSDT @ 0.08114
+  • ETHUSDT @ 2,441.92
+  • ICPUSDT @ 3.054
+  • ONDOUSDT @ 0.46862
+  • PENDLEUSDT @ 2.059
+  • QNTUSDT @ 204.7
+  • SPCXONUSDT @ 148.65
+  • SPYXUSDT @ 773.28
+  • XPLUSDT @ 0.0858
+  • ZECUSDT @ 1,221
+
+🔴 Bearish sweeps: none
+
+— KUCOIN (SPOT) —
+
+🟢 Bullish sweeps (12):
+  • ANSEM-USDT @ 0.1155
+  • BDX-USDT @ 0.07323
+  • DEBIT-USDT @ 1.5259
+  • DOGE-USDT @ 0.08113
+  • ETH-USDT @ 2,442.28
+  • HOME-USDT @ 0.005125
+  • ICP-USDT @ 3.057
+  • NIULAI-USDT @ 0.06737
+  • ONDO-USDT @ 0.46882
+  • QNT-USDT @ 204.775
+  • RAY-USDT @ 1.8278
+  • XPL-USDT @ 0.0858
+
+🔴 Bearish sweeps: none
+
+⚠️ Binance futures unavailable (HTTP 451 — likely geo-block on runner). Spot results above are complete.
