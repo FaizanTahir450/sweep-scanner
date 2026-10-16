@@ -4927,3 +4927,22 @@ PSX market closed today (last session 13 Oct 2026) — no new daily candle.
 🔴 Bearish sweeps (2):
   • ALTN @ 6.83
   • MFFL @ 161.94
+
+==================================================
+
+📊 PSX Weekly Sweep Scan — 16 Oct 2026 (1w close)
+
+— PSX (EQUITIES) —
+
+🟢 Bullish sweeps (5):
+  • APL @ 534.84
+  • EXIDE @ 424.51
+  • GWLC @ 45.72
+  • OLPL @ 45.45
+  • PTL @ 46.5
+
+🔴 Bearish sweeps (4):
+  • DAAG @ 114.32
+  • GOC @ 233.12
+  • KSTM @ 12.67
+  • SHCM @ 62.28
