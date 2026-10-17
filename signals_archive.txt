@@ -4946,3 +4946,39 @@ PSX market closed today (last session 13 Oct 2026) — no new daily candle.
   • GOC @ 233.12
   • KSTM @ 12.67
   • SHCM @ 62.28
+
+==================================================
+
+📊 Daily Sweep Scan — 17 Oct 2026 (1d close)
+
+— BINANCE (SPOT) —
+
+🟢 Bullish sweeps: none
+
+🔴 Bearish sweeps: none
+
+— BITGET (SPOT) —
+
+🟢 Bullish sweeps (1):
+  • GAIBUSDT @ 0.02062
+
+🔴 Bearish sweeps (3):
+  • ALIGNUSDT @ 0.005001
+  • ARIAUSDT @ 0.04087
+  • KAIOUSDT @ 0.03595
+
+— MEXC (SPOT) —
+
+🟢 Bullish sweeps: none
+
+🔴 Bearish sweeps (1):
+  • ZEREBROUSDT @ 0.03272
+
+— KUCOIN (SPOT) —
+
+🟢 Bullish sweeps: none
+
+🔴 Bearish sweeps (1):
+  • STBL-USDT @ 0.02445
+
+⚠️ Binance futures unavailable (HTTP 451 — likely geo-block on runner). Spot results above are complete.
