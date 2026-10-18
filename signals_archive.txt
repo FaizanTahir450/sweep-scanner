@@ -4982,3 +4982,41 @@ PSX market closed today (last session 13 Oct 2026) — no new daily candle.
   • STBL-USDT @ 0.02445
 
 ⚠️ Binance futures unavailable (HTTP 451 — likely geo-block on runner). Spot results above are complete.
+
+==================================================
+
+📊 Daily Sweep Scan — 18 Oct 2026 (1d close)
+
+— BINANCE (SPOT) —
+
+🟢 Bullish sweeps (6):
+  • ARKMUSDT @ 0.1188
+  • BIOUSDT @ 0.0243
+  • HYPERUSDT @ 0.0626
+  • LITEBUSDT @ 814.75
+  • NXPCUSDT @ 0.1739
+  • TQQQBUSDT @ 67.45
+
+🔴 Bearish sweeps (1):
+  • SOXSBUSDT @ 50.18
+
+— BITGET (SPOT) —
+
+🟢 Bullish sweeps: none
+
+🔴 Bearish sweeps (1):
+  • ICNTUSDT @ 0.1699
+
+— MEXC (SPOT) —
+
+🟢 Bullish sweeps: none
+
+🔴 Bearish sweeps: none
+
+— KUCOIN (SPOT) —
+
+🟢 Bullish sweeps: none
+
+🔴 Bearish sweeps: none
+
+⚠️ Binance futures unavailable (HTTP 451 — likely geo-block on runner). Spot results above are complete.
