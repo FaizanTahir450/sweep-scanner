@@ -5081,3 +5081,45 @@ PSX market closed today (last session 13 Oct 2026) — no new daily candle.
   • GWEI-USDT @ 0.021683
 
 ⚠️ Binance futures unavailable (HTTP 451 — likely geo-block on runner). Spot results above are complete.
+
+==================================================
+
+📊 Weekly Sweep Scan — 19 Oct 2026 (1w close)
+
+— BINANCE (SPOT) —
+
+🟢 Bullish sweeps (3):
+  • KAITOUSDT @ 0.2756
+  • TURBOUSDT @ 0.000844
+  • ZILUSDT @ 0.002241
+
+🔴 Bearish sweeps (2):
+  • AVAUSDT @ 0.3198
+  • RSRUSDT @ 0.001915
+
+— BITGET (SPOT) —
+
+🟢 Bullish sweeps (3):
+  • IRYSUSDT @ 0.01223
+  • KAITOUSDT @ 0.2755
+  • MONUSDT @ 0.02113
+
+🔴 Bearish sweeps (2):
+  • AVAUSDT @ 0.3199
+  • RSRUSDT @ 0.001918
+
+— MEXC (SPOT) —
+
+🟢 Bullish sweeps: none
+
+🔴 Bearish sweeps: none
+
+— KUCOIN (SPOT) —
+
+🟢 Bullish sweeps: none
+
+🔴 Bearish sweeps (2):
+  • ATOM-USDT @ 1.7617
+  • AVA-USDT @ 0.2691
+
+⚠️ Binance futures unavailable (HTTP 451 — likely geo-block on runner). Spot results above are complete.
