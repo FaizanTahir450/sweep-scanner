@@ -5020,3 +5020,64 @@ PSX market closed today (last session 13 Oct 2026) — no new daily candle.
 🔴 Bearish sweeps: none
 
 ⚠️ Binance futures unavailable (HTTP 451 — likely geo-block on runner). Spot results above are complete.
+
+==================================================
+
+📊 Daily Sweep Scan — 19 Oct 2026 (1d close)
+
+— BINANCE (SPOT) —
+
+🟢 Bullish sweeps (15):
+  • CHZUSDT @ 0.01379
+  • CYBERUSDT @ 0.313
+  • FLOKIUSDT @ 0.00002341
+  • OPGUSDT @ 0.1203
+  • PNUTUSDT @ 0.0433
+  • RENDERUSDT @ 1.815
+  • ROSEUSDT @ 0.00737
+  • SKLUSDT @ 0.00441
+  • TAOUSDT @ 270.7
+  • TKOUSDT @ 0.0503
+  • TURBOUSDT @ 0.000844
+  • USTCUSDT @ 0.00487
+  • WCTUSDT @ 0.03469
+  • WUSDT @ 0.01304
+  • ZILUSDT @ 0.002241
+
+🔴 Bearish sweeps: none
+
+— BITGET (SPOT) —
+
+🟢 Bullish sweeps (8):
+  • AEROUSDT @ 0.7989
+  • BLUEUSDT @ 0.00851
+  • IRYSUSDT @ 0.01223
+  • MONUSDT @ 0.02113
+  • RENDERUSDT @ 1.815
+  • TAOUSDT @ 271
+  • WUSDT @ 0.01305
+  • XLMUSDT @ 0.17799
+
+🔴 Bearish sweeps (1):
+  • GWEIUSDT @ 0.021625
+
+— MEXC (SPOT) —
+
+🟢 Bullish sweeps (2):
+  • TAOUSDT @ 270.93
+  • WUSDT @ 0.013046
+
+🔴 Bearish sweeps (1):
+  • 9BITUSDT @ 0.063191
+
+— KUCOIN (SPOT) —
+
+🟢 Bullish sweeps (3):
+  • PIEVERSE-USDT @ 1.0679
+  • TAO-USDT @ 270.66
+  • VVV-USDT @ 22.642
+
+🔴 Bearish sweeps (1):
+  • GWEI-USDT @ 0.021683
+
+⚠️ Binance futures unavailable (HTTP 451 — likely geo-block on runner). Spot results above are complete.
