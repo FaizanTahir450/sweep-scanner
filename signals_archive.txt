@@ -5180,3 +5180,23 @@ PSX market closed today (last session 13 Oct 2026) — no new daily candle.
   • GTC-USDT @ 0.3395
 
 ⚠️ Binance futures unavailable (HTTP 451 — likely geo-block on runner). Spot results above are complete.
+
+==================================================
+
+📊 PSX Daily Sweep Scan — 20 Oct 2026 (1d close)
+
+— PSX (EQUITIES) —
+
+🟢 Bullish sweeps (7):
+  • GCWL @ 12.1
+  • ICL @ 125.66
+  • KHTC @ 248.02
+  • NRSL @ 31.65
+  • PGLC @ 13.49
+  • PICT @ 43.66
+  • TATM @ 139.15
+
+🔴 Bearish sweeps (3):
+  • DNCC @ 19.72
+  • ESBL @ 13.08
+  • PASL @ 3.14
