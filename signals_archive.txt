@@ -5200,3 +5200,41 @@ PSX market closed today (last session 13 Oct 2026) — no new daily candle.
   • DNCC @ 19.72
   • ESBL @ 13.08
   • PASL @ 3.14
+
+==================================================
+
+📊 Daily Sweep Scan — 21 Oct 2026 (1d close)
+
+— BINANCE (SPOT) —
+
+🟢 Bullish sweeps (2):
+  • BERAUSDT @ 0.1675
+  • WLFIUSDT @ 0.0556
+
+🔴 Bearish sweeps (1):
+  • COMPUSDT @ 25.92
+
+— BITGET (SPOT) —
+
+🟢 Bullish sweeps (2):
+  • BTWUSDT @ 2.0439
+  • POWERUSDT @ 0.075213
+
+🔴 Bearish sweeps (1):
+  • COMPUSDT @ 25.93
+
+— MEXC (SPOT) —
+
+🟢 Bullish sweeps (1):
+  • BTWUSDT @ 2.0452
+
+🔴 Bearish sweeps: none
+
+— KUCOIN (SPOT) —
+
+🟢 Bullish sweeps: none
+
+🔴 Bearish sweeps (1):
+  • COMP-USDT @ 25.93
+
+⚠️ Binance futures unavailable (HTTP 451 — likely geo-block on runner). Spot results above are complete.
