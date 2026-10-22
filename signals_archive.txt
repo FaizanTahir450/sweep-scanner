@@ -5257,3 +5257,52 @@ PSX market closed today (last session 13 Oct 2026) — no new daily candle.
   • FTMM @ 20.51
   • GSPM @ 7.76
   • RICL @ 12.09
+
+==================================================
+
+📊 Daily Sweep Scan — 22 Oct 2026 (1d close)
+
+— BINANCE (SPOT) —
+
+🟢 Bullish sweeps (1):
+  • REQUSDT @ 0.0518
+
+🔴 Bearish sweeps (4):
+  • IOTXUSDT @ 0.004227
+  • METISUSDT @ 4.19
+  • PARTIUSDT @ 0.0328
+  • TSLABUSDT @ 373.94
+
+— BITGET (SPOT) —
+
+🟢 Bullish sweeps: none
+
+🔴 Bearish sweeps (6):
+  • ARIAUSDT @ 0.06369
+  • BTTUSDT @ 0.00000038
+  • IRYSUSDT @ 0.01772
+  • JCTUSDT @ 0.003751
+  • MAGMAUSDT @ 0.323
+  • PARTIUSDT @ 0.03284
+
+— MEXC (SPOT) —
+
+🟢 Bullish sweeps: none
+
+🔴 Bearish sweeps (3):
+  • BULLAUSDT @ 0.115152
+  • IRYSUSDT @ 0.01771
+  • JCTUSDT @ 0.003755
+
+— KUCOIN (SPOT) —
+
+🟢 Bullish sweeps (2):
+  • PTB-USDT @ 0.000653
+  • YOM-USDT @ 0.01346
+
+🔴 Bearish sweeps (3):
+  • IRYS-USDT @ 0.01772
+  • JCT-USDT @ 0.003767
+  • TSLAX-USDT @ 373.99
+
+⚠️ Binance futures unavailable (HTTP 451 — likely geo-block on runner). Spot results above are complete.
