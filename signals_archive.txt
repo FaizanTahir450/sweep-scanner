@@ -5407,3 +5407,22 @@ PSX market closed today (last session 13 Oct 2026) — no new daily candle.
   • DIIL @ 85.46
   • NCL @ 43.04
   • PASL @ 3.33
+
+==================================================
+
+📊 PSX Weekly Sweep Scan — 23 Oct 2026 (1w close)
+
+— PSX (EQUITIES) —
+
+🟢 Bullish sweeps (4):
+  • FTSM @ 29.22
+  • KAPCO @ 24.03
+  • PAEL @ 32.05
+  • TCORP @ 19.02
+
+🔴 Bearish sweeps (5):
+  • DIIL @ 85.46
+  • NCL @ 43.04
+  • PASL @ 3.33
+  • PRL @ 94.52
+  • UPFL @ 26,376.79
