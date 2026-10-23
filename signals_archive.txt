@@ -5375,3 +5375,35 @@ PSX market closed today (last session 13 Oct 2026) — no new daily candle.
   • XMR-USDT @ 600.61
 
 ⚠️ Binance futures unavailable (HTTP 451 — likely geo-block on runner). Spot results above are complete.
+
+==================================================
+
+📊 PSX Daily Sweep Scan — 23 Oct 2026 (1d close)
+
+— PSX (EQUITIES) —
+
+🟢 Bullish sweeps (19):
+  • AGIC @ 39.41
+  • AKDHL @ 144.27
+  • ATBA @ 161.12
+  • DSL @ 4.11
+  • FECTC @ 86.85
+  • FFLM @ 11.27
+  • FTSM @ 29.22
+  • GHGL @ 38.5
+  • HBL @ 283.26
+  • HIRAT @ 4.97
+  • JSML @ 48.73
+  • JVDC @ 127.08
+  • MLCF @ 86.63
+  • PAEL @ 32.05
+  • POWER @ 20.83
+  • SAPT @ 1,522.15
+  • SRVI @ 170.66
+  • TRIPF @ 119.85
+  • UBL @ 399.23
+
+🔴 Bearish sweeps (3):
+  • DIIL @ 85.46
+  • NCL @ 43.04
+  • PASL @ 3.33
