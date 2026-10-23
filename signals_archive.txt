@@ -5330,3 +5330,48 @@ PSX market closed today (last session 13 Oct 2026) — no new daily candle.
 🔴 Bearish sweeps (2):
   • JDWS @ 881.91
   • PAKOXY @ 349.1
+
+==================================================
+
+📊 Daily Sweep Scan — 23 Oct 2026 (1d close)
+
+— BINANCE (SPOT) —
+
+🟢 Bullish sweeps (3):
+  • ACEUSDT @ 0.1439
+  • FLOWUSDT @ 0.02863
+  • RLCUSDT @ 0.6524
+
+🔴 Bearish sweeps (2):
+  • ARKMUSDT @ 0.1295
+  • MASKUSDT @ 0.424
+
+— BITGET (SPOT) —
+
+🟢 Bullish sweeps (2):
+  • PWTUSDT @ 0.481897
+  • RLCUSDT @ 0.6526
+
+🔴 Bearish sweeps (3):
+  • ARKMUSDT @ 0.1292
+  • AVVUSDT @ 0.008171
+  • MASKUSDT @ 0.4251
+
+— MEXC (SPOT) —
+
+🟢 Bullish sweeps (1):
+  • AKEUSDT @ 0.0314574
+
+🔴 Bearish sweeps (1):
+  • XMRUSDT @ 601.31
+
+— KUCOIN (SPOT) —
+
+🟢 Bullish sweeps (2):
+  • ADI-USDT @ 8.0539
+  • AKE-USDT @ 0.031477
+
+🔴 Bearish sweeps (1):
+  • XMR-USDT @ 600.61
+
+⚠️ Binance futures unavailable (HTTP 451 — likely geo-block on runner). Spot results above are complete.
