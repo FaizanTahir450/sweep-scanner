@@ -5426,3 +5426,58 @@ PSX market closed today (last session 13 Oct 2026) — no new daily candle.
   • PASL @ 3.33
   • PRL @ 94.52
   • UPFL @ 26,376.79
+
+==================================================
+
+📊 Daily Sweep Scan — 24 Oct 2026 (1d close)
+
+— BINANCE (SPOT) —
+
+🟢 Bullish sweeps (7):
+  • BANKUSDT @ 0.0247
+  • CHZUSDT @ 0.01331
+  • PAXGUSDT @ 4,003.77
+  • PYTHUSDT @ 0.07073
+  • VELODROMEUSDT @ 0.03215
+  • XAUTUSDT @ 3,994.18
+  • XLMUSDT @ 0.1734
+
+🔴 Bearish sweeps (2):
+  • AAPLBUSDT @ 347.86
+  • SOXSBUSDT @ 52.71
+
+— BITGET (SPOT) —
+
+🟢 Bullish sweeps (4):
+  • PAXGUSDT @ 4,003.05
+  • PYTHUSDT @ 0.07066
+  • XAUTUSDT @ 3,995.73
+  • XLMUSDT @ 0.17342
+
+🔴 Bearish sweeps (1):
+  • JCTUSDT @ 0.002609
+
+— MEXC (SPOT) —
+
+🟢 Bullish sweeps (3):
+  • GOLD(PAXG)USDT @ 4,003.77
+  • GOLD(XAUT)USDT @ 3,994.71
+  • PYTHUSDT @ 0.07074
+
+🔴 Bearish sweeps (2):
+  • AGTUSDT @ 0.087568
+  • JCTUSDT @ 0.002618
+
+— KUCOIN (SPOT) —
+
+🟢 Bullish sweeps (3):
+  • PAXG-USDT @ 4,003.77
+  • XAUT-USDT @ 3,996.09
+  • XLM-USDT @ 0.1733
+
+🔴 Bearish sweeps (3):
+  • AGT-USDT @ 0.087866
+  • BTR-USDT @ 0.05659
+  • UP-USDT @ 0.07246
+
+⚠️ Binance futures unavailable (HTTP 451 — likely geo-block on runner). Spot results above are complete.
