@@ -5481,3 +5481,77 @@ PSX market closed today (last session 13 Oct 2026) — no new daily candle.
   • UP-USDT @ 0.07246
 
 ⚠️ Binance futures unavailable (HTTP 451 — likely geo-block on runner). Spot results above are complete.
+
+==================================================
+
+📊 Daily Sweep Scan — 25 Oct 2026 (1d close)
+
+— BINANCE (SPOT) —
+
+🟢 Bullish sweeps (12):
+  • ATOMUSDT @ 1.641
+  • BBUSDT @ 0.0076
+  • BTCUSDT @ 80,888.16
+  • CFXUSDT @ 0.0485
+  • DEXEUSDT @ 1.64
+  • ENSUSDT @ 5.37
+  • GIGGLEUSDT @ 30.13
+  • GMTUSDT @ 0.00703
+  • OPUSDT @ 0.1136
+  • VTHOUSDT @ 0.000599
+  • WBTCUSDT @ 80,737.55
+  • XPLUSDT @ 0.07438
+
+🔴 Bearish sweeps (4):
+  • KATUSDT @ 0.00454
+  • LAUSDT @ 0.0627
+  • NEWTUSDT @ 0.04532
+  • TREEUSDT @ 0.0443
+
+— BITGET (SPOT) —
+
+🟢 Bullish sweeps (9):
+  • ATOMUSDT @ 1.642
+  • BTCUSDT @ 80,882
+  • FILUSDT @ 0.9395
+  • GOMININGUSDT @ 0.3677
+  • HYPEUSDT @ 76.685
+  • OPUSDT @ 0.1136
+  • VELOUSDT @ 0.003849
+  • XPLUSDT @ 0.07449
+  • ZIGUSDT @ 0.04567
+
+🔴 Bearish sweeps (5):
+  • BIRBUSDT @ 0.09061
+  • BLENDUSDT @ 0.05357
+  • KATUSDT @ 0.004543
+  • LAUSDT @ 0.06293
+  • TREEUSDT @ 0.04425
+
+— MEXC (SPOT) —
+
+🟢 Bullish sweeps (5):
+  • ATOMUSDT @ 1.641
+  • BTCUSDT @ 80,878.79
+  • FILUSDT @ 0.9397
+  • HYPEUSDT @ 76.74
+  • ZIGUSDT @ 0.045584
+
+🔴 Bearish sweeps (1):
+  • INUSDT @ 0.03493
+
+— KUCOIN (SPOT) —
+
+🟢 Bullish sweeps (4):
+  • BTC-USDT @ 80,891.2
+  • HYPE-USDT @ 76.692
+  • KONET-USDT @ 0.01153
+  • ONDO-USDT @ 0.40988
+
+🔴 Bearish sweeps (4):
+  • BLEND-USDT @ 0.05354
+  • IN-USDT @ 0.03506
+  • TREE-USDT @ 0.0443
+  • WET-USDT @ 0.05548
+
+⚠️ Binance futures unavailable (HTTP 451 — likely geo-block on runner). Spot results above are complete.
