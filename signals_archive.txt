@@ -5738,3 +5738,23 @@ PSX market closed today (last session 13 Oct 2026) — no new daily candle.
 🔴 Bearish sweeps: none
 
 ⚠️ Binance futures unavailable (HTTP 451 — likely geo-block on runner). Spot results above are complete.
+
+==================================================
+
+📊 PSX Daily Sweep Scan — 27 Oct 2026 (1d close)
+
+— PSX (EQUITIES) —
+
+🟢 Bullish sweeps (9):
+  • ASTL @ 16.3
+  • CSIL @ 4.97
+  • JDWS @ 877.99
+  • PASM @ 9.38
+  • PPP @ 118
+  • SHNI @ 8.09
+  • SNAI @ 34.49
+  • TPLL @ 18.19
+  • UBDL @ 22.67
+
+🔴 Bearish sweeps (1):
+  • SPAC2 @ 17.53
