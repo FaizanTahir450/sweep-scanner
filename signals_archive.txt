@@ -5758,3 +5758,42 @@ PSX market closed today (last session 13 Oct 2026) — no new daily candle.
 
 🔴 Bearish sweeps (1):
   • SPAC2 @ 17.53
+
+==================================================
+
+📊 Daily Sweep Scan — 28 Oct 2026 (1d close)
+
+— BINANCE (SPOT) —
+
+🟢 Bullish sweeps (2):
+  • GOOGLBUSDT @ 323.81
+  • POLYXUSDT @ 0.0331
+
+🔴 Bearish sweeps: none
+
+— BITGET (SPOT) —
+
+🟢 Bullish sweeps (1):
+  • UAIUSDT @ 0.23569
+
+🔴 Bearish sweeps (3):
+  • BREVUSDT @ 0.0852
+  • COLLECTUSDT @ 0.026821
+  • QUSDT @ 0.0531999
+
+— MEXC (SPOT) —
+
+🟢 Bullish sweeps: none
+
+🔴 Bearish sweeps (1):
+  • QUSDT @ 0.05313
+
+— KUCOIN (SPOT) —
+
+🟢 Bullish sweeps: none
+
+🔴 Bearish sweeps (2):
+  • ON-USDT @ 0.1504
+  • Q-USDT @ 0.053142
+
+⚠️ Binance futures unavailable (HTTP 451 — likely geo-block on runner). Spot results above are complete.
