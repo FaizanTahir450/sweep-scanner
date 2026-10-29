@@ -5821,3 +5821,44 @@ PSX market closed today (last session 13 Oct 2026) — no new daily candle.
   • GEMBCEM @ 12.18
   • PAKT @ 1,478.4
   • WAHN @ 230.73
+
+==================================================
+
+📊 Daily Sweep Scan — 29 Oct 2026 (1d close)
+
+— BINANCE (SPOT) —
+
+🟢 Bullish sweeps: none
+
+🔴 Bearish sweeps (4):
+  • BNCBUSDT @ 5.61
+  • MSFTBUSDT @ 546.83
+  • ORCLBUSDT @ 141.25
+  • PEPEUSDT @ 0.00000503
+
+— BITGET (SPOT) —
+
+🟢 Bullish sweeps: none
+
+🔴 Bearish sweeps (4):
+  • BLESSUSDT @ 0.0110119
+  • GOMININGUSDT @ 0.3876
+  • PEPEUSDT @ 0.00000503
+  • PWTUSDT @ 0.286474
+
+— MEXC (SPOT) —
+
+🟢 Bullish sweeps: none
+
+🔴 Bearish sweeps (1):
+  • PEPEUSDT @ 0.00000503
+
+— KUCOIN (SPOT) —
+
+🟢 Bullish sweeps: none
+
+🔴 Bearish sweeps (2):
+  • PEPE-USDT @ 0.00000503
+  • XPIN-USDT @ 0.0008496
+
+⚠️ Binance futures unavailable (HTTP 451 — likely geo-block on runner). Spot results above are complete.
