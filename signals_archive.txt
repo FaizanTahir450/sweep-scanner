@@ -5881,3 +5881,73 @@ PSX market closed today (last session 13 Oct 2026) — no new daily candle.
   • SNGP @ 91.84
   • TGL @ 170.47
   • TPL @ 24.76
+
+==================================================
+
+📊 Daily Sweep Scan — 30 Oct 2026 (1d close)
+
+— BINANCE (SPOT) —
+
+🟢 Bullish sweeps (16):
+  • ACEUSDT @ 0.1332
+  • ADAUSDT @ 0.1904
+  • ADXUSDT @ 0.0505
+  • BERAUSDT @ 0.1381
+  • BNSOLUSDT @ 108.7
+  • C98USDT @ 0.01308
+  • ETCUSDT @ 7.09
+  • FORMUSDT @ 0.206
+  • LINKUSDT @ 10.62
+  • LUNAUSDT @ 0.0394
+  • NEIROUSDT @ 0.00006262
+  • NOMUSDT @ 0.001557
+  • NVDABUSDT @ 210.39
+  • ORCAUSDT @ 1.567
+  • SPCXBUSDT @ 140.65
+  • TUSDT @ 0.00452
+
+🔴 Bearish sweeps (3):
+  • HYPEUSDT @ 89.06
+  • JSTUSDT @ 0.14174
+  • PEPEUSDT @ 0.00000456
+
+— BITGET (SPOT) —
+
+🟢 Bullish sweeps (8):
+  • ADAUSDT @ 0.1907
+  • ARKMUSDT @ 0.1089
+  • BABYDOGEUSDT @ 0
+  • CPUSDT @ 0.00813
+  • ETCUSDT @ 7.115
+  • FARTCOINUSDT @ 0.1193
+  • LINKUSDT @ 10.618
+  • NOMUSDT @ 0.001553
+
+🔴 Bearish sweeps (3):
+  • HYPEUSDT @ 89.108
+  • JSTUSDT @ 0.1415
+  • PEPEUSDT @ 0.00000455
+
+— MEXC (SPOT) —
+
+🟢 Bullish sweeps (2):
+  • LINKUSDT @ 10.624
+  • NVDAXUSDT @ 209.7
+
+🔴 Bearish sweeps (1):
+  • PEPEUSDT @ 0.00000456
+
+— KUCOIN (SPOT) —
+
+🟢 Bullish sweeps (4):
+  • ADA-USDT @ 0.1905
+  • CP-USDT @ 0.00812
+  • ETC-USDT @ 7.0995
+  • FARTCOIN-USDT @ 0.1192
+
+🔴 Bearish sweeps (3):
+  • HYPE-USDT @ 89.017
+  • PEPE-USDT @ 0.00000455
+  • TRUTH-USDT @ 0.02085
+
+⚠️ Binance futures unavailable (HTTP 451 — likely geo-block on runner). Spot results above are complete.
