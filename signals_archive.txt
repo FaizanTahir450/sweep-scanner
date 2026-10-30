@@ -5975,3 +5975,23 @@ PSX market closed today (last session 13 Oct 2026) — no new daily candle.
   • PASL @ 3.96
   • PECO @ 880.29
   • SUTM @ 118.49
+
+==================================================
+
+📊 PSX Weekly Sweep Scan — 30 Oct 2026 (1w close)
+
+— PSX (EQUITIES) —
+
+🟢 Bullish sweeps (7):
+  • CSAP @ 81.96
+  • DEL @ 15.05
+  • GADT @ 292.61
+  • HUBC @ 193.18
+  • PTC @ 45.19
+  • TELE @ 6.72
+  • TPLL @ 15.76
+
+🔴 Bearish sweeps (3):
+  • DNCC @ 23.92
+  • PASL @ 3.96
+  • PECO @ 880.29
