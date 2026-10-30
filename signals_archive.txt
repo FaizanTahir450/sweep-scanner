@@ -5951,3 +5951,27 @@ PSX market closed today (last session 13 Oct 2026) — no new daily candle.
   • TRUTH-USDT @ 0.02085
 
 ⚠️ Binance futures unavailable (HTTP 451 — likely geo-block on runner). Spot results above are complete.
+
+==================================================
+
+📊 PSX Daily Sweep Scan — 30 Oct 2026 (1d close)
+
+— PSX (EQUITIES) —
+
+🟢 Bullish sweeps (7):
+  • DEL @ 15.05
+  • FCEL @ 4.57
+  • GTYR @ 24.05
+  • IMAGE @ 22.83
+  • MFFL @ 150.32
+  • MUGHAL @ 58.73
+  • SEPL @ 125.4
+
+🔴 Bearish sweeps (7):
+  • BHAT @ 906.67
+  • BTL @ 899.98
+  • DSIL @ 36.13
+  • IDEAL @ 56.09
+  • PASL @ 3.96
+  • PECO @ 880.29
+  • SUTM @ 118.49
